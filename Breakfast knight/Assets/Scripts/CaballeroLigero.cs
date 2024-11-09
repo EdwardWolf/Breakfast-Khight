@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class CaballeroLigero : Jugador
 {
+    private bool escudoActivo = false;
 
     private void Update()
     {
@@ -20,6 +21,15 @@ public class CaballeroLigero : Jugador
         {
             ActivarInteraction();
         }
+        if (PlayerController.Shield())
+        {
+            ActivarEscudo();
+        }
+        else
+        {
+            DesactivarEscudo();
+        }
+
     }
 
     public override void Mover(Vector3 direccion)
@@ -30,13 +40,32 @@ public class CaballeroLigero : Jugador
 
     public override void ActivarAccion()
     {
-        // Lógica de acción específica (ataque, etc.)
+        // Ataque simple
         Debug.Log("Caballero Ligero está atacando");
     }
 
     public override void ActivarInteraction()
     {
-        // Lógica de acción específica (ataque, etc.)
+        // Interactuar
         Debug.Log("Caballero Ligero está Interactuando");
+    }
+    public void ActivarEscudo()
+    {
+        if (!escudoActivo)
+        {
+            //escudo.SetActive(true);  // Activar el objeto escudo en la escena.
+            escudoActivo = true;
+            Debug.Log("Escudo activado.");
+        }
+    }
+
+    public void DesactivarEscudo()
+    {
+        if (escudoActivo)
+        {
+            //escudo.SetActive(false);  // Desactivar el objeto escudo.
+            escudoActivo = false;
+            Debug.Log("Escudo desactivado.");
+        }
     }
 }

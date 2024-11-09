@@ -27,4 +27,8 @@ public static class PlayerController
     {
         return playerInput.Player.Interact.triggered;
     }
+    public static bool Shield()
+    {
+        return playerInput.Player.Shield.IsPressed();
+    }
 }
