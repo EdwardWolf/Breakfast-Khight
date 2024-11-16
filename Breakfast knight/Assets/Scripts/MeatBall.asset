@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69802df00aa3e974988ca33c4dd8bc88, type: 3}
-  m_Name: Stats
+  m_Script: {fileID: 11500000, guid: f0f79e6a616b0c44bb57fa7e8281b500, type: 3}
+  m_Name: MeatBall
   m_EditorClassIdentifier: 
   vida: 100
-  resistenciaEscudo: 20
-  velocidadMovimiento: 5
-  velocidadAtaque: 5
+  velocidadMovimiento: 2
+  velocidadAtaque: 1
