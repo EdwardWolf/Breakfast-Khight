@@ -4,45 +4,33 @@ using UnityEngine;
 
 public class Enemigo : MonoBehaviour
 {
-    public GameObject canon;
-        public EnemigoStats statsEnemigo;
-        public float detectionRadius = 5f;
-        public LayerMask playerLayer;
-        public AERecto ataqueRecto;
+    public EnemigoStats statsEnemigo;
+    public float detectionRadius = 5f;
+    public LayerMask playerLayer;
+    public AttackHandler attackHandler; // Añadir referencia a AttackHandler
 
     private void Start()
     {
-        ataqueRecto = GetComponent<AERecto>();
-        canon.SetActive(false);
+        attackHandler = GetComponent<AttackHandler>(); // Obtener el componente AttackHandler
     }
 
-
     void Update()
-        {
-            DetectPlayer();
-        }
+    {
+        DetectPlayer();
+    }
 
-        void DetectPlayer()
+    void DetectPlayer()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayer);
+        if (hits.Length > 0)
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayer);
-            if (hits.Length > 0)
-            {
             Atacck();
-            }
-
-        else
-        {
-            NoAtacck();
         }
-        }
+    }
 
     void Atacck()
     {
-        canon.SetActive(true);
-    }
-    void NoAtacck()
-    {
-        canon.SetActive(false);
+        attackHandler.ActivarAtaque(); // Llamar al método para activar el ataque
     }
 
     private void OnDrawGizmosSelected()
@@ -54,4 +42,5 @@ public class Enemigo : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }
+
 

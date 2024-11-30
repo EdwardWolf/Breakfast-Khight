@@ -1,35 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 public class Bala : MonoBehaviour
 {
-        public float speed = 10f;
+    [SerializeField]private AttackHandler attackHandler;
 
-        void Update()
+    private void Start()
+    {
+        Transform enemigo = transform.parent?.parent?.parent;
+
+        if (enemigo != null)
         {
-            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+            // Obtener el componente del tercer padre
+            attackHandler = enemigo.GetComponent<AttackHandler>();
+
+            if (attackHandler != null)
+            {
+                // Hacer algo con el componente
+                Debug.Log("Componente encontrado en el tercer padre.");
+            }
+            else
+            {
+                Debug.Log("El tercer padre no tiene el componente requerido.");
+            }
         }
-
-    //void OnCollisionEnter(Collision collision)
-    //{
-
-    //    Debug.Log("Hubo colision");
-    //    gameObject.SetActive(false);
-
-    //}
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-        Debug.Log("Golpeado");
-            gameObject.SetActive(false);
+            Debug.Log("Golpeado");
+            attackHandler.ataqueActual.RegresarBala(this.gameObject);
+
         }
         if (other.CompareTag("Muro"))
         {
             Debug.Log("Pego Muro");
-            gameObject.SetActive(false);
+            attackHandler.ataqueActual.RegresarBala(this.gameObject);
+
         }
     }
-
 }

@@ -4,11 +4,12 @@ using UnityEngine;
 
 public abstract class AtaqueEnemigo : MonoBehaviour
 {
-    public GameObject bulletPrefab;
-    public int poolSize = 10;
-    public float fireRate = 1f;
-    private List<GameObject> bulletPool;
-    private float nextFireTime;
+    public GameObject bulletPrefab; // Prefab de la bala.
+    public int poolSize = 10; // Cuantas balas se van a instanciar.
+    public float fireRate = 1f; // Cada cuanto
+    private Queue<GameObject> bulletPool; // Lista de balas.
+    // Quitamos la variable nextFireTime.
+    public bool canShoot = true; // Saber si podemos disparar.
 
     void Start()
     {
@@ -17,39 +18,38 @@ public abstract class AtaqueEnemigo : MonoBehaviour
 
     void CrearPool()
     {
-        bulletPool = new List<GameObject>();
+        bulletPool = new Queue<GameObject>();
         for (int i = 0; i < poolSize; i++)
         {
             GameObject bullet = Instantiate(bulletPrefab);
             bullet.SetActive(false);
-            bulletPool.Add(bullet);
+            bulletPool.Enqueue(bullet);
+            bullet.transform.SetParent(this.transform);
         }
     }
 
-    public void Disparar(Vector3 direction)
+    public void RegresarBala(GameObject bala)
     {
-        if (Time.time >= nextFireTime)
+        bala.SetActive(false);
+        bulletPool.Enqueue(bala);
+    }
+
+    protected GameObject ObtenerBala()
+    {
+        if (bulletPool.Count > 0)
         {
-            nextFireTime = Time.time + 1f / fireRate;
-            GameObject bullet = ObtenerBala();
-            if (bullet != null)
-            {
-                bullet.transform.position = transform.position;
-                bullet.transform.rotation = Quaternion.LookRotation(direction);
-                bullet.SetActive(true);
-            }
+            GameObject bala = bulletPool.Dequeue();
+            bala.SetActive(true);
+            return bala;
+        }
+        else
+        {
+            Debug.LogWarning("No hay balas disponibles en el pool.");
+            return null;
         }
     }
 
-    GameObject ObtenerBala()
-    {
-        foreach (var bala in bulletPool)
-        {
-            if (!bala.activeInHierarchy)
-            {
-                return bala;
-            }
-        }
-        return null;
-    }
+    public abstract void Atacar();
+
+    public abstract void CoolDown();
 }
