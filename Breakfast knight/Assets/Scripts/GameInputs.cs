@@ -78,6 +78,17 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""0813f4e6-2eb1-43c3-a9a6-92039c340b5d"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""a7742a38-dfc1-425b-a7ce-33275ed8fd9e"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",

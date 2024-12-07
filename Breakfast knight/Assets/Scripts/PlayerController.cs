@@ -22,6 +22,10 @@ public static class PlayerController
     {
         return playerInput.Player.Attack.triggered;
     }
+    public static bool IsAttackCharge()
+    {
+        return playerInput.Player.Attack.IsPressed();
+    }
 
     public static bool Interaccion()
     {

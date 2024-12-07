@@ -1,45 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 
 public class Bala : MonoBehaviour
 {
-    [SerializeField]private AttackHandler attackHandler;
+    public AttackHandler attackHandler;
+    [SerializeField] private float damage = 10f; // Daño que la bala inflige al jugador
 
-    private void Start()
+    public void SetAttackHandler(AttackHandler handler)
     {
-        Transform enemigo = transform.parent?.parent?.parent;
-
-        if (enemigo != null)
-        {
-            // Obtener el componente del tercer padre
-            attackHandler = enemigo.GetComponent<AttackHandler>();
-
-            if (attackHandler != null)
-            {
-                // Hacer algo con el componente
-                Debug.Log("Componente encontrado en el tercer padre.");
-            }
-            else
-            {
-                Debug.Log("El tercer padre no tiene el componente requerido.");
-            }
-        }
+        attackHandler = handler;
     }
-    private void OnTriggerEnter(Collider other)
+
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("Player"))
+        if (collision.collider.CompareTag("Player"))
         {
             Debug.Log("Golpeado");
-            attackHandler.ataqueActual.RegresarBala(this.gameObject);
 
+            // Reducir la vida del jugador
+            Jugador jugador = collision.collider.GetComponent<Jugador>();
+            if (jugador != null)
+            {
+                jugador.ReducirVida(damage);
+            }
+
+            if (attackHandler != null && attackHandler.ataqueActual != null)
+            {
+                Debug.Log("Llamando a RegresarBala para el jugador");
+                attackHandler.ataqueActual.RegresarBala(this.gameObject);
+            }
         }
-        if (other.CompareTag("Muro"))
+        else if (collision.collider.CompareTag("Muro"))
         {
             Debug.Log("Pego Muro");
-            attackHandler.ataqueActual.RegresarBala(this.gameObject);
-
+            if (attackHandler != null && attackHandler.ataqueActual != null)
+            {
+                Debug.Log("Llamando a RegresarBala para el muro");
+                attackHandler.ataqueActual.RegresarBala(this.gameObject);
+            }
         }
     }
 }
+
+
+

@@ -18,8 +18,8 @@ public class ADisperso : AtaqueEnemigo
 
     private void DispararBala(Transform firePoint)
     {
-        // Obtener una bala del pool
-        GameObject bala = ObtenerBala();
+        // Obtener una bala del pool con el handler
+        GameObject bala = ObtenerBalaConHandler(GetComponent<AttackHandler>());
         if (bala != null)
         {
             // Posicionar y rotar la bala en el firePoint
@@ -36,3 +36,6 @@ public class ADisperso : AtaqueEnemigo
         // Implementar lógica de cooldown si es necesario
     }
 }
+
+
+
