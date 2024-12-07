@@ -10,11 +10,10 @@ public class CaballeroLigero : Jugador
     private bool isChargingAttack = false;
     private float attackChargeTime = 0f;
     private float requiredChargeTime = 2f; // Tiempo necesario para un ataque cargado
-    private float velocidadOriginal; // Para almacenar la velocidad original del jugador
     public Animator animator; // Referencia al componente Animator
     public Collider hijogolpe; // Referencia al collider del golpe
-
-
+    
+    
     private void Update()
     {
         GirarHaciaMouse();
@@ -63,9 +62,9 @@ public class CaballeroLigero : Jugador
 
     public override void Mover(Vector3 direccion)
     {
-        // Mover en la dirección en la que el jugador está mirando
+        // Mover en la direcciï¿½n en la que el jugador estï¿½ mirando
         Vector3 moveDirection = transform.forward * direccion.z + transform.right * direccion.x;
-        transform.Translate(moveDirection * stats.velocidadMovimiento * Time.deltaTime, Space.World);
+        transform.Translate(moveDirection * _velocidadMovimiento * Time.deltaTime, Space.World);
     }
 
     public override void ActivarAtaque()
@@ -73,8 +72,8 @@ public class CaballeroLigero : Jugador
         if (!escudoActivo)
         {
             // Ataque simple
-            Debug.Log("Caballero Ligero está atacando");
-            animator.SetTrigger("Ataque"); // Activar la animación de ataque
+            Debug.Log("Caballero Ligero estï¿½ atacando");
+            animator.SetTrigger("Ataque"); // Activar la animaciï¿½n de ataque
             StartCoroutine(ActivarColliderTemporalmente());
         }
     }
@@ -84,8 +83,8 @@ public class CaballeroLigero : Jugador
         if (!escudoActivo)
         {
             // Ataque cargado
-            Debug.Log("Caballero Ligero está realizando un ataque cargado");
-            animator.SetTrigger("AtaqueCargado"); // Activar la animación de ataque cargado
+            Debug.Log("Caballero Ligero estï¿½ realizando un ataque cargado");
+            animator.SetTrigger("AtaqueCargado"); // Activar la animaciï¿½n de ataque cargado
             StartCoroutine(ActivarColliderTemporalmente());
         }
     }
@@ -93,7 +92,7 @@ public class CaballeroLigero : Jugador
     public override void ActivarInteraction()
     {
         // Interactuar
-        Debug.Log("Caballero Ligero está interactuando");
+        Debug.Log("Caballero Ligero estï¿½ interactuando");
     }
 
     public void ActivarEscudo()
@@ -101,9 +100,9 @@ public class CaballeroLigero : Jugador
         if (!escudoActivo)
         {
             escudoActivo = true;
-            stats.velocidadMovimiento /= 2; // Reducir la velocidad a la mitad
+            _velocidadMovimiento /= 2; // Reducir la velocidad a la mitad
             Debug.Log("Escudo activado.");
-            animator.SetTrigger("EscudoActivado"); // Activar la animación de escudo activado
+            animator.SetTrigger("EscudoActivado"); // Activar la animaciï¿½n de escudo activado
         }
     }
 
@@ -112,9 +111,9 @@ public class CaballeroLigero : Jugador
         if (escudoActivo)
         {
             escudoActivo = false;
-            stats.velocidadMovimiento = velocidadOriginal; // Restaurar la velocidad original
+            _velocidadMovimiento = stats.velocidadMovimiento; // Restaurar la velocidad original
             Debug.Log("Escudo desactivado.");
-            animator.SetTrigger("EscudoDesactivado"); // Activar la animación de escudo desactivado
+            animator.SetTrigger("EscudoDesactivado"); // Activar la animaciï¿½n de escudo desactivado
         }
     }
 
@@ -133,7 +132,7 @@ public class CaballeroLigero : Jugador
     private IEnumerator ActivarColliderTemporalmente()
     {
         hijogolpe.enabled = true;
-        yield return new WaitForSeconds(0.5f); // Ajusta el tiempo según la duración del golpe
+        yield return new WaitForSeconds(0.5f); // Ajusta el tiempo segï¿½n la duraciï¿½n del golpe
         hijogolpe.enabled = false;
     }
 }

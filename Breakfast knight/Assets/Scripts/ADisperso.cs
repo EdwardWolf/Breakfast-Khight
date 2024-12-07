@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class ADisperso : AtaqueEnemigo
 {
-    public Transform[] firePoints; // Puntos desde donde se disparar·n las balas
+    public Transform[] firePoints; // Puntos desde donde se disparar√°n las balas
 
     public override void Atacar()
     {
-        Debug.Log("Ataque de dispersiÛn");
+        Debug.Log("Ataque de dispersi√≥n");
 
         foreach (Transform firePoint in firePoints)
         {
@@ -16,24 +16,27 @@ public class ADisperso : AtaqueEnemigo
         }
     }
 
+    // Conseguir el parent (metaball) 
+    
     private void DispararBala(Transform firePoint)
     {
         // Obtener una bala del pool con el handler
-        GameObject bala = ObtenerBalaConHandler(GetComponent<AttackHandler>());
+        GameObject bala = ObtenerBalaConHandler(GetComponent<AttackHandler>()); // meatball.getcomponent<AttackHandler>
+        Debug.Log("Bala: " + bala.name);
         if (bala != null)
         {
             // Posicionar y rotar la bala en el firePoint
             bala.transform.position = firePoint.position;
             bala.transform.rotation = firePoint.rotation;
 
-            // Aplicar la direcciÛn en la que est· mirando el firePoint a la bala
+            // Aplicar la direcci√≥n en la que est√° mirando el firePoint a la bala
             bala.GetComponent<Rigidbody>().velocity = firePoint.forward * fireRate;
         }
     }
 
     public override void CoolDown()
     {
-        // Implementar lÛgica de cooldown si es necesario
+        // Implementar l√≥gica de cooldown si es necesario
     }
 }
 

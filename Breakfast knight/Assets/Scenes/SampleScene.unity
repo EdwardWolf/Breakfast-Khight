@@ -15758,7 +15758,7 @@ MonoBehaviour:
   stats: {fileID: 11400000, guid: bcc619bd20650d744af4f2c6a53f2d1e, type: 2}
   vidaActual: 0
   resistenciaEscudoActual: 0
-  velocidadMovimiento: 0
+  _velocidadMovimiento: 0
   velocidadAtaque: 0
   Image: {fileID: 960328496}
   animator: {fileID: 1918288947}

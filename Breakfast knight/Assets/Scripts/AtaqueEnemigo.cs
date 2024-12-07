@@ -19,7 +19,7 @@ public abstract class AtaqueEnemigo : MonoBehaviour
 
     void CrearPool()
     {
-        // Crear un nuevo objeto vacío para actuar como el padre del pool de balas
+        // Crear un nuevo objeto vacÃ­o para actuar como el padre del pool de balas
         poolParent = new GameObject("BulletPool").transform;
 
         bulletPool = new Queue<GameObject>();
@@ -29,6 +29,7 @@ public abstract class AtaqueEnemigo : MonoBehaviour
             bullet.SetActive(false);
             bulletPool.Enqueue(bullet);
             bullet.transform.SetParent(poolParent);
+            bullet.name = "Bala" + i;
         }
     }
 
@@ -58,11 +59,14 @@ public abstract class AtaqueEnemigo : MonoBehaviour
     {
         GameObject bala = ObtenerBala();
         if (bala != null)
+                Debug.Log("Consiguiendo Bala de" + bala.name);
         {
             Bala balaScript = bala.GetComponent<Bala>();
+                Debug.Log("Bala conseguida");
             if (balaScript != null)
             {
                 balaScript.SetAttackHandler(handler);
+                Debug.Log("Handler Seteado");
             }
         }
         return bala;

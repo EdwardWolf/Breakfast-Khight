@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public abstract class Jugador : MonoBehaviour
@@ -9,7 +10,7 @@ public abstract class Jugador : MonoBehaviour
     //public Stats stats;
     [SerializeField] protected float vidaActual;
     [SerializeField] protected float resistenciaEscudoActual;
-    [SerializeField] protected float velocidadMovimiento;
+    [SerializeField] protected float _velocidadMovimiento;
     [SerializeField] protected float velocidadAtaque;
     [SerializeField] protected Image Image;
 
@@ -20,10 +21,10 @@ public abstract class Jugador : MonoBehaviour
 
     protected virtual void Start()
     {
-        // Asignar los valores iniciales de las estadísticas.
+        // Asignar los valores iniciales de las estadÃ­sticas.
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
-        velocidadMovimiento = stats.velocidadMovimiento;
+        _velocidadMovimiento = stats.velocidadMovimiento;
         velocidadAtaque = stats.velocidadAtaque;
         corazonesActuales = Mathf.CeilToInt(vidaActual / 30f);
         OnVidaCambiada?.Invoke(corazonesActuales);
