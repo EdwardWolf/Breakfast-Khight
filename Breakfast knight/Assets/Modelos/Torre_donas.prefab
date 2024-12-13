@@ -1,0 +1,537 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4585215624625648393
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3430385843825406181}
+  m_Layer: 0
+  m_Name: Torre_donas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3430385843825406181
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4585215624625648393}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12.2665205, y: 4.861649, z: 21.835712}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8112411919772823671}
+  - {fileID: 2492705107834952486}
+  - {fileID: 4735913213635494786}
+  - {fileID: 7389652370661396738}
+  - {fileID: 8524210004010935230}
+  - {fileID: 8669359718864420930}
+  - {fileID: 6133380829778437411}
+  - {fileID: 8235673083731180577}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2674407466425433293
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3430385843825406181}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.4665203
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.431649
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6757126
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Name
+      value: Dona_Sola_002
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+--- !u!4 &2492705107834952486 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+  m_PrefabInstance: {fileID: 2674407466425433293}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5058649060113638505
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3430385843825406181}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.1265202
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.5316491
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6757126
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Name
+      value: Dona_Sola_003
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+--- !u!4 &4735913213635494786 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+  m_PrefabInstance: {fileID: 5058649060113638505}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5950552682365125320
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3430385843825406181}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.67652035
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.2783508
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6757126
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Name
+      value: Dona_Sola_007
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+--- !u!4 &6133380829778437411 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+  m_PrefabInstance: {fileID: 5950552682365125320}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6991812929391179497
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3430385843825406181}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.2365208
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.61164904
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6757126
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Name
+      value: Dona_Sola_004
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+--- !u!4 &7389652370661396738 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+  m_PrefabInstance: {fileID: 6991812929391179497}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8198427812912841813
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3430385843825406181}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.78652096
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.32835102
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6757126
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Name
+      value: Dona_Sola_005
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+--- !u!4 &8524210004010935230 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+  m_PrefabInstance: {fileID: 8198427812912841813}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8484856965065317322
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3430385843825406181}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.9665203
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.2883506
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6757126
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Name
+      value: Dona_Sola_008
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+--- !u!4 &8235673083731180577 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+  m_PrefabInstance: {fileID: 8484856965065317322}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8583767249331509148
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3430385843825406181}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.2565203
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.301649
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6757126
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Name
+      value: Dona_Sola_001
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+--- !u!4 &8112411919772823671 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+  m_PrefabInstance: {fileID: 8583767249331509148}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9206898904912881577
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3430385843825406181}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.9665203
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.308351
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.6757126
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Name
+      value: Dona_Sola_006
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+--- !u!4 &8669359718864420930 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+  m_PrefabInstance: {fileID: 9206898904912881577}
+  m_PrefabAsset: {fileID: 0}
