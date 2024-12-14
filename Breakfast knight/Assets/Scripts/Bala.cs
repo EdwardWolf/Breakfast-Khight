@@ -6,20 +6,32 @@ public class Bala : MonoBehaviour
 {
     public AttackHandler attackHandler;
     [SerializeField] private float damage = 10f; // Daño que la bala inflige al jugador
+    [SerializeField] private float shieldDamage = 5f; // Daño que la bala inflige al escudo
 
     public void SetAttackHandler(AttackHandler handler)
     {
         attackHandler = handler;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void Start()
     {
-        if (collision.collider.CompareTag("Player"))
+        // Obtener el AttackHandler del tercer nivel de padres
+        //Transform parent = transform.parent?.parent?.parent;
+        Transform parent = transform.parent;
+        if (parent != null)
+        {
+            attackHandler = parent.GetComponent<AttackHandler>();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
         {
             Debug.Log("Golpeado");
 
             // Reducir la vida del jugador
-            Jugador jugador = collision.collider.GetComponent<Jugador>();
+            Jugador jugador = other.GetComponent<Jugador>();
             if (jugador != null)
             {
                 jugador.ReducirVida(damage);
@@ -27,21 +39,32 @@ public class Bala : MonoBehaviour
 
             if (attackHandler != null && attackHandler.ataqueActual != null)
             {
-                Debug.Log("Llamando a RegresarBala para el jugador");
                 attackHandler.ataqueActual.RegresarBala(this.gameObject);
             }
         }
-        else if (collision.collider.CompareTag("Muro"))
+        else if (other.CompareTag("Muro"))
         {
             Debug.Log("Pego Muro");
             if (attackHandler != null && attackHandler.ataqueActual != null)
             {
-                Debug.Log("Llamando a RegresarBala para el muro");
+                attackHandler.ataqueActual.RegresarBala(this.gameObject);
+            }
+        }
+        else if (other.CompareTag("Escudo"))
+        {
+            Debug.Log("Pego Escudo");
+
+            // Reducir la resistencia del escudo
+            Jugador jugador = other.GetComponentInParent<Jugador>();
+            if (jugador != null)
+            {
+                jugador.ReducirResistenciaEscudo(shieldDamage);
+            }
+
+            if (attackHandler != null && attackHandler.ataqueActual != null)
+            {
                 attackHandler.ataqueActual.RegresarBala(this.gameObject);
             }
         }
     }
 }
-
-
-

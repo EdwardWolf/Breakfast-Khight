@@ -1,8 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
+
 
 public class CaballeroLigero : Jugador
 {
@@ -11,9 +11,31 @@ public class CaballeroLigero : Jugador
     private float attackChargeTime = 0f;
     private float requiredChargeTime = 2f; // Tiempo necesario para un ataque cargado
     public Animator animator; // Referencia al componente Animator
-    public Collider hijogolpe; // Referencia al collider del golpe
-    
-    
+    public Collider Espada; // Referencia al collider del golpe
+    public Collider Escudo; // Referencia al collider del escudo
+    private GameInputs playerInputActions;
+
+    private void Awake()
+    {
+        playerInputActions = new GameInputs();
+
+        Escudo.enabled = false;
+    }
+
+    private void OnEnable()
+    {
+        playerInputActions.Player.AtaqueCargado.started += OnChargeAttackStarted;
+        playerInputActions.Player.AtaqueCargado.canceled += OnChargeAttackCanceled;
+        playerInputActions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerInputActions.Player.AtaqueCargado.started -= OnChargeAttackStarted;
+        playerInputActions.Player.AtaqueCargado.canceled -= OnChargeAttackCanceled;
+        playerInputActions.Disable();
+    }
+
     private void Update()
     {
         GirarHaciaMouse();
@@ -74,19 +96,23 @@ public class CaballeroLigero : Jugador
             // Ataque simple
             Debug.Log("Caballero Ligero est� atacando");
             animator.SetTrigger("Ataque"); // Activar la animaci�n de ataque
-            StartCoroutine(ActivarColliderTemporalmente());
+            StartCoroutine(ActivarColliderEspada());
         }
     }
 
+    private void OnChargeAttackStarted(InputAction.CallbackContext context)
+    {
+        IniciarCarga();
+    }
+
+    private void OnChargeAttackCanceled(InputAction.CallbackContext context)
+    {
+        CancelarCarga();
+    }
     public override void ActivarAtaqueCargado()
     {
-        if (!escudoActivo)
-        {
-            // Ataque cargado
-            Debug.Log("Caballero Ligero est� realizando un ataque cargado");
-            animator.SetTrigger("AtaqueCargado"); // Activar la animaci�n de ataque cargado
-            StartCoroutine(ActivarColliderTemporalmente());
-        }
+        Debug.Log("Caballero Ligero está realizando un ataque cargado de área");
+        AtaqueCargadoArea();
     }
 
     public override void ActivarInteraction()
@@ -99,6 +125,7 @@ public class CaballeroLigero : Jugador
     {
         if (!escudoActivo)
         {
+            Escudo.enabled = true;
             escudoActivo = true;
             _velocidadMovimiento /= 2; // Reducir la velocidad a la mitad
             Debug.Log("Escudo activado.");
@@ -110,6 +137,7 @@ public class CaballeroLigero : Jugador
     {
         if (escudoActivo)
         {
+            Escudo.enabled = false;
             escudoActivo = false;
             _velocidadMovimiento = stats.velocidadMovimiento; // Restaurar la velocidad original
             Debug.Log("Escudo desactivado.");
@@ -129,10 +157,11 @@ public class CaballeroLigero : Jugador
         }
     }
 
-    private IEnumerator ActivarColliderTemporalmente()
+    private IEnumerator ActivarColliderEspada()
     {
-        hijogolpe.enabled = true;
+        Espada.enabled = true;
         yield return new WaitForSeconds(0.5f); // Ajusta el tiempo seg�n la duraci�n del golpe
-        hijogolpe.enabled = false;
+        Espada.enabled = false;
     }
+
 }

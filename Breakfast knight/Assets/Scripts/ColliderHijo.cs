@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class ColliderHijo : MonoBehaviour
 {
+    private Jugador jugador;
+
     private void Start()
     {
+        jugador = GetComponentInParent<Jugador>();
         // Desactivar el collider al inicio
         GetComponent<Collider>().enabled = false;
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemigo"))
@@ -18,8 +22,18 @@ public class ColliderHijo : MonoBehaviour
             {
                 Debug.Log("Golpeado enemigo");
                 // Aplicar daño al enemigo
-                enemigo.RecibirDanio(10f); // Ajusta la cantidad de daño según sea necesario
+                enemigo.RecibirDanio(jugador.ataque); // Usar el daño actual del jugador
+                jugador.AsestarGolpe(); // Llamar a AsestarGolpe en el jugador
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+

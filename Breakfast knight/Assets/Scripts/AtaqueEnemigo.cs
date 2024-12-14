@@ -8,7 +8,6 @@ public abstract class AtaqueEnemigo : MonoBehaviour
     public int poolSize = 10; // Cuantas balas se van a instanciar.
     public float fireRate = 1f; // Cada cuanto
     private Queue<GameObject> bulletPool; // Lista de balas.
-    // Quitamos la variable nextFireTime.
     public bool canShoot = true; // Saber si podemos disparar.
     private Transform poolParent; // Nuevo padre para el pool de balas
 
@@ -21,6 +20,8 @@ public abstract class AtaqueEnemigo : MonoBehaviour
     {
         // Crear un nuevo objeto vacío para actuar como el padre del pool de balas
         poolParent = new GameObject("BulletPool").transform;
+        poolParent.SetParent(null); // Hacer que el poolParent sea independiente
+        poolParent.gameObject.AddComponent<AttackHandler>().ataques = new AtaqueEnemigo[] { this };
 
         bulletPool = new Queue<GameObject>();
         for (int i = 0; i < poolSize; i++)
@@ -29,13 +30,11 @@ public abstract class AtaqueEnemigo : MonoBehaviour
             bullet.SetActive(false);
             bulletPool.Enqueue(bullet);
             bullet.transform.SetParent(poolParent);
-            bullet.name = "Bala" + i;
         }
     }
 
     public void RegresarBala(GameObject bala)
     {
-        Debug.Log("Regresando bala al pool");
         bala.SetActive(false);
         bulletPool.Enqueue(bala);
     }
@@ -59,14 +58,11 @@ public abstract class AtaqueEnemigo : MonoBehaviour
     {
         GameObject bala = ObtenerBala();
         if (bala != null)
-                Debug.Log("Consiguiendo Bala de" + bala.name);
         {
             Bala balaScript = bala.GetComponent<Bala>();
-                Debug.Log("Bala conseguida");
             if (balaScript != null)
             {
                 balaScript.SetAttackHandler(handler);
-                Debug.Log("Handler Seteado");
             }
         }
         return bala;
@@ -76,6 +72,3 @@ public abstract class AtaqueEnemigo : MonoBehaviour
 
     public abstract void CoolDown();
 }
-
-
-

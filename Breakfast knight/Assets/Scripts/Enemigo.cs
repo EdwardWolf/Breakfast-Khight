@@ -11,20 +11,34 @@ public class Enemigo : MonoBehaviour
     public LayerMask playerLayer;
     public AttackHandler attackHandler; // Añadir referencia a AttackHandler
     private Transform playerTransform; // Añadir referencia al transform del jugador
-    public float vidaE = 100f;
-    public float velocidadMovimiento = 2f; // Velocidad de movimiento del enemigo
+    public float vidaE; // Vida del enemigo
+    public float damage; // Daño del enemigo
+    public float velocidadMovimiento; // Velocidad de movimiento del enemigo
     public bool usarRadioDeAtaque = true; // Booleano para activar o desactivar el radio de ataque
     public Image barraDeVida; // Referencia a la imagen de la barra de vida
+    private Camera camara; // Añadir referencia a la cámara
+    public GameObject aderezoPrefab; // Prefab del objeto Aderezo
+    public float dropChanceMin = 0.1f; // Probabilidad mínima de dropear el objeto
+    public float dropChanceMax = 0.5f; // Probabilidad máxima de dropear el objeto
+    public Transform dropPosition; // Referencia al objeto hijo donde se dropeará el Aderezo
+    private Jugador jugador;
+    private bool isDamaging = false;
+    public GameObject attackEffect; // Efecto que se ejecutará antes del ataque
 
     private void Start()
     {
+        camara = Camera.main; // Obtener la cámara principal    
         attackHandler = GetComponent<AttackHandler>(); // Obtener el componente AttackHandler
         vidaE = statsEnemigo.vida; // Inicializar la vida del enemigo
         ActualizarBarraDeVida(); // Inicializar la barra de vida
+        velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Inicializar la velocidad de movimiento
+        damage = statsEnemigo.daño; // Inicializar el daño
     }
 
     void Update()
     {
+        barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
+                         camara.transform.rotation * Vector3.up);
         DetectPlayer();
         if (playerTransform != null)
         {
@@ -61,7 +75,28 @@ public class Enemigo : MonoBehaviour
 
     void Atacck()
     {
-        attackHandler.ActivarAtaque(); // Llamar al método para activar el ataque
+        StartCoroutine(PreAttackEffect());
+    }
+
+    IEnumerator PreAttackEffect()
+    {
+        // Ejecutar el efecto antes del ataque
+        if (attackEffect != null)
+        {
+            attackEffect.SetActive(true);
+        }
+
+        // Esperar un segundo
+        yield return new WaitForSeconds(1f);
+
+        // Desactivar el efecto
+        if (attackEffect != null)
+        {
+            attackEffect.SetActive(false);
+        }
+
+        // Ejecutar el ataque
+        attackHandler.ActivarAtaque();
     }
 
     void LookAtPlayer()
@@ -83,10 +118,10 @@ public class Enemigo : MonoBehaviour
         ActualizarBarraDeVida();
         if (vidaE <= 0)
         {
+            DropAderezo();
             DesactivarEnemigo();
         }
     }
-
 
     void ActualizarBarraDeVida()
     {
@@ -116,5 +151,61 @@ public class Enemigo : MonoBehaviour
             // Dibujar una esfera en el punto donde está el enemigo con el radio de ataque
             Gizmos.DrawWireSphere(transform.position, attackRadius);
         }
+    }
+
+    private void DropAderezo()
+    {
+        float dropChance = Random.Range(dropChanceMin, dropChanceMax);
+        if (Random.value <= dropChance)
+        {
+            if (dropPosition != null)
+            {
+                Instantiate(aderezoPrefab, dropPosition.position, Quaternion.identity);
+                Debug.Log("Aderezo dropeado en la posición: " + dropPosition.position);
+            }
+            else
+            {
+                Instantiate(aderezoPrefab, transform.position, Quaternion.identity);
+                Debug.Log("Aderezo dropeado en la posición: " + transform.position);
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            jugador = collision.gameObject.GetComponent<Jugador>();
+            if (jugador != null && !isDamaging)
+            {
+                StartCoroutine(DañarJugador());
+            }
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            jugador = null;
+            isDamaging = false;
+            StopAllCoroutines();
+            velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Detener el movimiento del enemigo
+        }
+    }
+
+    private IEnumerator DañarJugador()
+    {
+        isDamaging = true;
+        yield return new WaitForSeconds(2f); // Esperar 2 segundos
+
+        if (jugador != null)
+        {
+            velocidadMovimiento = 0f; // Detener el movimiento del enemigo
+            jugador.ReducirVida(damage);
+            Debug.Log("Jugador ha recibido daño");
+        }
+
+        isDamaging = false;
     }
 }

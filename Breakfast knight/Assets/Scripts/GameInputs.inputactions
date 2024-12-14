@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "Hold",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "AtaqueCargado",
+                    "type": "Button",
+                    "id": "452be677-bc68-45e2-a095-4ff2cf302595",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -48,17 +57,6 @@
                     "id": "676bd9f1-edf4-4729-84a4-29d714e0c6ff",
                     "path": "<Keyboard>/space",
                     "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0813f4e6-2eb1-43c3-a9a6-92039c340b5d",
-                    "path": "<Keyboard>/space",
-                    "interactions": "Hold",
                     "processors": "",
                     "groups": "",
                     "action": "Attack",
@@ -161,6 +159,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Shield",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9a2f15ab-d498-4d2b-8f67-24bdd9c802ab",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AtaqueCargado",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -62,6 +62,15 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Hold"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""AtaqueCargado"",
+                    ""type"": ""Button"",
+                    ""id"": ""452be677-bc68-45e2-a095-4ff2cf302595"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -70,17 +79,6 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""id"": ""676bd9f1-edf4-4729-84a4-29d714e0c6ff"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Attack"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0813f4e6-2eb1-43c3-a9a6-92039c340b5d"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": ""Hold"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Attack"",
@@ -185,6 +183,17 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Shield"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9a2f15ab-d498-4d2b-8f67-24bdd9c802ab"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AtaqueCargado"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -197,6 +206,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Shield = m_Player.FindAction("Shield", throwIfNotFound: true);
+        m_Player_AtaqueCargado = m_Player.FindAction("AtaqueCargado", throwIfNotFound: true);
     }
 
     ~@GameInputs()
@@ -267,6 +277,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Shield;
+    private readonly InputAction m_Player_AtaqueCargado;
     public struct PlayerActions
     {
         private @GameInputs m_Wrapper;
@@ -275,6 +286,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Shield => m_Wrapper.m_Player_Shield;
+        public InputAction @AtaqueCargado => m_Wrapper.m_Player_AtaqueCargado;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -296,6 +308,9 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             @Shield.started += instance.OnShield;
             @Shield.performed += instance.OnShield;
             @Shield.canceled += instance.OnShield;
+            @AtaqueCargado.started += instance.OnAtaqueCargado;
+            @AtaqueCargado.performed += instance.OnAtaqueCargado;
+            @AtaqueCargado.canceled += instance.OnAtaqueCargado;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -312,6 +327,9 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             @Shield.started -= instance.OnShield;
             @Shield.performed -= instance.OnShield;
             @Shield.canceled -= instance.OnShield;
+            @AtaqueCargado.started -= instance.OnAtaqueCargado;
+            @AtaqueCargado.performed -= instance.OnAtaqueCargado;
+            @AtaqueCargado.canceled -= instance.OnAtaqueCargado;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -335,5 +353,6 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnShield(InputAction.CallbackContext context);
+        void OnAtaqueCargado(InputAction.CallbackContext context);
     }
 }

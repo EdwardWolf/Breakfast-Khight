@@ -9,4 +9,5 @@ public class Stats : ScriptableObject
     public float resistenciaEscudo;
     public float velocidadMovimiento;
     public float velocidadAtaque;
+    public float ataque; // Añadir una variable para el ataque
 }

@@ -22,7 +22,6 @@ public class ADisperso : AtaqueEnemigo
     {
         // Obtener una bala del pool con el handler
         GameObject bala = ObtenerBalaConHandler(GetComponent<AttackHandler>()); // meatball.getcomponent<AttackHandler>
-        Debug.Log("Bala: " + bala.name);
         if (bala != null)
         {
             // Posicionar y rotar la bala en el firePoint

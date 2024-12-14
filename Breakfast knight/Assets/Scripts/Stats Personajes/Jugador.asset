@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Jugador
   m_EditorClassIdentifier: 
   vida: 90
-  resistenciaEscudo: 20
+  resistenciaEscudo: 50
   velocidadMovimiento: 5
   velocidadAtaque: 5
+  ataque: 30

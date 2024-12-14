@@ -9,10 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0f79e6a616b0c44bb57fa7e8281b500, type: 3}
-  m_Name: MeatBall
+  m_Script: {fileID: 11500000, guid: 8885807382f189f419e85e00f4498ac9, type: 3}
+  m_Name: Chocolate
   m_EditorClassIdentifier: 
-  vida: 100
-  velocidadMovimiento: 2
-  velocidadAtaque: 1
-  "da\xF1o": 10
+  IncrementoAtaque: 0

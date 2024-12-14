@@ -8,4 +8,5 @@ public class EnemigoStats : ScriptableObject
     public float vida;
     public float velocidadMovimiento;
     public float velocidadAtaque;
+    public float daño;
 }
