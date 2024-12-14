@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3430385843825406181}
+  - component: {fileID: 3643785455070139944}
   m_Layer: 0
   m_Name: Torre_donas
   m_TagString: Untagged
@@ -39,6 +40,27 @@ Transform:
   - {fileID: 8235673083731180577}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3643785455070139944
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4585215624625648393}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.8864274, y: 8.038435, z: 3.0616436}
+  m_Center: {x: -1.1486571, y: 0.502738, z: -3.9446497}
 --- !u!1001 &2674407466425433293
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -91,6 +113,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dona_Sola_002
       objectReference: {fileID: 0}
+    - target: {fileID: 8238623438816077644, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
+    - target: {fileID: 8465033204252607075, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ade0474787d6c343996717392df680b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -153,6 +183,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dona_Sola_003
       objectReference: {fileID: 0}
+    - target: {fileID: 8238623438816077644, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
+    - target: {fileID: 8465033204252607075, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ade0474787d6c343996717392df680b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -215,6 +253,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dona_Sola_007
       objectReference: {fileID: 0}
+    - target: {fileID: 8238623438816077644, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
+    - target: {fileID: 8465033204252607075, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ade0474787d6c343996717392df680b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -277,6 +323,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dona_Sola_004
       objectReference: {fileID: 0}
+    - target: {fileID: 8238623438816077644, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
+    - target: {fileID: 8465033204252607075, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ade0474787d6c343996717392df680b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -339,6 +393,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dona_Sola_005
       objectReference: {fileID: 0}
+    - target: {fileID: 8238623438816077644, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
+    - target: {fileID: 8465033204252607075, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ade0474787d6c343996717392df680b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -401,6 +463,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dona_Sola_008
       objectReference: {fileID: 0}
+    - target: {fileID: 8238623438816077644, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
+    - target: {fileID: 8465033204252607075, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 44ed741d9e4b6b84fb9dafc421f21c17, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -463,6 +533,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dona_Sola_001
       objectReference: {fileID: 0}
+    - target: {fileID: 8238623438816077644, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
+    - target: {fileID: 8465033204252607075, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ade0474787d6c343996717392df680b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -525,6 +603,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dona_Sola_006
       objectReference: {fileID: 0}
+    - target: {fileID: 8238623438816077644, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
+    - target: {fileID: 8465033204252607075, guid: 023857b8b73650d48822758b58aba43c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ade0474787d6c343996717392df680b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
