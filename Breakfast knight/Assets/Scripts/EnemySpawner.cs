@@ -10,10 +10,13 @@ public class EnemySpawner : MonoBehaviour
     public int poolSize = 10; // Tamaño del pool de enemigos
     public int maxActiveEnemies = 5; // Número máximo de enemigos activos al mismo tiempo
     public float spawnCooldown = 5f; // Tiempo de cooldown entre spawns en segundos
+    public float detectionRadius = 10f; // Radio de detección del jugador
+    public LayerMask playerLayer; // Capa del jugador
     private float lastSpawnTime;
     private int spawnCount = 0;
     private Queue<GameObject> enemyPool; // Pool de enemigos
     private List<GameObject> activeEnemies; // Lista de enemigos activos
+    private bool isPlayerInRange = false; // Indica si el jugador está en el rango de detección
 
     private void Start()
     {
@@ -24,7 +27,9 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
-        if (Time.time >= lastSpawnTime + spawnCooldown && activeEnemies.Count < maxActiveEnemies)
+        DetectPlayer();
+
+        if (isPlayerInRange && Time.time >= lastSpawnTime + spawnCooldown && activeEnemies.Count < maxActiveEnemies)
         {
             SpawnEnemigo();
             lastSpawnTime = Time.time;
@@ -78,5 +83,19 @@ public class EnemySpawner : MonoBehaviour
     private void CambiarEnemigo()
     {
         // Este método ya no es necesario si los enemigos son aleatorios en el pool
+    }
+
+    private void DetectPlayer()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayer);
+        isPlayerInRange = hits.Length > 0;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Cambiar el color de los Gizmos (opcional)
+        Gizmos.color = Color.green;
+        // Dibujar una esfera en el punto donde está el spawner con el radio de detección
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }

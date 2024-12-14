@@ -24,6 +24,9 @@ public class Enemigo : MonoBehaviour
     private Jugador jugador;
     private bool isDamaging = false;
     public GameObject attackEffect; // Efecto que se ejecutará antes del ataque
+    public Material materialOriginal; // Material original del enemigo
+    public Material materialDaño; // Material del enemigo cuando hace daño
+    private Renderer renderer; // Referencia al Renderer del enemigo
 
     private void Start()
     {
@@ -33,6 +36,11 @@ public class Enemigo : MonoBehaviour
         ActualizarBarraDeVida(); // Inicializar la barra de vida
         velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Inicializar la velocidad de movimiento
         damage = statsEnemigo.daño; // Inicializar el daño
+        renderer = GetComponent<Renderer>(); // Obtener el Renderer del enemigo
+        if (renderer != null)
+        {
+            renderer.material = materialOriginal; // Asignar el material original al inicio
+        }
     }
 
     void Update()
@@ -175,6 +183,7 @@ public class Enemigo : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            Debug.Log("Enemigo ha colisionado con el jugador");
             jugador = collision.gameObject.GetComponent<Jugador>();
             if (jugador != null && !isDamaging)
             {
@@ -191,12 +200,14 @@ public class Enemigo : MonoBehaviour
             isDamaging = false;
             StopAllCoroutines();
             velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Detener el movimiento del enemigo
+            CambiarMaterial(materialOriginal); // Cambiar al material original
         }
     }
 
     private IEnumerator DañarJugador()
     {
         isDamaging = true;
+        CambiarMaterial(materialDaño); // Cambiar al material de daño
         yield return new WaitForSeconds(2f); // Esperar 2 segundos
 
         if (jugador != null)
@@ -207,5 +218,15 @@ public class Enemigo : MonoBehaviour
         }
 
         isDamaging = false;
+        CambiarMaterial(materialOriginal); // Cambiar al material original
+    }
+
+    private void CambiarMaterial(Material nuevoMaterial)
+    {
+        if (renderer != null)
+        {
+            renderer.material = nuevoMaterial;
+        }
     }
 }
+

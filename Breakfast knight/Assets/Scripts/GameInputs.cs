@@ -77,7 +77,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""676bd9f1-edf4-4729-84a4-29d714e0c6ff"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -176,7 +176,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""bff68665-01e8-4cec-9723-fd3ef6cfce7e"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -187,8 +187,8 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9a2f15ab-d498-4d2b-8f67-24bdd9c802ab"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": ""Press,Hold"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""AtaqueCargado"",

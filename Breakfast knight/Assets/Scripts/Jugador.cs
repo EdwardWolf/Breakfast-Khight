@@ -230,7 +230,7 @@ public abstract class Jugador : MonoBehaviour
     {
         isCharging = true;
         chargeTime = 0f;
-        
+
     }
 
     public void CancelarCarga()
@@ -247,4 +247,17 @@ public abstract class Jugador : MonoBehaviour
     {
         return escudoActivo && resistenciaEscudoActual >= valorMinimoEscudo;
     }
+
+    public void ActivarEscudo()
+    {
+        if (PuedeUsarEscudo())
+        {
+            // Lógica para activar la animación del escudo
+        }
+        else
+        {
+            Debug.Log("No se puede activar el escudo, resistencia insuficiente");
+        }
+    }
 }
+
