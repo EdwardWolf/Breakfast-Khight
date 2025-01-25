@@ -126,6 +126,8 @@ public class Enemigo : MonoBehaviour
         ActualizarBarraDeVida();
         if (vidaE <= 0)
         {
+            // Notificar al SectionManager que el enemigo ha sido derrotado
+            //sectionManager.EnemyDefeated();
             DropAderezo();
             DesactivarEnemigo();
         }
@@ -228,5 +230,8 @@ public class Enemigo : MonoBehaviour
             renderer.material = nuevoMaterial;
         }
     }
+
+    public SectionManager sectionManager; // Referencia al SectionManager
+
 }
 

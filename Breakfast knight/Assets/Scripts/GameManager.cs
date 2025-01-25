@@ -1,9 +1,28 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+
+    public List<SectionManager> sections; // Lista de secciones en el nivel
+
+    public void AddSection(SectionManager section)
+    {
+        if (!sections.Contains(section))
+        {
+            sections.Add(section);
+        }
+    }
+
+    public void EnemyDefeated(SectionManager section)
+    {
+        if (sections.Contains(section))
+        {
+            section.EnemyDefeated();
+        }
+    }
 
     private void Awake()
     {
@@ -26,7 +45,41 @@ public class GameManager : MonoBehaviour
         // Cargar la escena actual
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    public List<Door> doors; // Lista de puertas en el nivel
+    public List<Key> keys; // Lista de llaves en el nivel
+
+    private void Start()
+    {
+        // Inicializar puertas y llaves si es necesario
+        // Inicializar secciones si es necesario
+    }
+
+    public void AddDoor(Door door)
+    {
+        if (!doors.Contains(door))
+        {
+            doors.Add(door);
+        }
+    }
+
+    public void AddKey(Key key)
+    {
+        if (!keys.Contains(key))
+        {
+            keys.Add(key);
+        }
+    }
+
+    public void UnlockDoor(Door door)
+    {
+        if (doors.Contains(door))
+        {
+            door.Unlock();
+        }
+    }
 }
+
 
 
 

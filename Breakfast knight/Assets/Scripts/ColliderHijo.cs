@@ -23,7 +23,7 @@ public class ColliderHijo : MonoBehaviour
                 Debug.Log("Golpeado enemigo");
                 // Aplicar daño al enemigo
                 enemigo.RecibirDanio(jugador.ataque); // Usar el daño actual del jugador
-                jugador.AsestarGolpe(); // Llamar a AsestarGolpe en el jugador
+                //jugador.AsestarGolpe(); // Llamar a AsestarGolpe en el jugador
             }
         }
     }

@@ -9,7 +9,6 @@ public class AERecto : AtaqueEnemigo
 
     public override void Atacar()
     {
-        Debug.Log("Ataque de dispersión");
         DispararBala();
     }
 

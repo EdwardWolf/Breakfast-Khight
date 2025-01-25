@@ -93,7 +93,7 @@ public class Aderezo : MonoBehaviour
         if (jugador != null)
         {
             jugador.IncrementarAtaqueTemporal(incrementoAtaque, cantidadGolpes);
-            // Incrementar el ataque del jugador temporalmente
+            jugador.uiManager.MostrarIncrementoAtaque(incrementoAtaque, cantidadGolpes); // Actualizar la UI
             gameObject.SetActive(false); // Desactivar el objeto instanciado
             Debug.Log("Ataque del jugador incrementado temporalmente");
         }

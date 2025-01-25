@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public abstract class Jugador : MonoBehaviour
@@ -8,7 +9,7 @@ public abstract class Jugador : MonoBehaviour
     [SerializeField] protected Stats stats;
     [SerializeField] protected float vidaActual;
     [SerializeField] protected float resistenciaEscudoActual;
-    [SerializeField] protected float _velocidadMovimiento;
+    [SerializeField] public float _velocidadMovimiento;
     [SerializeField] protected float velocidadAtaque;
     [SerializeField] public float ataque; // Añadir una variable para el ataque
     private int golpesRestantes; // Variable para almacenar los golpes restantes con el ataque incrementado
@@ -20,19 +21,26 @@ public abstract class Jugador : MonoBehaviour
     public float pushForce = 10f; // Fuerza de empuje del ataque cargado
     public Image cargaBarra; // Referencia a la barra de carga
     public Image barraResistenciaEscudo; // Referencia a la barra de resistencia del escudo
-    private bool isCharging = false;
-    private float chargeTime = 0f;
-    private float maxChargeTime = 2f; // Tiempo máximo de carga
+    public GameObject ataqueCargadoEfecto; // Referencia al objeto del efecto del ataque cargado
+    public bool isCharging = false;
+    public float chargeTime;
+    public float maxChargeTime = 3f; // Tiempo máximo de carga
     private bool escudoActivo = false;
-    private float tiempoUltimoDaño = 0f;
     private float tiempoRegeneracion = 5f; // Tiempo de espera para comenzar la regeneración
     private float velocidadRegeneracion = 5f; // Velocidad de regeneración de la resistencia del escudo
     private float valorMinimoEscudo = 10f; // Valor mínimo de resistencia del escudo para poder usarlo
+    private const float valorCorazon = 10f; // Valor de cada corazón
+    public float tiempoUltimoDaño = 2f;
+
+    public UIManager uiManager;
 
     private int corazonesActuales;
+    private float incrementoAtaqueTemporal; // Variable para almacenar el incremento de ataque temporal
 
     public delegate void VidaCambiada(int corazones);
     public static event VidaCambiada OnVidaCambiada;
+
+    private GameInputs playerInputActions;
 
     protected virtual void Start()
     {
@@ -42,7 +50,7 @@ public abstract class Jugador : MonoBehaviour
         _velocidadMovimiento = stats.velocidadMovimiento;
         velocidadAtaque = stats.velocidadAtaque;
         ataque = stats.ataque; // Inicializar el ataque
-        corazonesActuales = Mathf.CeilToInt(vidaActual / 30f);
+        corazonesActuales = Mathf.CeilToInt(vidaActual / valorCorazon);
         OnVidaCambiada?.Invoke(corazonesActuales);
         derrota.SetActive(false);
 
@@ -60,12 +68,46 @@ public abstract class Jugador : MonoBehaviour
         {
             barraResistenciaEscudo.fillAmount = resistenciaEscudoActual / stats.resistenciaEscudo; // Inicializar la barra de resistencia del escudo
         }
+
+        if (ataqueCargadoEfecto != null)
+        {
+            ataqueCargadoEfecto.SetActive(false); // Inicializar el efecto del ataque cargado como deshabilitado
+        }
+
+        playerInputActions = new GameInputs();
+        playerInputActions.Player.AtaqueCargado.started += OnAttackChargedStarted;
+        playerInputActions.Player.AtaqueCargado.canceled += OnAttackChargedCanceled;
+        playerInputActions.Player.Attack.started += OnAttackStarted;
+        playerInputActions.Enable();
+    }
+
+    private void OnDestroy()
+    {
+        playerInputActions.Player.AtaqueCargado.started -= OnAttackChargedStarted;
+        playerInputActions.Player.AtaqueCargado.canceled -= OnAttackChargedCanceled;
+        playerInputActions.Player.Attack.started -= OnAttackStarted;
+        playerInputActions.Disable();
+    }
+
+    private void OnAttackChargedStarted(InputAction.CallbackContext context)
+    {
+        IniciarCarga();
+    }
+
+    private void OnAttackChargedCanceled(InputAction.CallbackContext context)
+    {
+        CancelarCarga();
+    }
+
+    private void OnAttackStarted(InputAction.CallbackContext context)
+    {
+        ActivarAtaque();
     }
 
     public void ReducirVida(float cantidad)
     {
         vidaActual -= cantidad;
-        int nuevosCorazones = Mathf.CeilToInt(vidaActual / 30f);
+        int nuevosCorazones = Mathf.CeilToInt(vidaActual / valorCorazon);
 
         if (nuevosCorazones < corazonesActuales)
         {
@@ -89,7 +131,6 @@ public abstract class Jugador : MonoBehaviour
         {
             resistenciaEscudoActual = 0;
         }
-        tiempoUltimoDaño = Time.time;
 
         if (barraResistenciaEscudo != null)
         {
@@ -104,7 +145,7 @@ public abstract class Jugador : MonoBehaviour
         }
     }
 
-    private void RegenerarResistenciaEscudo()
+    public void RegenerarResistenciaEscudo()
     {
         if (Time.time - tiempoUltimoDaño >= tiempoRegeneracion && resistenciaEscudoActual < stats.resistenciaEscudo)
         {
@@ -127,32 +168,13 @@ public abstract class Jugador : MonoBehaviour
         }
     }
 
-    public void IncrementarAtaque(float cantidad)
-    {
-        ataque += cantidad;
-        Debug.Log("Ataque incrementado en " + cantidad);
-    }
-
     public void IncrementarAtaqueTemporal(float cantidad, int golpes)
     {
-        ataque += cantidad;
+        incrementoAtaqueTemporal = cantidad;
         golpesRestantes = golpes;
         Debug.Log("Ataque incrementado temporalmente en " + cantidad + " por " + golpes + " golpes");
         CambiarMaterial(materialAumento); // Cambiar al material de aumento de ataque
-    }
-
-    public void AsestarGolpe()
-    {
-        if (golpesRestantes > 0)
-        {
-            golpesRestantes--;
-            if (golpesRestantes <= 0)
-            {
-                ataque = stats.ataque;
-                Debug.Log("Ataque restablecido a " + stats.ataque);
-                CambiarMaterial(materialBase); // Cambiar al material base
-            }
-        }
+        uiManager.MostrarIncrementoAtaque(cantidad, golpes); // Actualizar la UI
     }
 
     private void CambiarMaterial(Material nuevoMaterial)
@@ -171,75 +193,74 @@ public abstract class Jugador : MonoBehaviour
 
     public abstract void Mover(Vector3 direccion);
     public abstract void ActivarAtaque();
-    public abstract void ActivarAtaqueCargado();
+    //public abstract void ActivarAtaqueCargado();
     public abstract void ActivarInteraction();
 
     protected void AtaqueCargadoArea()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, areaRadius);
-        foreach (Collider hitCollider in hitColliders)
+        if (incrementoAtaqueTemporal > 0)
         {
-            if (hitCollider.CompareTag("Enemigo"))
+            Debug.Log("Ataque Cargado Realizado");
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, areaRadius);
+            foreach (Collider hitCollider in hitColliders)
             {
-                Enemigo enemigo = hitCollider.GetComponent<Enemigo>();
-                if (enemigo != null)
+                if (hitCollider.CompareTag("Enemigo"))
                 {
-                    enemigo.RecibirDanio(ataque);
-                    EmpujarEnemigo(enemigo);
+                    Enemigo enemigo = hitCollider.GetComponent<Enemigo>();
+                    if (enemigo != null)
+                    {
+                        enemigo.RecibirDanio(ataque + incrementoAtaqueTemporal); // Usar el incremento de ataque temporal
+                        EmpujarEnemigo(enemigo);
+                    }
                 }
             }
-        }
-    }
-
-    private void EmpujarEnemigo(Enemigo enemigo)
-    {
-        Rigidbody rb = enemigo.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            Vector3 direction = (enemigo.transform.position - transform.position).normalized;
-            rb.AddForce(direction * pushForce, ForceMode.Impulse);
-        }
-    }
-
-    protected void Update()
-    {
-        if (isCharging)
-        {
-            chargeTime += Time.deltaTime;
-            if (cargaBarra != null)
+            // Decrementar los golpes restantes después de un ataque cargado
+            golpesRestantes--;
+            uiManager.UsarGolpe();
+            if (golpesRestantes <= 0)
             {
-                cargaBarra.fillAmount = chargeTime / maxChargeTime;
-            }
-
-            if (chargeTime >= maxChargeTime)
-            {
-                ActivarAtaqueCargado();
-                isCharging = false;
-                chargeTime = 0f;
-                if (cargaBarra != null)
-                {
-                    cargaBarra.fillAmount = 0f;
-                }
+                incrementoAtaqueTemporal = 0; // Restablecer el incremento de ataque temporal
+                CambiarMaterial(materialBase); // Cambiar al material base
             }
         }
-
-        RegenerarResistenciaEscudo();
+        else
+        {
+            Debug.Log("No se puede realizar el ataque cargado sin incremento de ataque");
+            uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
+        }
     }
 
     public void IniciarCarga()
     {
-        isCharging = true;
-        chargeTime = 0f;
-
+        if (incrementoAtaqueTemporal > 0)
+        {
+            Debug.Log("IniciarCarga called");
+            isCharging = true;
+            chargeTime = 0f;
+            if (ataqueCargadoEfecto != null)
+            {
+                ataqueCargadoEfecto.SetActive(true); // Mostrar el efecto del ataque cargado
+            }
+        }
+        else
+        {
+            Debug.Log("No se puede iniciar la carga sin incremento de ataque");
+            uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
+        }
     }
 
     public void CancelarCarga()
     {
+        Debug.Log("CancelarCarga called");
         isCharging = false;
         chargeTime = 0f;
         if (cargaBarra != null)
         {
             cargaBarra.fillAmount = 0f;
+        }
+        if (ataqueCargadoEfecto != null)
+        {
+            ataqueCargadoEfecto.SetActive(false); // Ocultar el efecto del ataque cargado
         }
     }
 
@@ -258,6 +279,23 @@ public abstract class Jugador : MonoBehaviour
         {
             Debug.Log("No se puede activar el escudo, resistencia insuficiente");
         }
+    }
+
+    private void EmpujarEnemigo(Enemigo enemigo)
+    {
+        Rigidbody rb = enemigo.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            Vector3 direction = (enemigo.transform.position - transform.position).normalized;
+            rb.AddForce(direction * pushForce, ForceMode.Impulse);
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Dibujar el área de daño en el editor cuando el objeto está seleccionado
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, areaRadius);
     }
 }
 

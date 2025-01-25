@@ -28,7 +28,6 @@ public class Bala : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Golpeado");
 
             // Reducir la vida del jugador
             Jugador jugador = other.GetComponent<Jugador>();
