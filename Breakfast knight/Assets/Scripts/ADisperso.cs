@@ -8,8 +8,6 @@ public class ADisperso : AtaqueEnemigo
 
     public override void Atacar()
     {
-        Debug.Log("Ataque de dispersión");
-
         foreach (Transform firePoint in firePoints)
         {
             DispararBala(firePoint);

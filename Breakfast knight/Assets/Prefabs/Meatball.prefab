@@ -131,7 +131,7 @@ Transform:
   m_GameObject: {fileID: 2024649173722615043}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.964, z: 0}
+  m_LocalPosition: {x: 0, y: 0.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -407,7 +407,7 @@ MonoBehaviour:
   velocidadMovimiento: 2
   usarRadioDeAtaque: 1
   barraDeVida: {fileID: 2736929630848678896}
-  aderezoPrefab: {fileID: 314813060356092051, guid: 203865cd49b9d8843a424b7b73cba8ac, type: 3}
+  aderezoPrefab: {fileID: 314813060356092051, guid: 2bb3af57676a91347ad980157b9a29d6, type: 3}
   dropChanceMin: 0.1
   dropChanceMax: 0.5
   dropPosition: {fileID: 2356957444021245349}

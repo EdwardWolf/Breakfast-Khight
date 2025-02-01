@@ -188,7 +188,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""9a2f15ab-d498-4d2b-8f67-24bdd9c802ab"",
                     ""path"": ""<Keyboard>/space"",
-                    ""interactions"": ""Press,Hold"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""AtaqueCargado"",

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class Arma : MonoBehaviour
 {
+
     // Atributos del arma.
     public string nombreArma;
     public float daño;
@@ -17,5 +18,7 @@ public abstract class Arma : MonoBehaviour
 
     public virtual void Activa()
     {
-    }
+    } 
+
+
 }

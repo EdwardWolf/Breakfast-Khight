@@ -3,70 +3,48 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
-
 public class CaballeroLigero : Jugador
 {
     private bool escudoActivo = false;
-    private bool isChargingAttack = false;
-    private float attackChargeTime = 0f;
-    private float requiredChargeTime = 2f; // Tiempo necesario para un ataque cargado
-    public Animator animator; // Referencia al componente Animator
     public Collider Espada; // Referencia al collider del golpe
     public Collider Escudo; // Referencia al collider del escudo
     private GameInputs playerInputActions;
+    public Animator animator; // Referencia al componente Animator
+    public Animator armas; // Referencia al componente Animator
 
     private void Awake()
     {
         playerInputActions = new GameInputs();
-
         Escudo.enabled = false;
-    }
 
-    private void OnEnable()
-    {
-        playerInputActions.Player.AtaqueCargado.started += OnChargeAttackStarted;
-        playerInputActions.Player.AtaqueCargado.canceled += OnChargeAttackCanceled;
-        playerInputActions.Enable();
     }
-
-    private void OnDisable()
-    {
-        playerInputActions.Player.AtaqueCargado.started -= OnChargeAttackStarted;
-        playerInputActions.Player.AtaqueCargado.canceled -= OnChargeAttackCanceled;
-        playerInputActions.Disable();
-    }
-
     private void Update()
     {
         GirarHaciaMouse();
         Vector3 movimiento = PlayerController.GetMoveInput();
         Mover(movimiento);
 
-        if (!escudoActivo)
+        if (isCharging)
         {
-            if (PlayerController.IsAttackPressed())
+            chargeTime += Time.deltaTime;
+            if (cargaBarra != null)
             {
-                if (!isChargingAttack)
-                {
-                    isChargingAttack = true;
-                    attackChargeTime = 0f;
-                }
-                else
-                {
-                    attackChargeTime += Time.deltaTime;
-                    if (attackChargeTime >= requiredChargeTime)
-                    {
-                        ActivarAtaqueCargado();
-                        isChargingAttack = false;
-                    }
-                }
+                cargaBarra.fillAmount = chargeTime / maxChargeTime;
             }
-            else if (isChargingAttack)
+
+            if (chargeTime >= maxChargeTime)
             {
-                ActivarAtaque();
-                isChargingAttack = false;
+                AtaqueCargadoArea();
+                isCharging = false;
+                chargeTime = 0f;
+                if (cargaBarra != null)
+                {
+                    cargaBarra.fillAmount = 0f;
+                }
             }
         }
+
+        RegenerarResistenciaEscudo();
 
         if (PlayerController.Interaccion())
         {
@@ -82,54 +60,40 @@ public class CaballeroLigero : Jugador
         }
     }
 
-    public override void Mover(Vector3 direccion)
-    {
-        // Mover en la direcci�n en la que el jugador est� mirando
-        Vector3 moveDirection = transform.forward * direccion.z + transform.right * direccion.x;
-        transform.Translate(moveDirection * _velocidadMovimiento * Time.deltaTime, Space.World);
-    }
+    //Activar de regreso para el movimiento en funcion a la direccion
+    //public override void Mover(Vector3 direccion)
+    //{
+    //    // Mover en la dirección en la que el jugador está mirando
+    //    Vector3 moveDirection = transform.forward * direccion.z + transform.right * direccion.x;
+    //    transform.Translate(moveDirection * _velocidadMovimiento * Time.deltaTime, Space.World);
+    //}
 
     public override void ActivarAtaque()
     {
         if (!escudoActivo)
         {
+            armas.SetTrigger("Ataque");
             // Ataque simple
-            Debug.Log("Caballero Ligero est� atacando");
-            animator.SetTrigger("Ataque"); // Activar la animaci�n de ataque
+            animator.SetTrigger("Ataque"); // Activar la animación de ataque
             StartCoroutine(ActivarColliderEspada());
         }
-    }
-
-    private void OnChargeAttackStarted(InputAction.CallbackContext context)
-    {
-        IniciarCarga();
-    }
-
-    private void OnChargeAttackCanceled(InputAction.CallbackContext context)
-    {
-        CancelarCarga();
-    }
-    public override void ActivarAtaqueCargado()
-    {
-        Debug.Log("Caballero Ligero está realizando un ataque cargado de área");
-        AtaqueCargadoArea();
     }
 
     public override void ActivarInteraction()
     {
         // Interactuar
-        Debug.Log("Caballero Ligero est� interactuando");
+        Debug.Log("Caballero Ligero está interactuando");
     }
 
     public void ActivarEscudo()
     {
         if (!escudoActivo)
         {
+            armas.SetTrigger("EscudoActivado");
             Escudo.enabled = true;
             escudoActivo = true;
             _velocidadMovimiento /= 2; // Reducir la velocidad a la mitad
-            Debug.Log("Escudo activado.");
-            animator.SetTrigger("EscudoActivado"); // Activar la animaci�n de escudo activado
+            animator.SetTrigger("EscudoActivado"); // Activar la animación de escudo activado
         }
     }
 
@@ -137,11 +101,11 @@ public class CaballeroLigero : Jugador
     {
         if (escudoActivo)
         {
+            armas.SetTrigger("EscudoDesactivado");
             Escudo.enabled = false;
             escudoActivo = false;
             _velocidadMovimiento = stats.velocidadMovimiento; // Restaurar la velocidad original
-            Debug.Log("Escudo desactivado.");
-            animator.SetTrigger("EscudoDesactivado"); // Activar la animaci�n de escudo desactivado
+            animator.SetTrigger("EscudoDesactivado"); // Activar la animación de escudo desactivado
         }
     }
 
@@ -160,8 +124,8 @@ public class CaballeroLigero : Jugador
     private IEnumerator ActivarColliderEspada()
     {
         Espada.enabled = true;
-        yield return new WaitForSeconds(0.5f); // Ajusta el tiempo seg�n la duraci�n del golpe
+        yield return new WaitForSeconds(0.5f); // Ajusta el tiempo según la duración del golpe
         Espada.enabled = false;
     }
-
 }
+
