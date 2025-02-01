@@ -4,35 +4,41 @@ using UnityEngine;
 
 public class SectionManager : MonoBehaviour
 {
-
     public Door[] doors; // Puertas que se bloquearán y desbloquearán
-    public int enemiesToDefeat = 5; // Cantidad de enemigos a derrotar para desbloquear las puertas
-    public int enemiesDefeated = 0; // Contador de enemigos derrotados
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             LockDoors();
-            
         }
     }
 
-    public void EnemyDefeated()
+    private void Update()
     {
-        enemiesDefeated++;
-        if (enemiesDefeated >= enemiesToDefeat)
+        if (AreAllChildrenDeactivated())
         {
             UnlockDoors();
         }
+    }
+
+    private bool AreAllChildrenDeactivated()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i).gameObject.activeSelf)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void LockDoors()
     {
         foreach (Door door in doors)
         {
-
             door.Lock();
-
         }
     }
 
@@ -41,9 +47,7 @@ public class SectionManager : MonoBehaviour
         foreach (Door door in doors)
         {
             door.Unlock();
-
         }
     }
-
-
 }
+

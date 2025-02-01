@@ -16,13 +16,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void EnemyDefeated(SectionManager section)
-    {
-        if (sections.Contains(section))
-        {
-            section.EnemyDefeated();
-        }
-    }
 
     private void Awake()
     {

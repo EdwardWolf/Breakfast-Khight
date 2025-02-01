@@ -191,7 +191,6 @@ public abstract class Jugador : MonoBehaviour
         // Opcional: Mostrar un mensaje de "Game Over" o una pantalla de pausa
     }
 
-    public abstract void Mover(Vector3 direccion);
     public abstract void ActivarAtaque();
     //public abstract void ActivarAtaqueCargado();
     public abstract void ActivarInteraction();
@@ -297,5 +296,21 @@ public abstract class Jugador : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, areaRadius);
     }
+    public void Mover(Vector3 direccion)
+    {
+        // Normalizar la dirección para evitar que las velocidades se sumen
+        if (direccion.magnitude > 1)
+        {
+            direccion.Normalize();
+        }
+
+        // Mover al jugador en la dirección especificada
+        transform.Translate(direccion * _velocidadMovimiento * Time.deltaTime, Space.World);
+    }
+
 }
+
+
+
+
 

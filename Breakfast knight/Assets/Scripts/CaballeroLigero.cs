@@ -60,12 +60,13 @@ public class CaballeroLigero : Jugador
         }
     }
 
-    public override void Mover(Vector3 direccion)
-    {
-        // Mover en la dirección en la que el jugador está mirando
-        Vector3 moveDirection = transform.forward * direccion.z + transform.right * direccion.x;
-        transform.Translate(moveDirection * _velocidadMovimiento * Time.deltaTime, Space.World);
-    }
+    //Activar de regreso para el movimiento en funcion a la direccion
+    //public override void Mover(Vector3 direccion)
+    //{
+    //    // Mover en la dirección en la que el jugador está mirando
+    //    Vector3 moveDirection = transform.forward * direccion.z + transform.right * direccion.x;
+    //    transform.Translate(moveDirection * _velocidadMovimiento * Time.deltaTime, Space.World);
+    //}
 
     public override void ActivarAtaque()
     {

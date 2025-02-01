@@ -1,0 +1,324 @@
+fileFormatVersion: 2
+guid: 6518073bdb04ea7448603d83f7ce277a
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 10
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: knight(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:Group20486
+      parentName: knight(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:Hips
+      parentName: knight(Clone)
+      position: {x: -0.0000020265713, y: 0.32424432, z: -0.0016972835}
+      rotation: {x: -0.0000005399558, y: -0.0000014355196, z: 0.000039692004, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftUpLeg
+      parentName: BK_ModeloTEST:Hips
+      position: {x: -0.037487883, y: -0.015444731, z: 0.000820744}
+      rotation: {x: 0.00042757328, y: 0.00286579, z: 0.9998926, w: 0.014367554}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftLeg
+      parentName: BK_ModeloTEST:LeftUpLeg
+      position: {x: -1.110223e-17, y: 0.1272129, z: 0}
+      rotation: {x: -0.03430604, y: -0.00048362315, z: 0.027463129, w: 0.99903387}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftFoot
+      parentName: BK_ModeloTEST:LeftLeg
+      position: {x: -0, y: 0.13892905, z: 1.3877788e-18}
+      rotation: {x: 0.42654425, y: -0.017367583, z: -0.008859246, w: 0.9042566}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftToeBase
+      parentName: BK_ModeloTEST:LeftFoot
+      position: {x: -0, y: 0.06300456, z: 0}
+      rotation: {x: 0.3681302, y: -0.004809869, z: 0.0019044233, w: 0.92975986}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftToe_End
+      parentName: BK_ModeloTEST:LeftToeBase
+      position: {x: -5.551115e-18, y: 0.024887709, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightUpLeg
+      parentName: BK_ModeloTEST:Hips
+      position: {x: 0.037487883, y: -0.015444731, z: 0.0018401965}
+      rotation: {x: -0.00051535113, y: 0.0026591036, z: 0.99989426, w: -0.014287779}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightLeg
+      parentName: BK_ModeloTEST:RightUpLeg
+      position: {x: 1.110223e-17, y: 0.12723565, z: 0}
+      rotation: {x: -0.037581842, y: 0.0005067484, z: -0.027464282, w: 0.998916}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightFoot
+      parentName: BK_ModeloTEST:RightLeg
+      position: {x: 5.551115e-18, y: 0.1389712, z: -2.0816683e-18}
+      rotation: {x: 0.4329861, y: 0.017154697, z: 0.008919887, w: 0.90119326}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightToeBase
+      parentName: BK_ModeloTEST:RightFoot
+      position: {x: -5.551115e-18, y: 0.063501075, z: 5.551115e-18}
+      rotation: {x: 0.36472753, y: 0.0048437607, z: -0.0018973829, w: 0.9310998}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightToe_End
+      parentName: BK_ModeloTEST:RightToeBase
+      position: {x: -5.551115e-18, y: 0.025216896, z: -1.3877788e-18}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:Spine
+      parentName: BK_ModeloTEST:Hips
+      position: {x: -0, y: 0.027811788, z: -0.0029641418}
+      rotation: {x: -0.05306341, y: 0.000003539685, z: -0.000039559913, w: 0.9985912}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:Spine1
+      parentName: BK_ModeloTEST:Spine
+      position: {x: -0, y: 0.032630865, z: 1.110223e-17}
+      rotation: {x: 7.726835e-26, y: -1.1468207e-13, z: 6.7376145e-13, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:Spine2
+      parentName: BK_ModeloTEST:Spine1
+      position: {x: -0, y: 0.0372924, z: 0}
+      rotation: {x: 0, y: 0, z: 4.259849e-29, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:Neck
+      parentName: BK_ModeloTEST:Spine2
+      position: {x: -0, y: 0.04195399, z: 0.000000005734848}
+      rotation: {x: 0.053063978, y: -2.84839e-20, z: 1.3420283e-19, w: 0.9985911}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:Head
+      parentName: BK_ModeloTEST:Neck
+      position: {x: -0, y: 0.016867876, z: 0.0011478848}
+      rotation: {x: 0, y: -0, z: -1.2712923e-38, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:HeadTop_End
+      parentName: BK_ModeloTEST:Head
+      position: {x: -0, y: 0.2185132, z: 0.014870165}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightShoulder
+      parentName: BK_ModeloTEST:Spine2
+      position: {x: 0.021982592, y: 0.03566838, z: -0.0008834882}
+      rotation: {x: -0.5478985, y: -0.44122848, z: 0.5691175, w: -0.42571118}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightArm
+      parentName: BK_ModeloTEST:RightShoulder
+      position: {x: -0, y: 0.046035443, z: 0}
+      rotation: {x: -0.12502234, y: 0.0020936644, z: 0.018463006, w: 0.99197996}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightForeArm
+      parentName: BK_ModeloTEST:RightArm
+      position: {x: -0, y: 0.049226876, z: 0}
+      rotation: {x: 0.00000027233222, y: -0.015067566, z: 0.00000003236394, w: 0.9998865}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightHand
+      parentName: BK_ModeloTEST:RightForeArm
+      position: {x: -0, y: 0.070773475, z: -8.881784e-17}
+      rotation: {x: -0.00000027348918, y: 0.28408244, z: -0.000000009507639, w: 0.95879984}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightHandThumb1
+      parentName: BK_ModeloTEST:RightHand
+      position: {x: -0.020636076, y: 0.03551823, z: -0.0000000011879497}
+      rotation: {x: -0.070771314, y: -0.037611984, z: 0.317041, w: 0.9450194}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightHandThumb2
+      parentName: BK_ModeloTEST:RightHandThumb1
+      position: {x: -0.0022252067, y: 0.03278688, z: 0}
+      rotation: {x: 0.00015764737, y: -0.0027750977, z: 0.011081575, w: 0.9999348}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightHandThumb3
+      parentName: BK_ModeloTEST:RightHandThumb2
+      position: {x: -0.001054081, y: 0.022943586, z: -8.881784e-17}
+      rotation: {x: -0.00054630754, y: -0.0061409716, z: 0.13406605, w: 0.99095327}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightHandThumb4
+      parentName: BK_ModeloTEST:RightHandThumb3
+      position: {x: 0.0032792878, y: 0.01445237, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightHandIndex1
+      parentName: BK_ModeloTEST:RightHand
+      position: {x: -2.220446e-17, y: 0.073445186, z: -0.000000001076832}
+      rotation: {x: -0.000030651878, y: 0.0024150468, z: -0.012598958, w: 0.99991775}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightHandIndex2
+      parentName: BK_ModeloTEST:RightHandIndex1
+      position: {x: -0.00064780004, y: 0.025792718, z: 0}
+      rotation: {x: -0.00003887171, y: 0.0010505179, z: -0.011503747, w: 0.9999333}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightHandIndex3
+      parentName: BK_ModeloTEST:RightHandIndex2
+      position: {x: -0.0010290301, y: 0.021345695, z: 8.881784e-17}
+      rotation: {x: -0.00022478032, y: -0.006060476, z: 0.08509609, w: 0.9963543}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:RightHandIndex4
+      parentName: BK_ModeloTEST:RightHandIndex3
+      position: {x: 0.0016768302, y: 0.013681709, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftShoulder
+      parentName: BK_ModeloTEST:Spine2
+      position: {x: -0.021982592, y: 0.03562336, z: -0.00046112054}
+      rotation: {x: 0.55385315, y: -0.43677083, z: 0.564144, w: 0.42920798}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftArm
+      parentName: BK_ModeloTEST:LeftShoulder
+      position: {x: 1.110223e-17, y: 0.046035443, z: 8.881784e-17}
+      rotation: {x: -0.12603225, y: -0.004521896, z: -0.008525882, w: 0.99197924}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftForeArm
+      parentName: BK_ModeloTEST:LeftArm
+      position: {x: -0, y: 0.049446527, z: 0}
+      rotation: {x: -0.00000026134498, y: 0.017944654, z: 0.00000005758361, w: 0.999839}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftHand
+      parentName: BK_ModeloTEST:LeftForeArm
+      position: {x: -0, y: 0.07083436, z: -8.881784e-17}
+      rotation: {x: 0.0000003444901, y: -0.28575355, z: 0.00000005764453, w: 0.95830315}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftHandIndex1
+      parentName: BK_ModeloTEST:LeftHand
+      position: {x: -2.220446e-17, y: 0.06920067, z: 0.0000000020245063}
+      rotation: {x: 0.000079429985, y: -0.0030439433, z: -0.026045386, w: 0.99965614}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftHandIndex2
+      parentName: BK_ModeloTEST:LeftHandIndex1
+      position: {x: -0.0014084937, y: 0.027039887, z: 0}
+      rotation: {x: 0.000008503786, y: 0.001097771, z: 0.059848517, w: 0.99820685}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftHandIndex3
+      parentName: BK_ModeloTEST:LeftHandIndex2
+      position: {x: 0.0015475306, y: 0.022873985, z: 0}
+      rotation: {x: -0.000079328, y: -0.002660411, z: -0.037929207, w: 0.9992769}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftHandIndex4
+      parentName: BK_ModeloTEST:LeftHandIndex3
+      position: {x: -0.0001390371, y: 0.017058697, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftHandThumb1
+      parentName: BK_ModeloTEST:LeftHand
+      position: {x: 0.020794142, y: 0.03604784, z: 4.4267348e-10}
+      rotation: {x: -0.07178129, y: 0.037965722, z: -0.3142305, w: 0.9458675}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftHandThumb2
+      parentName: BK_ModeloTEST:LeftHandThumb1
+      position: {x: 0.0023317628, y: 0.033210568, z: 0}
+      rotation: {x: 0.000047450263, y: 0.0011026362, z: -0.027520461, w: 0.9996207}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftHandThumb3
+      parentName: BK_ModeloTEST:LeftHandThumb2
+      position: {x: 0.00033565678, y: 0.022671135, z: -8.881784e-17}
+      rotation: {x: -0.0005852724, y: 0.006649328, z: -0.10253721, w: 0.9947068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: BK_ModeloTEST:LeftHandThumb4
+      parentName: BK_ModeloTEST:LeftHandThumb3
+      position: {x: -0.0026674194, y: 0.013852409, z: 4.440892e-17}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 10
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 3
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
