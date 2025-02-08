@@ -18,6 +18,7 @@ public class Enemigo : MonoBehaviour
     public Image barraDeVida; // Referencia a la imagen de la barra de vida
     private Camera camara; // Añadir referencia a la cámara
     public GameObject aderezoPrefab; // Prefab del objeto Aderezo
+    public GameObject otroObjetoPrefab; // Prefab del nuevo objeto
     public float dropChanceMin = 0.1f; // Probabilidad mínima de dropear el objeto
     public float dropChanceMax = 0.5f; // Probabilidad máxima de dropear el objeto
     public Transform dropPosition; // Referencia al objeto hijo donde se dropeará el Aderezo
@@ -27,6 +28,9 @@ public class Enemigo : MonoBehaviour
     public ParticleSystem damageParticleSystem; // Sistema de partículas para el daño
     private Renderer renderer; // Referencia al Renderer del enemigo
     public float atackCooldown = 1.5f; // Cooldown del ataque
+    public float tiempoParaSoltarObjeto = 5f; // Tiempo que debe pasar antes de soltar el objeto
+    public bool persiguiendoJugador = false; // Indica si el enemigo está persiguiendo al jugador
+    public bool puedeSoltarObjeto = true; // Booleano para activar o desactivar la funcionalidad de soltar el objeto
 
     private void Start()
     {
@@ -53,8 +57,20 @@ public class Enemigo : MonoBehaviour
             }
             else
             {
+                if (!persiguiendoJugador)
+                {
+                    persiguiendoJugador = true;
+                    if (puedeSoltarObjeto)
+                    {
+                        StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+                    }
+                }
                 PerseguirJugador();
             }
+        }
+        else
+        {
+            persiguiendoJugador = false;
         }
     }
 
@@ -185,6 +201,8 @@ public class Enemigo : MonoBehaviour
             {
                 StartCoroutine(DañarJugador());
             }
+            // Dejar de soltar el objeto adicional
+            puedeSoltarObjeto = false;
         }
     }
 
@@ -196,6 +214,12 @@ public class Enemigo : MonoBehaviour
             isDamaging = false;
             StopAllCoroutines();
             velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Detener el movimiento del enemigo
+            // Volver a soltar el objeto adicional
+            puedeSoltarObjeto = true;
+            if (persiguiendoJugador)
+            {
+                StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+            }
         }
     }
 
@@ -229,9 +253,32 @@ public class Enemigo : MonoBehaviour
         isDamaging = false;
     }
 
+    private IEnumerator SoltarObjetoCadaIntervalo(float intervalo)
+    {
+        while (persiguiendoJugador)
+        {
+            yield return new WaitForSeconds(intervalo);
+            if (puedeSoltarObjeto)
+            {
+                Vector3 dropPosition = this.dropPosition != null ? this.dropPosition.position : transform.position;
+                RaycastHit hit;
+                if (Physics.Raycast(dropPosition, Vector3.down, out hit))
+                {
+                    dropPosition.y = hit.point.y+0.1f;
+                }
+
+                GameObject objetoInstanciado = Instantiate(otroObjetoPrefab, dropPosition, Quaternion.identity);
+                Debug.Log("Otro objeto dropeado en la posición: " + dropPosition);
+
+                // Iniciar la disminución del albedo si el objeto instanciado tiene el componente Charco
+                Charco charco = objetoInstanciado.GetComponent<Charco>();
+                if (charco != null)
+                {
+                    charco.IniciarDisminucion();
+                }
+            }
+        }
+    }
+
     public SectionManager sectionManager; // Referencia al SectionManager
 }
-
-
-
-

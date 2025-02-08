@@ -21,6 +21,7 @@ public class CaballeroLigero : Jugador
     private void Update()
     {
         GirarHaciaMouse();
+        
         Vector3 movimiento = PlayerController.GetMoveInput();
         Mover(movimiento);
 

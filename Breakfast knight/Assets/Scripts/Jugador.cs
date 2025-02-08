@@ -304,8 +304,13 @@ public abstract class Jugador : MonoBehaviour
             direccion.Normalize();
         }
 
-        // Mover al jugador en la dirección especificada
-        transform.Translate(direccion * _velocidadMovimiento * Time.deltaTime, Space.World);
+        // Rotar la dirección del movimiento 45 grados
+        Quaternion rotacion = Quaternion.Euler(0, 45, 0);
+        Vector3 direccionRotada = rotacion * direccion;
+
+        // Mover al jugador en la dirección rotada sin importar la dirección a la que está mirando
+        Vector3 movimiento = new Vector3(direccionRotada.x, 0, direccionRotada.z) * _velocidadMovimiento * Time.deltaTime;
+        transform.Translate(movimiento, Space.World);
     }
 
 }
