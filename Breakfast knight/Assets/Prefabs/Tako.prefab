@@ -120,12 +120,12 @@ MonoBehaviour:
   usarRadioDeAtaque: 0
   barraDeVida: {fileID: 636513289733358477}
   aderezoPrefab: {fileID: 314813060356092051, guid: 203865cd49b9d8843a424b7b73cba8ac, type: 3}
-  otroObjetoPrefab: {fileID: 0}
+  otroObjetoPrefab: {fileID: 8530985405293348726, guid: 3b37336d6f5c4354b92e215040e2a22e, type: 3}
   dropChanceMin: 0.1
   dropChanceMax: 1
   dropPosition: {fileID: 6097031936530603922}
   attackEffect: {fileID: 3917783562994029846}
-  damageParticleSystem: {fileID: 0}
+  damageParticleSystem: {fileID: 4249944899423191858}
   atackCooldown: 1.5
   tiempoParaSoltarObjeto: 5
   persiguiendoJugador: 0
@@ -274,7 +274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6050255891465207686
 Transform:
   m_ObjectHideFlags: 0
