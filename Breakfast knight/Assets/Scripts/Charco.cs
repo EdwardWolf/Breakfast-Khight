@@ -11,8 +11,7 @@ public class Charco : MonoBehaviour
     private Color colorInicial;
     private Jugador jugador; // Referencia al jugador
     public float reduccionVelocidad = 0.3f; // Reducción de velocidad (30%)
-
-
+    private bool debufoAplicado = false; // Para evitar acumulación de debufos
 
     private void Start()
     {
@@ -21,7 +20,6 @@ public class Charco : MonoBehaviour
         {
             material = renderer.material;
             colorInicial = material.color;
-
         }
         else
         {
@@ -31,9 +29,7 @@ public class Charco : MonoBehaviour
 
     public void IniciarDisminucion()
     {
-
-            StartCoroutine(DisminuirAlbedo());
-
+        StartCoroutine(DisminuirAlbedo());
     }
 
     private IEnumerator DisminuirAlbedo()
@@ -57,24 +53,31 @@ public class Charco : MonoBehaviour
         // Desactivar el objeto una vez que el albedo sea 0
         gameObject.SetActive(false);
     }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !debufoAplicado)
         {
             jugador = other.GetComponent<Jugador>();
             if (jugador != null)
             {
-                jugador._velocidadMovimiento *= (1 - reduccionVelocidad); // Reducir la velocidad del jugador en un 30%
+                jugador.AplicarDebufoVelocidad(reduccionVelocidad); // Usar el nuevo método
+                debufoAplicado = true; // Marcar que el debufo ha sido aplicado
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && jugador != null)
+        if (other.CompareTag("Player"))
         {
-            jugador._velocidadMovimiento /= (1 - reduccionVelocidad); // Restaurar la velocidad del jugador
-            jugador = null;
+            Jugador jugadorSaliente = other.GetComponent<Jugador>();
+            if (jugadorSaliente != null && jugadorSaliente == jugador)
+            {
+                jugador.RemoverDebufoVelocidad(); // Usar el nuevo método
+                jugador = null;
+                debufoAplicado = false; // Marcar que el debufo ha sido removido
+            }
         }
     }
 }

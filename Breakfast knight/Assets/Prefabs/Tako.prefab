@@ -114,6 +114,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   attackHandler: {fileID: 0}
+  playerTransform: {fileID: 0}
   vidaE: 100
   damage: 0
   velocidadMovimiento: 3
@@ -5229,7 +5230,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6097031936530603922}
   m_Layer: 7
-  m_Name: dropPos
+  m_Name: DropPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5244,7 +5245,7 @@ Transform:
   m_GameObject: {fileID: 6472112954473015282}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.05, y: 1.31, z: -0.56}
+  m_LocalPosition: {x: 0.05, y: 1.31, z: -1.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5260,7 +5261,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1280306220594101021}
   m_Layer: 7
-  m_Name: Ataques (1)
+  m_Name: ControlAtaques
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

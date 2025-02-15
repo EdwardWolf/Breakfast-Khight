@@ -86,7 +86,7 @@ public class CaballeroLigero : Jugador
         Debug.Log("Caballero Ligero está interactuando");
     }
 
-    public void ActivarEscudo()
+    private void ActivarEscudo()
     {
         if (!escudoActivo)
         {
@@ -98,7 +98,7 @@ public class CaballeroLigero : Jugador
         }
     }
 
-    public void DesactivarEscudo()
+    private void DesactivarEscudo()
     {
         if (escudoActivo)
         {

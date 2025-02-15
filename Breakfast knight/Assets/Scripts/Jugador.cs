@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public abstract class Jugador : MonoBehaviour
 {
-    [SerializeField] protected Stats stats;
+    [SerializeField] public Stats stats;
     [SerializeField] protected float vidaActual;
     [SerializeField] protected float resistenciaEscudoActual;
     [SerializeField] public float _velocidadMovimiento;
@@ -41,6 +41,8 @@ public abstract class Jugador : MonoBehaviour
     public static event VidaCambiada OnVidaCambiada;
 
     private GameInputs playerInputActions;
+    public bool debufoVelocidadAplicado = false; // Variable para rastrear el debufo de velocidad
+
 
     protected virtual void Start()
     {
@@ -81,6 +83,22 @@ public abstract class Jugador : MonoBehaviour
         playerInputActions.Enable();
     }
 
+    public void AplicarDebufoVelocidad(float reduccionVelocidad)
+    {
+        if (!debufoVelocidadAplicado)
+        {
+            _velocidadMovimiento *= (1 - reduccionVelocidad);
+            debufoVelocidadAplicado = true;
+        }
+    }
+    public void RemoverDebufoVelocidad()
+    {
+        if (debufoVelocidadAplicado)
+        {
+            _velocidadMovimiento = stats.velocidadMovimiento;
+            debufoVelocidadAplicado = false;
+        }
+    }
     private void OnDestroy()
     {
         playerInputActions.Player.AtaqueCargado.started -= OnAttackChargedStarted;
@@ -118,7 +136,6 @@ public abstract class Jugador : MonoBehaviour
         if (vidaActual <= 0)
         {
             // Manejar la muerte del jugador
-            Debug.Log("Jugador ha muerto");
             derrota.SetActive(true);
             PausarJuego();
         }
@@ -140,7 +157,6 @@ public abstract class Jugador : MonoBehaviour
         if (resistenciaEscudoActual <= 0)
         {
             // Manejar la ruptura del escudo
-            Debug.Log("Escudo roto");
             escudoActivo = false;
         }
     }
@@ -149,7 +165,6 @@ public abstract class Jugador : MonoBehaviour
     {
         if (Time.time - tiempoUltimoDaño >= tiempoRegeneracion && resistenciaEscudoActual < stats.resistenciaEscudo)
         {
-            Debug.Log("Esta regenerando escudo");
             resistenciaEscudoActual += velocidadRegeneracion * Time.deltaTime;
             if (resistenciaEscudoActual > stats.resistenciaEscudo)
             {
@@ -172,7 +187,6 @@ public abstract class Jugador : MonoBehaviour
     {
         incrementoAtaqueTemporal = cantidad;
         golpesRestantes = golpes;
-        Debug.Log("Ataque incrementado temporalmente en " + cantidad + " por " + golpes + " golpes");
         CambiarMaterial(materialAumento); // Cambiar al material de aumento de ataque
         uiManager.MostrarIncrementoAtaque(cantidad, golpes); // Actualizar la UI
     }
@@ -199,7 +213,6 @@ public abstract class Jugador : MonoBehaviour
     {
         if (incrementoAtaqueTemporal > 0)
         {
-            Debug.Log("Ataque Cargado Realizado");
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, areaRadius);
             foreach (Collider hitCollider in hitColliders)
             {
@@ -224,7 +237,6 @@ public abstract class Jugador : MonoBehaviour
         }
         else
         {
-            Debug.Log("No se puede realizar el ataque cargado sin incremento de ataque");
             uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
         }
     }
@@ -233,7 +245,6 @@ public abstract class Jugador : MonoBehaviour
     {
         if (incrementoAtaqueTemporal > 0)
         {
-            Debug.Log("IniciarCarga called");
             isCharging = true;
             chargeTime = 0f;
             if (ataqueCargadoEfecto != null)
@@ -243,14 +254,12 @@ public abstract class Jugador : MonoBehaviour
         }
         else
         {
-            Debug.Log("No se puede iniciar la carga sin incremento de ataque");
             uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
         }
     }
 
     public void CancelarCarga()
     {
-        Debug.Log("CancelarCarga called");
         isCharging = false;
         chargeTime = 0f;
         if (cargaBarra != null)
@@ -268,17 +277,17 @@ public abstract class Jugador : MonoBehaviour
         return escudoActivo && resistenciaEscudoActual >= valorMinimoEscudo;
     }
 
-    public void ActivarEscudo()
-    {
-        if (PuedeUsarEscudo())
-        {
-            // Lógica para activar la animación del escudo
-        }
-        else
-        {
-            Debug.Log("No se puede activar el escudo, resistencia insuficiente");
-        }
-    }
+    //public void ActivarEscudo()
+    //{
+    //    if (PuedeUsarEscudo())
+    //    {
+    //        // Lógica para activar la animación del escudo
+    //    }
+    //    else
+    //    {
+    //        // Lógica para mostrar un mensaje de que no se puede usar el escudo
+    //    }
+    //}
 
     private void EmpujarEnemigo(Enemigo enemigo)
     {
