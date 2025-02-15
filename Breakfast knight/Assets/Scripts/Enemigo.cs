@@ -10,7 +10,7 @@ public class Enemigo : MonoBehaviour
     public float attackRadius = 2f;
     public LayerMask playerLayer;
     public AttackHandler attackHandler; // Añadir referencia a AttackHandler
-    private Transform playerTransform; // Añadir referencia al transform del jugador
+    public Transform playerTransform; // Añadir referencia al transform del jugador
     public float vidaE; // Vida del enemigo
     public float damage; // Daño del enemigo
     public float velocidadMovimiento; // Velocidad de movimiento del enemigo
@@ -18,17 +18,21 @@ public class Enemigo : MonoBehaviour
     public Image barraDeVida; // Referencia a la imagen de la barra de vida
     private Camera camara; // Añadir referencia a la cámara
     public GameObject aderezoPrefab; // Prefab del objeto Aderezo
+    public GameObject otroObjetoPrefab; // Prefab del nuevo objeto
     public float dropChanceMin = 0.1f; // Probabilidad mínima de dropear el objeto
     public float dropChanceMax = 0.5f; // Probabilidad máxima de dropear el objeto
     public Transform dropPosition; // Referencia al objeto hijo donde se dropeará el Aderezo
-    private Jugador jugador;
-    private bool isDamaging = false;
+    public Jugador jugador;
+    public bool isDamaging = false;
     public GameObject attackEffect; // Efecto que se ejecutará antes del ataque
     public ParticleSystem damageParticleSystem; // Sistema de partículas para el daño
-    private Renderer renderer; // Referencia al Renderer del enemigo
     public float atackCooldown = 1.5f; // Cooldown del ataque
+    public float tiempoParaSoltarObjeto = 5f; // Tiempo que debe pasar antes de soltar el objeto
+    public bool persiguiendoJugador = false; // Indica si el enemigo está persiguiendo al jugador
+    public bool puedeSoltarObjeto = true; // Booleano para activar o desactivar la funcionalidad de soltar el objeto
+    private Animator animator; // Referencia al componente Animator
 
-    private void Start()
+    protected virtual void Start()
     {
         camara = Camera.main; // Obtener la cámara principal    
         attackHandler = GetComponent<AttackHandler>(); // Obtener el componente AttackHandler
@@ -36,10 +40,10 @@ public class Enemigo : MonoBehaviour
         ActualizarBarraDeVida(); // Inicializar la barra de vida
         velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Inicializar la velocidad de movimiento
         damage = statsEnemigo.daño; // Inicializar el daño
-        renderer = GetComponent<Renderer>(); // Obtener el Renderer del enemigo
+        animator = GetComponent<Animator>(); // Obtener el componente Animator
     }
 
-    void Update()
+    protected virtual void Update()
     {
         barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
                          camara.transform.rotation * Vector3.up);
@@ -49,21 +53,40 @@ public class Enemigo : MonoBehaviour
             LookAtPlayer();
             if (usarRadioDeAtaque && IsPlayerInAttackRange())
             {
-                Atacck();
+                if (!isDamaging)
+                {
+                    StartCoroutine(DañarJugador());
+                }
             }
             else
             {
+                if (!persiguiendoJugador)
+                {
+                    persiguiendoJugador = true;
+                    if (puedeSoltarObjeto)
+                    {
+                        StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+                    }
+                }
                 PerseguirJugador();
             }
         }
+        else
+        {
+            persiguiendoJugador = false;
+        }
     }
 
-    void DetectPlayer()
+    protected virtual void DetectPlayer()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayer);
         if (hits.Length > 0)
         {
             playerTransform = hits[0].transform; // Guardar la referencia al transform del jugador
+            if (animator != null)
+            {
+                animator.SetTrigger("DetectarJugador"); // Activar el Trigger de la animación de detección
+            }
         }
         else
         {
@@ -71,7 +94,7 @@ public class Enemigo : MonoBehaviour
         }
     }
 
-    bool IsPlayerInAttackRange()
+    public bool IsPlayerInAttackRange()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, attackRadius, playerLayer);
         return hits.Length > 0;
@@ -185,6 +208,10 @@ public class Enemigo : MonoBehaviour
             {
                 StartCoroutine(DañarJugador());
             }
+            // Detener el movimiento del enemigo
+            velocidadMovimiento = 0f;
+            // Dejar de soltar el objeto adicional
+            puedeSoltarObjeto = false;
         }
     }
 
@@ -195,43 +222,78 @@ public class Enemigo : MonoBehaviour
             jugador = null;
             isDamaging = false;
             StopAllCoroutines();
-            velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Detener el movimiento del enemigo
+            velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Restaurar la velocidad de movimiento del enemigo
+                                                                    // Volver a soltar el objeto adicional
+            puedeSoltarObjeto = true;
+            if (persiguiendoJugador)
+            {
+                StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+            }
         }
     }
 
-    private IEnumerator DañarJugador()
+    public IEnumerator DañarJugador()
     {
         isDamaging = true;
         while (jugador != null)
         {
+            // Ejecutar el ataque
+            attackHandler.ActivarAtaque();
+            Debug.Log("Jugador ha recibido daño");
+
+            // Activar el sistema de partículas
+            if (damageParticleSystem != null)
+            {
+                damageParticleSystem.Play();
+            }
+
+            // Esperar el cooldown del ataque
             yield return new WaitForSeconds(atackCooldown);
 
-            if (jugador != null)
+            // Desactivar el sistema de partículas después de un breve tiempo
+            if (damageParticleSystem != null)
             {
-                velocidadMovimiento = 0f; // Detener el movimiento del enemigo
-                jugador.ReducirVida(damage);
-                Debug.Log("Jugador ha recibido daño");
+                damageParticleSystem.Stop();
+            }
 
-                // Activar el sistema de partículas
-                if (damageParticleSystem != null)
-                {
-                    damageParticleSystem.Play();
-                }
-
-                // Desactivar el sistema de partículas después de un breve tiempo
-                yield return new WaitForSeconds(0.5f);
-                if (damageParticleSystem != null)
-                {
-                    damageParticleSystem.Stop();
-                }
+            // Verificar si el jugador sigue en rango de ataque
+            if (!IsPlayerInAttackRange())
+            {
+                // Si el jugador está fuera de rango, perseguirlo
+                velocidadMovimiento = statsEnemigo.velocidadMovimiento;
+                PerseguirJugador();
+                break;
             }
         }
         isDamaging = false;
     }
 
+    private IEnumerator SoltarObjetoCadaIntervalo(float intervalo)
+    {
+        while (persiguiendoJugador)
+        {
+            yield return new WaitForSeconds(intervalo);
+            if (puedeSoltarObjeto)
+            {
+                Vector3 dropPosition = this.dropPosition != null ? this.dropPosition.position : transform.position;
+                RaycastHit hit;
+                if (Physics.Raycast(dropPosition, Vector3.down, out hit))
+                {
+                    dropPosition.y = hit.point.y + 0.1f;
+                }
+
+                GameObject objetoInstanciado = Instantiate(otroObjetoPrefab, dropPosition, Quaternion.identity);
+
+                // Iniciar la disminución del albedo si el objeto instanciado tiene el componente Charco
+                Charco charco = objetoInstanciado.GetComponent<Charco>();
+                if (charco != null)
+                {
+                    charco.IniciarDisminucion();
+                }
+            }
+        }
+    }
+
     public SectionManager sectionManager; // Referencia al SectionManager
 }
-
-
-
 

@@ -7,6 +7,7 @@ TagManager:
   - Muro
   - Enemigo
   - Escudo
+  - Puerta
   layers:
   - Default
   - TransparentFX

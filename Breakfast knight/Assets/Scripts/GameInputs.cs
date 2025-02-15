@@ -71,6 +71,15 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Movimiento"",
+                    ""type"": ""Value"",
+                    ""id"": ""056292cf-b2a0-4eec-9dec-a70e3f9e5cfd"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -194,6 +203,61 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""action"": ""AtaqueCargado"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""30693d52-64bb-4850-9b51-5ac6fa44e371"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movimiento"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""5305acb1-054e-4810-864d-0f6ff2b1c531"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movimiento"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""46aa6fb2-4093-49a4-8299-0f1f5409f4f5"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movimiento"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""865842c9-28d3-4e2b-bcdf-430fbb57b963"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movimiento"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""35942bce-ebe7-465c-a6f1-62e4308ce253"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movimiento"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -207,6 +271,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Shield = m_Player.FindAction("Shield", throwIfNotFound: true);
         m_Player_AtaqueCargado = m_Player.FindAction("AtaqueCargado", throwIfNotFound: true);
+        m_Player_Movimiento = m_Player.FindAction("Movimiento", throwIfNotFound: true);
     }
 
     ~@GameInputs()
@@ -278,6 +343,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Shield;
     private readonly InputAction m_Player_AtaqueCargado;
+    private readonly InputAction m_Player_Movimiento;
     public struct PlayerActions
     {
         private @GameInputs m_Wrapper;
@@ -287,6 +353,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Shield => m_Wrapper.m_Player_Shield;
         public InputAction @AtaqueCargado => m_Wrapper.m_Player_AtaqueCargado;
+        public InputAction @Movimiento => m_Wrapper.m_Player_Movimiento;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -311,6 +378,9 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             @AtaqueCargado.started += instance.OnAtaqueCargado;
             @AtaqueCargado.performed += instance.OnAtaqueCargado;
             @AtaqueCargado.canceled += instance.OnAtaqueCargado;
+            @Movimiento.started += instance.OnMovimiento;
+            @Movimiento.performed += instance.OnMovimiento;
+            @Movimiento.canceled += instance.OnMovimiento;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -330,6 +400,9 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             @AtaqueCargado.started -= instance.OnAtaqueCargado;
             @AtaqueCargado.performed -= instance.OnAtaqueCargado;
             @AtaqueCargado.canceled -= instance.OnAtaqueCargado;
+            @Movimiento.started -= instance.OnMovimiento;
+            @Movimiento.performed -= instance.OnMovimiento;
+            @Movimiento.canceled -= instance.OnMovimiento;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -354,5 +427,6 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnShield(InputAction.CallbackContext context);
         void OnAtaqueCargado(InputAction.CallbackContext context);
+        void OnMovimiento(InputAction.CallbackContext context);
     }
 }

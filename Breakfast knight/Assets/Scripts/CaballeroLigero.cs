@@ -21,6 +21,7 @@ public class CaballeroLigero : Jugador
     private void Update()
     {
         GirarHaciaMouse();
+        
         Vector3 movimiento = PlayerController.GetMoveInput();
         Mover(movimiento);
 
@@ -85,7 +86,7 @@ public class CaballeroLigero : Jugador
         Debug.Log("Caballero Ligero está interactuando");
     }
 
-    public void ActivarEscudo()
+    private void ActivarEscudo()
     {
         if (!escudoActivo)
         {
@@ -97,7 +98,7 @@ public class CaballeroLigero : Jugador
         }
     }
 
-    public void DesactivarEscudo()
+    private void DesactivarEscudo()
     {
         if (escudoActivo)
         {
