@@ -22,15 +22,15 @@ public class EnemigoDistancia : Enemigo
         if (IsPlayerInAttackRange())
         {
             atacando = true;
-            StartCoroutine(DJugador());
-            
+            attackHandler.ActivarAtaque();
         }
     }
 
-    public override void Atacck()
-    {
-        attackHandler.ActivarAtaque();
-    }
+    //public override void Atacck()
+    //{
+
+    //    Debug.Log("ejecuto ataque");
+    //}
 
     public override IEnumerator DJugador()
     {

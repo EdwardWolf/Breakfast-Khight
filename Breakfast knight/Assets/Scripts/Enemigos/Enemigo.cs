@@ -75,6 +75,7 @@ public class Enemigo : MonoBehaviour
         if (hits.Length > 0)
         {
             playerTransform = hits[0].transform; // Guardar la referencia al transform del jugador
+            Debug.Log("Jugador detectado en el radio de detección.");
             if (animator != null)
             {
                 animator.SetTrigger("DetectarJugador"); // Activar el Trigger de la animación de detección
@@ -89,7 +90,12 @@ public class Enemigo : MonoBehaviour
     public bool IsPlayerInAttackRange()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, attackRadius, playerLayer);
-        return hits.Length > 0;
+        bool inRange = hits.Length > 0;
+        if (inRange)
+        {
+            Debug.Log("Jugador en el radio de ataque.");
+        }
+        return inRange;
     }
 
     public virtual void Atacck()
@@ -236,5 +242,3 @@ public class Enemigo : MonoBehaviour
 
     public SectionManager sectionManager; // Referencia al SectionManager
 }
-
-
