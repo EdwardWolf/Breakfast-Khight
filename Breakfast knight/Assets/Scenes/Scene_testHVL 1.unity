@@ -2269,6 +2269,10 @@ MonoBehaviour:
   poolSize: 10
   maxActiveEnemies: 5
   spawnCooldown: 5
+  detectionRadius: 10
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &180130010
 Transform:
   m_ObjectHideFlags: 0
@@ -21749,7 +21753,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.15333334
+  m_VoxelSize: 0.07333333
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 3462e6e098254804c89de35f29433454, type: 2}
   m_BuildHeightMesh: 0

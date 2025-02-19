@@ -1037,6 +1037,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1887825637667914525, guid: 203865cd49b9d8843a424b7b73cba8ac, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2331,10 +2335,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isLocked: 0
   animator: {fileID: 280973768}
-  materialBase: {fileID: 2100000, guid: 28c3bf24b98d51e4ea30cbb8702433d9, type: 2}
-  lockedMaterial: {fileID: 2100000, guid: b94b4f02ebeadac44a67a4fbc9206998, type: 2}
-  unlockedMaterial: {fileID: 2100000, guid: 28c3bf24b98d51e4ea30cbb8702433d9, type: 2}
-  detectionCollider: {fileID: 0}
 --- !u!65 &280973763
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2707,10 +2707,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isLocked: 0
   animator: {fileID: 301297661}
-  materialBase: {fileID: 2100000, guid: 28c3bf24b98d51e4ea30cbb8702433d9, type: 2}
-  lockedMaterial: {fileID: 2100000, guid: b94b4f02ebeadac44a67a4fbc9206998, type: 2}
-  unlockedMaterial: {fileID: 2100000, guid: 28c3bf24b98d51e4ea30cbb8702433d9, type: 2}
-  detectionCollider: {fileID: 0}
 --- !u!65 &301297656
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3141,11 +3137,11 @@ PrefabInstance:
     - target: {fileID: -1984596954816247883, guid: 792f662f7565688409f97623c944a3c5, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 26670659545adc443987d673d95e893e, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: -385270102831769719, guid: 792f662f7565688409f97623c944a3c5, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 26670659545adc443987d673d95e893e, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 792f662f7565688409f97623c944a3c5, type: 3}
       propertyPath: m_Name
       value: Cuchara_HVL_TEST
@@ -3942,7 +3938,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -6174,7 +6171,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9026,6 +9023,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pilar_chocolates_cubos (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3031231912045488726, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    - target: {fileID: 7100362609682504000, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    - target: {fileID: 7427456250695860533, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9093,6 +9102,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pilar_chocolates_cubos (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 3031231912045488726, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    - target: {fileID: 7100362609682504000, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    - target: {fileID: 7427456250695860533, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -11820,7 +11841,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.15333334
+  m_VoxelSize: 0.07333333
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 2d35e8f12794f544c8681636525956ab, type: 2}
   m_BuildHeightMesh: 0
@@ -16308,7 +16329,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -17719,6 +17741,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pilar_chocolates_cubos
       objectReference: {fileID: 0}
+    - target: {fileID: 3031231912045488726, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    - target: {fileID: 7100362609682504000, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    - target: {fileID: 7427456250695860533, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -21736,6 +21770,10 @@ PrefabInstance:
       propertyPath: damageParticleSystem
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 582264556803773260, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
     - target: {fileID: 1796982255342016933, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
       propertyPath: m_Name
       value: Tako (1)
@@ -21991,6 +22029,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pilar_chocolates_cubos (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3031231912045488726, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    - target: {fileID: 7100362609682504000, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    - target: {fileID: 7427456250695860533, guid: 5a8f28172da3a21488f637b63b1fdacf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -23235,6 +23285,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 858036653430989946, guid: 468b12d8c72b775428f648e8776a13f7, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
     - target: {fileID: 925026461639537578, guid: 468b12d8c72b775428f648e8776a13f7, type: 3}
       propertyPath: m_IsKinematic
       value: 1
@@ -23532,6 +23586,10 @@ PrefabInstance:
       propertyPath: jugador
       value: 
       objectReference: {fileID: 1918288941}
+    - target: {fileID: 7828159044701835198, guid: c34cbfeea6cb7dd48ae5cd7d4fc7b36a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -23565,6 +23623,10 @@ PrefabInstance:
       propertyPath: damageParticleSystem
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 582264556803773260, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
     - target: {fileID: 1796982255342016933, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
       propertyPath: m_Name
       value: Tako
