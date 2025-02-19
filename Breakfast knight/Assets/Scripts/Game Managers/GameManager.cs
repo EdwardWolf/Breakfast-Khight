@@ -36,8 +36,18 @@ public class GameManager : MonoBehaviour
         // Reiniciar el tiempo de juego
         Time.timeScale = 1f;
         // Cargar la escena actual
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Principal");
+
     }
+
+    public void PausarJuego()
+    {
+        // Reiniciar el tiempo de juego
+        Time.timeScale = 0f;
+
+
+    }
+
 
     public List<Door> doors; // Lista de puertas en el nivel
     public List<Key> keys; // Lista de llaves en el nivel

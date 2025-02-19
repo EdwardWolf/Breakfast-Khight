@@ -32,6 +32,7 @@ public abstract class Jugador : MonoBehaviour
     private const float valorCorazon = 10f; // Valor de cada corazón
     public float tiempoUltimoDaño = 2f;
     public Camera camara; // Referencia a la cámara principal
+    public GameObject panelPausa; // Referencia al panel de pausa
 
     public UIManager uiManager;
 
@@ -49,11 +50,13 @@ public abstract class Jugador : MonoBehaviour
     [SerializeField] private AudioSource audioSource; // Referencia al componente AudioSource
     [SerializeField] private AudioClip sonidoGolpeEscudo; // Clip de audio para el sonido del golpe en el escudo
 
+    public bool juegoPausado = false; // Variable para rastrear el estado del juego (pausado o no)
+
     protected virtual void Start()
     {
         camara = Camera.main; // Obtener la cámara principal
         audioSource = camara.GetComponent<AudioSource>(); // Obtener el AudioSource de la cámara principal
-
+        panelPausa.SetActive(false); // oculta el panel de pausa
         // Asignar los valores iniciales de las estadísticas.
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
@@ -88,6 +91,7 @@ public abstract class Jugador : MonoBehaviour
         playerInputActions.Player.AtaqueCargado.started += OnAttackChargedStarted;
         playerInputActions.Player.AtaqueCargado.canceled += OnAttackChargedCanceled;
         playerInputActions.Player.Attack.started += OnAttackStarted;
+        playerInputActions.Player.Pausa.started += OnPausePressed; 
         playerInputActions.Enable();
     }
 
@@ -112,6 +116,7 @@ public abstract class Jugador : MonoBehaviour
         playerInputActions.Player.AtaqueCargado.started -= OnAttackChargedStarted;
         playerInputActions.Player.AtaqueCargado.canceled -= OnAttackChargedCanceled;
         playerInputActions.Player.Attack.started -= OnAttackStarted;
+        playerInputActions.Player.Pausa.started -= OnPausePressed; // Desasignar la acción de pausa
         playerInputActions.Disable();
     }
 
@@ -128,6 +133,18 @@ public abstract class Jugador : MonoBehaviour
     private void OnAttackStarted(InputAction.CallbackContext context)
     {
         ActivarAtaque();
+    }
+
+    private void OnPausePressed(InputAction.CallbackContext context)
+    {
+        if (juegoPausado)
+        {
+            ReanudarJuego();
+        }
+        else
+        {
+            PausarJuego();
+        }
     }
 
     public void ReducirVida(float cantidad)
@@ -226,10 +243,18 @@ public abstract class Jugador : MonoBehaviour
         }
     }
 
-    private void PausarJuego()
+    public void PausarJuego()
     {
         Time.timeScale = 0f; // Pausar el juego
-        // Opcional: Mostrar un mensaje de "Game Over" o una pantalla de pausa
+        juegoPausado = true;
+        panelPausa.SetActive(true); // Mostrar el panel de pausa
+    }
+
+    public void ReanudarJuego()
+    {
+        Time.timeScale = 1f; // Reanudar el juego
+        juegoPausado = false;
+        panelPausa.SetActive(false); // oculta el panel de pausa
     }
 
     public abstract void ActivarAtaque();
@@ -305,18 +330,6 @@ public abstract class Jugador : MonoBehaviour
         return escudoActivo && resistenciaEscudoActual >= valorMinimoEscudo;
     }
 
-    //public void ActivarEscudo()
-    //{
-    //    if (PuedeUsarEscudo())
-    //    {
-    //        // Lógica para activar la animación del escudo
-    //    }
-    //    else
-    //    {
-    //        // Lógica para mostrar un mensaje de que no se puede usar el escudo
-    //    }
-    //}
-
     private void EmpujarEnemigo(Enemigo enemigo)
     {
         Rigidbody rb = enemigo.GetComponent<Rigidbody>();
@@ -350,3 +363,4 @@ public abstract class Jugador : MonoBehaviour
         transform.Translate(movimiento, Space.World);
     }
 }
+

@@ -35,4 +35,8 @@ public static class PlayerController
     {
         return playerInput.Player.Shield.IsPressed();
     }
+        public static bool Pausa()
+    {
+        return playerInput.Player.Pausa.triggered;
+    }
 }
