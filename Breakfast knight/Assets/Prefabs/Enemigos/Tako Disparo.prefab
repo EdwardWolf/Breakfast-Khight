@@ -24,13 +24,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 67651969381850895}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -1.017, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8314989131710242568}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &1796982255342016933
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,11 +44,11 @@ GameObject:
   - component: {fileID: 2765718099733149342}
   - component: {fileID: 432653104884301826}
   - component: {fileID: 4495210902325272628}
-  - component: {fileID: 98541096788036500}
+  - component: {fileID: 8595395226700582368}
   m_Layer: 7
-  m_Name: Tako
+  m_Name: Tako Disparo
   m_TagString: Enemigo
-  m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -110,7 +110,7 @@ MonoBehaviour:
   ataques:
   - {fileID: 202818337070172411}
   ataqueActual: {fileID: 0}
-  cooldownTime: 1
+  cooldownTime: 2.86
 --- !u!65 &432653104884301826
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -159,7 +159,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &98541096788036500
+--- !u!114 &8595395226700582368
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -168,12 +168,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1796982255342016933}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b2e522d98559ad42ae00cd1b3a1aaec, type: 3}
+  m_Script: {fileID: 11500000, guid: e799b2287953f2440b39b5890d7c3c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   statsEnemigo: {fileID: 11400000, guid: 7a108cc28fd40754ea4ffb0de3b0f80d, type: 2}
-  detectionRadius: 11.93
-  attackRadius: 2.58
+  detectionRadius: 14.92
+  attackRadius: 5.23
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -181,7 +181,7 @@ MonoBehaviour:
   vidaE: 0
   damage: 0
   velocidadMovimiento: 0
-  usarRadioDeAtaque: 0
+  usarRadioDeAtaque: 1
   barraDeVida: {fileID: 636513289733358477}
   aderezoPrefab: {fileID: 314813060356092051, guid: 203865cd49b9d8843a424b7b73cba8ac, type: 3}
   dropChanceMin: 0.1
@@ -197,7 +197,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   golpeClip: {fileID: 8300000, guid: ff6457436fe2d1a49a6fc3c1078cf5d9, type: 3}
   sectionManager: {fileID: 0}
-  otroObjetoPrefab: {fileID: 8530985405293348726, guid: 3b37336d6f5c4354b92e215040e2a22e, type: 3}
+  attackHandler: {fileID: 0}
 --- !u!1 &3249295848647051217
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,13 +253,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3461670407729750323}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 1.15, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8314989131710242568}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &3917783562994029846
 GameObject:
   m_ObjectHideFlags: 0
@@ -5310,13 +5310,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6975997775439566339}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: -0.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8314989131710242568}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &8600605434855071861
 GameObject:
   m_ObjectHideFlags: 0
@@ -5636,15 +5636,15 @@ PrefabInstance:
     - target: {fileID: -6756540466453396485, guid: 4df70740f948d784aab0e22ff024a322, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 95542fed729524742993ad1ef06302e4, type: 2}
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
     - target: {fileID: -3816542594628886007, guid: 4df70740f948d784aab0e22ff024a322, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 0ade0474787d6c343996717392df680b, type: 2}
+      objectReference: {fileID: 2100000, guid: 95542fed729524742993ad1ef06302e4, type: 2}
     - target: {fileID: 497804180092593034, guid: 4df70740f948d784aab0e22ff024a322, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: ddcf77e9481928e4dae9c3772ddeeb12, type: 2}
+      objectReference: {fileID: 2100000, guid: 95542fed729524742993ad1ef06302e4, type: 2}
     - target: {fileID: 919132149155446097, guid: 4df70740f948d784aab0e22ff024a322, type: 3}
       propertyPath: m_Name
       value: "Ara\xF1a_Testeo"
@@ -5652,15 +5652,15 @@ PrefabInstance:
     - target: {fileID: 2289645218246245046, guid: 4df70740f948d784aab0e22ff024a322, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: ddcf77e9481928e4dae9c3772ddeeb12, type: 2}
+      objectReference: {fileID: 2100000, guid: 95542fed729524742993ad1ef06302e4, type: 2}
     - target: {fileID: 3303180567718481588, guid: 4df70740f948d784aab0e22ff024a322, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 0ade0474787d6c343996717392df680b, type: 2}
+      objectReference: {fileID: 2100000, guid: 95542fed729524742993ad1ef06302e4, type: 2}
     - target: {fileID: 9079246422309221563, guid: 4df70740f948d784aab0e22ff024a322, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 95542fed729524742993ad1ef06302e4, type: 2}
+      objectReference: {fileID: 2100000, guid: 07fe96baec29e6d4fa04ad4b99f52636, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

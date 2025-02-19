@@ -49,7 +49,7 @@ public class CaballeroLigero : Jugador
             }
         }
 
-        RegenerarResistenciaEscudo();
+        //RegenerarResistenciaEscudo();
 
         if (PlayerController.Interaccion())
         {

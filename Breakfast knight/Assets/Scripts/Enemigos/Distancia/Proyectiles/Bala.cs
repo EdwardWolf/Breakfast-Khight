@@ -7,10 +7,23 @@ public class Bala : MonoBehaviour
     public AttackHandler attackHandler;
     [SerializeField] private float damage = 10f; // Daño que la bala inflige al jugador
     [SerializeField] private float shieldDamage = 5f; // Daño que la bala inflige al escudo
+    [SerializeField] private float tiempoDeVida = 5f; // Tiempo de vida de la bala en segundos
+    public AudioSource audioSource; // Referencia al componente AudioSource
+    public AudioClip impactoClip; // Clip de audio para el sonido del impacto
 
     public void SetAttackHandler(AttackHandler handler)
     {
         attackHandler = handler;
+    }
+
+    private void Awake()
+    {
+        // Obtener el componente AudioSource de la cámara principal
+        Camera camara = Camera.main;
+        if (camara != null)
+        {
+            audioSource = camara.GetComponent<AudioSource>();
+        }
     }
 
     private void Start()
@@ -22,18 +35,35 @@ public class Bala : MonoBehaviour
         {
             attackHandler = parent.GetComponent<AttackHandler>();
         }
+
+        // Iniciar la corrutina para regresar la bala después de un tiempo
+        StartCoroutine(RegresarBalaDespuesDeTiempo(tiempoDeVida));
+    }
+
+    private IEnumerator RegresarBalaDespuesDeTiempo(float tiempo)
+    {
+        yield return new WaitForSeconds(tiempo);
+        if (attackHandler != null && attackHandler.ataqueActual != null)
+        {
+            attackHandler.ataqueActual.RegresarBala(this.gameObject);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-
             // Reducir la vida del jugador
             Jugador jugador = other.GetComponent<Jugador>();
             if (jugador != null)
             {
                 jugador.ReducirVida(damage);
+            }
+
+            // Reproducir el sonido del impacto
+            if (audioSource != null && impactoClip != null)
+            {
+                audioSource.PlayOneShot(impactoClip);
             }
 
             if (attackHandler != null && attackHandler.ataqueActual != null)
@@ -67,3 +97,6 @@ public class Bala : MonoBehaviour
         }
     }
 }
+
+
+

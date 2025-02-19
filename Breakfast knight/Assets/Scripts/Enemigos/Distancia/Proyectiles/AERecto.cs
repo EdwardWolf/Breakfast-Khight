@@ -7,6 +7,12 @@ public class AERecto : AtaqueEnemigo
     public Transform jugador;
     public LayerMask playerLayer;
 
+
+    private void Awake()
+    {
+        jugador = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+    
     public override void Atacar()
     {
         DispararBala();

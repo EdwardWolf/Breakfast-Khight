@@ -285,6 +285,7 @@ GameObject:
   - component: {fileID: 5908705135896800132}
   - component: {fileID: 7718722310069012698}
   - component: {fileID: 3852614654415314300}
+  - component: {fileID: -4485399278644901876}
   m_Layer: 7
   m_Name: Meatball
   m_TagString: Enemigo
@@ -346,12 +347,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   statsEnemigo: {fileID: 11400000, guid: c498f368e52051745803299915cafc9e, type: 2}
-  detectionRadius: 10
+  detectionRadius: 10.23
   attackRadius: 7
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackHandler: {fileID: 0}
   playerTransform: {fileID: 0}
   vidaE: 0
   damage: 0
@@ -359,18 +359,18 @@ MonoBehaviour:
   usarRadioDeAtaque: 1
   barraDeVida: {fileID: 2736929630848678896}
   aderezoPrefab: {fileID: 314813060356092051, guid: 203865cd49b9d8843a424b7b73cba8ac, type: 3}
-  otroObjetoPrefab: {fileID: 8530985405293348726, guid: 3b37336d6f5c4354b92e215040e2a22e, type: 3}
   dropChanceMin: 0.1
   dropChanceMax: 0.5
   dropPosition: {fileID: 2356957444021245349}
   jugador: {fileID: 0}
   isDamaging: 0
-  attackEffect: {fileID: 8307592135952057858}
   damageParticleSystem: {fileID: 205845514905942376}
   atackCooldown: 1.5
   tiempoParaSoltarObjeto: 5
   persiguiendoJugador: 0
   puedeSoltarObjeto: 1
+  audioSource: {fileID: 0}
+  golpeClip: {fileID: 8300000, guid: ff6457436fe2d1a49a6fc3c1078cf5d9, type: 3}
   sectionManager: {fileID: 0}
   tiempoPreparacion: 2
   velocidadEmbestida: 10
@@ -545,6 +545,27 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!95 &-4485399278644901876
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2958457280413121915}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3b7ebb6a52dca924d9abce4f4608bda1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3171151560266904959
 GameObject:
   m_ObjectHideFlags: 0
@@ -5587,6 +5608,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4483645128344389708}
     m_Modifications:
+    - target: {fileID: -8864524037390456124, guid: 67b01c61f2cfd6945a35a221cc5a3a33, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e74994b91a0e7e04885643186347a006, type: 2}
     - target: {fileID: -8679921383154817045, guid: 67b01c61f2cfd6945a35a221cc5a3a33, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.0029997
@@ -5639,6 +5664,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7096522804355000664, guid: 67b01c61f2cfd6945a35a221cc5a3a33, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e74994b91a0e7e04885643186347a006, type: 2}
+    - target: {fileID: -2184631528245307613, guid: 67b01c61f2cfd6945a35a221cc5a3a33, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ee9a8414b88a60d479d96399a9bdc44d, type: 2}
     - target: {fileID: -1998527195874843546, guid: 67b01c61f2cfd6945a35a221cc5a3a33, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -5659,10 +5692,18 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 4511003160402594489, guid: 67b01c61f2cfd6945a35a221cc5a3a33, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4602510127334939272, guid: 67b01c61f2cfd6945a35a221cc5a3a33, type: 3}
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 4981209608375563947, guid: 67b01c61f2cfd6945a35a221cc5a3a33, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ee9a8414b88a60d479d96399a9bdc44d, type: 2}
     - target: {fileID: 8724929517518154245, guid: 67b01c61f2cfd6945a35a221cc5a3a33, type: 3}
       propertyPath: m_Layer
       value: 7

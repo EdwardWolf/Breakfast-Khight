@@ -44,10 +44,16 @@ public abstract class Jugador : MonoBehaviour
     private GameInputs playerInputActions;
     public bool debufoVelocidadAplicado = false; // Variable para rastrear el debufo de velocidad
 
+    private Coroutine regeneracionEscudoCoroutine; // Variable para almacenar la corrutina de regeneración del escudo
+
+    [SerializeField] private AudioSource audioSource; // Referencia al componente AudioSource
+    [SerializeField] private AudioClip sonidoGolpeEscudo; // Clip de audio para el sonido del golpe en el escudo
 
     protected virtual void Start()
     {
         camara = Camera.main; // Obtener la cámara principal
+        audioSource = camara.GetComponent<AudioSource>(); // Obtener el AudioSource de la cámara principal
+
         // Asignar los valores iniciales de las estadísticas.
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
@@ -161,11 +167,28 @@ public abstract class Jugador : MonoBehaviour
             // Manejar la ruptura del escudo
             escudoActivo = false;
         }
+
+        // Reproducir el sonido del golpe en el escudo
+        if (audioSource != null && sonidoGolpeEscudo != null)
+        {
+            audioSource.PlayOneShot(sonidoGolpeEscudo);
+        }
+
+        // Reiniciar la corrutina de regeneración del escudo
+        if (regeneracionEscudoCoroutine != null)
+        {
+            StopCoroutine(regeneracionEscudoCoroutine);
+        }
+        regeneracionEscudoCoroutine = StartCoroutine(RegenerarResistenciaEscudo());
     }
 
-    public void RegenerarResistenciaEscudo()
+    private IEnumerator RegenerarResistenciaEscudo()
     {
-        if (Time.time - tiempoUltimoDaño >= tiempoRegeneracion && resistenciaEscudoActual < stats.resistenciaEscudo)
+        // Esperar el tiempo de regeneración
+        yield return new WaitForSeconds(tiempoRegeneracion);
+
+        // Regenerar la resistencia del escudo
+        while (resistenciaEscudoActual < stats.resistenciaEscudo)
         {
             resistenciaEscudoActual += velocidadRegeneracion * Time.deltaTime;
             if (resistenciaEscudoActual > stats.resistenciaEscudo)
@@ -182,6 +205,8 @@ public abstract class Jugador : MonoBehaviour
             {
                 escudoActivo = true;
             }
+
+            yield return null;
         }
     }
 
@@ -208,6 +233,7 @@ public abstract class Jugador : MonoBehaviour
     }
 
     public abstract void ActivarAtaque();
+
     //public abstract void ActivarAtaqueCargado();
     public abstract void ActivarInteraction();
 
@@ -323,10 +349,4 @@ public abstract class Jugador : MonoBehaviour
         Vector3 movimiento = new Vector3(direccionRotada.x, 0, direccionRotada.z) * _velocidadMovimiento * Time.deltaTime;
         transform.Translate(movimiento, Space.World);
     }
-
 }
-
-
-
-
-

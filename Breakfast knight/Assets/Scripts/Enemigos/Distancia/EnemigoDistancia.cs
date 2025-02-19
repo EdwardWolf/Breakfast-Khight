@@ -5,15 +5,13 @@ public class EnemigoDistancia : Enemigo
 {
     public AttackHandler attackHandler; // Añadir referencia a AttackHandler
     private bool atacando = false; // Variable para evitar múltiples corrutinas
+    
 
     protected override void Start()
     {
+
         base.Start();
         attackHandler = GetComponent<AttackHandler>(); // Obtener el componente AttackHandler
-        if (attackHandler == null)
-        {
-            Debug.LogError("No se encontró el componente AttackHandler en el objeto.");
-        }
     }
 
     protected override void Update()
@@ -37,15 +35,15 @@ public class EnemigoDistancia : Enemigo
         isDamaging = true;
         while (jugador != null)
         {
-            // Ejecutar el ataque
-            Atacck();
-            Debug.Log("Jugador ha recibido daño");
+            //// Ejecutar el ataque
+            //Atacck();
+            //Debug.Log("Jugador ha recibido daño");
 
-            // Activar el sistema de partículas
-            if (damageParticleSystem != null)
-            {
-                damageParticleSystem.Play();
-            }
+            //// Activar el sistema de partículas
+            //if (damageParticleSystem != null)
+            //{
+            //    damageParticleSystem.Play();
+            //}
 
             // Esperar el cooldown del ataque
             yield return new WaitForSeconds(atackCooldown);

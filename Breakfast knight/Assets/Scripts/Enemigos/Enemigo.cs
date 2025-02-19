@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class Enemigo : MonoBehaviour
 {
     public EnemigoStats statsEnemigo;
-    public float detectionRadius = 5f;
-    public float attackRadius = 2f;
+    public float detectionRadius;
+    public float attackRadius;
     public LayerMask playerLayer;
     public Transform playerTransform; // Añadir referencia al transform del jugador
     public float vidaE; // Vida del enemigo
@@ -28,10 +28,20 @@ public class Enemigo : MonoBehaviour
     public bool persiguiendoJugador = false; // Indica si el enemigo está persiguiendo al jugador
     public bool puedeSoltarObjeto = true; // Booleano para activar o desactivar la funcionalidad de soltar el objeto
     private Animator animator; // Referencia al componente Animator
+    public AudioSource audioSource; // Referencia al componente AudioSource
+    public AudioClip golpeClip; // Clip de audio para el sonido del golpe
+
+    protected virtual void Awake()
+    {
+        camara = Camera.main; // Obtener la cámara principal
+        if (camara != null)
+        {
+            audioSource = camara.GetComponent<AudioSource>(); // Obtener el componente AudioSource de la cámara
+        }
+    }
 
     protected virtual void Start()
     {
-        camara = Camera.main; // Obtener la cámara principal    
         vidaE = statsEnemigo.vida; // Inicializar la vida del enemigo
         ActualizarBarraDeVida(); // Inicializar la barra de vida
         velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Inicializar la velocidad de movimiento
@@ -75,7 +85,7 @@ public class Enemigo : MonoBehaviour
         if (hits.Length > 0)
         {
             playerTransform = hits[0].transform; // Guardar la referencia al transform del jugador
-            Debug.Log("Jugador detectado en el radio de detección.");
+            jugador = hits[0].GetComponent<Jugador>(); // Guardar la referencia al componente Jugador
             if (animator != null)
             {
                 animator.SetTrigger("DetectarJugador"); // Activar el Trigger de la animación de detección
@@ -84,6 +94,7 @@ public class Enemigo : MonoBehaviour
         else
         {
             playerTransform = null; // Si no hay jugador, resetear la referencia
+            jugador = null; // Resetear la referencia al componente Jugador
         }
     }
 
@@ -91,16 +102,19 @@ public class Enemigo : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, attackRadius, playerLayer);
         bool inRange = hits.Length > 0;
-        if (inRange)
-        {
-            Debug.Log("Jugador en el radio de ataque.");
-        }
         return inRange;
     }
 
     public virtual void Atacck()
     {
-        // Método virtual para ser sobrescrito en la clase derivada
+        if (jugador != null)
+        {
+            jugador.ReducirVida(damage); // Asegurarse de que el jugador reciba daño
+            if (audioSource != null && golpeClip != null)
+            {
+                audioSource.PlayOneShot(golpeClip); // Reproducir el sonido del golpe
+            }
+        }
     }
 
     public virtual IEnumerator DJugador()
@@ -242,3 +256,6 @@ public class Enemigo : MonoBehaviour
 
     public SectionManager sectionManager; // Referencia al SectionManager
 }
+
+
+

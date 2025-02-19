@@ -99,7 +99,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -121,6 +121,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackHandler: {fileID: 0}
   damage: 10
+  shieldDamage: 5
+  tiempoDeVida: 5
+  audioSource: {fileID: 0}
+  impactoClip: {fileID: 8300000, guid: dbd98ffcc75c9fe4d9b72cb58e132865, type: 3}
 --- !u!54 &5992699015641796833
 Rigidbody:
   m_ObjectHideFlags: 0
