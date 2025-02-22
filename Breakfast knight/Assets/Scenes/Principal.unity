@@ -1689,7 +1689,7 @@ GameObject:
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &180130009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4055,13 +4055,21 @@ PrefabInstance:
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 963194232}
+    - target: {fileID: 98541096788036500, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
+      propertyPath: persiguiendoJugador
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 98541096788036500, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
+      propertyPath: tiempoParaSoltarObjeto
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1796982255342016933, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
       propertyPath: m_Name
       value: Tako
       objectReference: {fileID: 0}
     - target: {fileID: 1796982255342016933, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5516416599882276330, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4564,6 +4572,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 961596893}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &475291444 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4514420319818716880, guid: 468b12d8c72b775428f648e8776a13f7, type: 3}
+  m_PrefabInstance: {fileID: 3137188331865252008}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &477947469
 GameObject:
   m_ObjectHideFlags: 0
@@ -14151,6 +14164,27 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 858036653430989946, guid: 468b12d8c72b775428f648e8776a13f7, type: 3}
   m_PrefabInstance: {fileID: 3137188331865252008}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &1275386031
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475291444}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4b5f327883889394c9dd64888bf425eb, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!43 &1281838541
 Mesh:
   m_ObjectHideFlags: 0
@@ -18077,8 +18111,8 @@ RectTransform:
   - {fileID: 104138505}
   - {fileID: 1055447284}
   - {fileID: 2121965706}
-  - {fileID: 770374914}
   - {fileID: 2137701194}
+  - {fileID: 770374914}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -20491,7 +20525,7 @@ GameObject:
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1860818458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24854,7 +24888,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4514420319818716880, guid: 468b12d8c72b775428f648e8776a13f7, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5015411517686417465, guid: 468b12d8c72b775428f648e8776a13f7, type: 3}
       propertyPath: m_IsActive
@@ -24980,6 +25014,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1249846634939483258, guid: 468b12d8c72b775428f648e8776a13f7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1918288949}
+    - targetCorrespondingSourceObject: {fileID: 4514420319818716880, guid: 468b12d8c72b775428f648e8776a13f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1275386031}
   m_SourcePrefab: {fileID: 100100000, guid: 468b12d8c72b775428f648e8776a13f7, type: 3}
 --- !u!224 &3805631544472948878 stripped
 RectTransform:

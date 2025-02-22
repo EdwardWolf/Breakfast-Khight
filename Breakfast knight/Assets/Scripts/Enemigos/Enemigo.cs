@@ -160,7 +160,7 @@ public class Enemigo : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
-    public void PerseguirJugador()
+    public virtual void PerseguirJugador()
     {
         Vector3 direction = (playerTransform.position - transform.position).normalized;
         transform.position += direction * velocidadMovimiento * Time.deltaTime;
@@ -251,11 +251,12 @@ public class Enemigo : MonoBehaviour
             StopAllCoroutines();
             velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Restaurar la velocidad de movimiento del enemigo
             puedeSoltarObjeto = true;
+            if (this is EnemigoCuerpo enemigoCuerpo)
+            {
+                enemigoCuerpo.AlcanzarJugador();
+            }
         }
     }
 
     public SectionManager sectionManager; // Referencia al SectionManager
 }
-
-
-

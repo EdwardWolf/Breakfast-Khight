@@ -5,19 +5,21 @@ public class EnemigoCuerpo : Enemigo
 {
     public GameObject otroObjetoPrefab;
     private Coroutine soltarObjetoCoroutine; // Variable para almacenar la corrutina
+    private bool haAlcanzadoAlJugador = false; // Variable para controlar si ha alcanzado al jugador
 
     protected override void Start()
     {
         base.Start();
+        soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
     }
 
     private IEnumerator SoltarObjetoCadaIntervalo(float intervalo)
     {
-        while (persiguiendoJugador)
+        while (true)
         {
-            if(!isDamaging)
+            yield return new WaitForSeconds(intervalo);
+            if (persiguiendoJugador && puedeSoltarObjeto)
             {
-                yield return new WaitForSeconds(intervalo);
                 Vector3 dropPosition = this.dropPosition != null ? this.dropPosition.position : transform.position;
                 RaycastHit hit;
                 if (Physics.Raycast(dropPosition, Vector3.down, out hit))
@@ -34,21 +36,31 @@ public class EnemigoCuerpo : Enemigo
                     charco.IniciarDisminucion();
                 }
             }
-             
         }
     }
 
     protected override void Update()
     {
         base.Update();
-        if (persiguiendoJugador && soltarObjetoCoroutine == null)
+        // No es necesario detener y reiniciar la corrutina aquí
+    }
+
+    public override void PerseguirJugador()
+    {
+        base.PerseguirJugador();
+        if (haAlcanzadoAlJugador)
         {
+            if (soltarObjetoCoroutine != null)
+            {
+                StopCoroutine(soltarObjetoCoroutine);
+            }
             soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+            haAlcanzadoAlJugador = false;
         }
-        else if (!persiguiendoJugador && soltarObjetoCoroutine != null)
-        {
-            StopCoroutine(soltarObjetoCoroutine);
-            soltarObjetoCoroutine = null;
-        }
+    }
+
+    public void AlcanzarJugador()
+    {
+        haAlcanzadoAlJugador = true;
     }
 }

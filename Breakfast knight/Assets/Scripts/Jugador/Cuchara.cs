@@ -3,6 +3,7 @@ using UnityEngine;
 public class Cuchara : Arma
 {
     [SerializeField] private ArmaData armaData;
+    private Animator animator;
 
     private void Awake()
     {
@@ -12,12 +13,17 @@ public class Cuchara : Arma
             daño = armaData.daño;
             velocidadDeAtaque = armaData.velocidadDeAtaque;
         }
+        animator = GetComponent<Animator>();
     }
 
     public override void Atacar()
     {
         // Implementación del ataque de la cuchara
         Debug.Log(nombreArma + " atacando con " + daño + " de daño.");
+        if (animator != null)
+        {
+            animator.SetTrigger("Atacar");
+        }
     }
 
     public override void Pasiva()

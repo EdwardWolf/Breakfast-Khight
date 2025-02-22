@@ -64,7 +64,7 @@ public abstract class Jugador : MonoBehaviour
     {
         camara = Camera.main; // Obtener la cámara principal
         audioSource = camara.GetComponent<AudioSource>(); // Obtener el AudioSource de la cámara principal
-        panelPausa.SetActive(false); // oculta el panel de pausa
+        panelPausa.SetActive(false); // Ocultar el panel de pausa
         // Asignar los valores iniciales de las estadísticas.
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
@@ -159,12 +159,18 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnAttackChargedStarted(InputAction.CallbackContext context)
     {
-        IniciarCarga();
+        if (!juegoPausado)
+        {
+            IniciarCarga();
+        }
     }
 
     private void OnAttackChargedCanceled(InputAction.CallbackContext context)
     {
-        CancelarCarga();
+        if (!juegoPausado)
+        {
+            CancelarCarga();
+        }
     }
 
     private void OnAttackStarted(InputAction.CallbackContext context)
@@ -186,12 +192,18 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnArmaAnterior(InputAction.CallbackContext context)
     {
-        CambiarArmaAnterior();
+        if (!juegoPausado)
+        {
+            CambiarArmaAnterior();
+        }
     }
 
     private void OnArmaSiguiente(InputAction.CallbackContext context)
     {
-        CambiarArmaSiguiente();
+        if (!juegoPausado)
+        {
+            CambiarArmaSiguiente();
+        }
     }
 
     public void CambiarArmaAnterior()
@@ -242,7 +254,8 @@ public abstract class Jugador : MonoBehaviour
         {
             // Manejar la muerte del jugador
             derrota.SetActive(true);
-            PausarJuego();
+            // No llamar a PausarJuego aquí
+            Time.timeScale = 0f; // Pausar el juego sin mostrar el panel de pausa
         }
     }
 
@@ -334,7 +347,7 @@ public abstract class Jugador : MonoBehaviour
     {
         Time.timeScale = 1f; // Reanudar el juego
         juegoPausado = false;
-        panelPausa.SetActive(false); // oculta el panel de pausa
+        panelPausa.SetActive(false); // Ocultar el panel de pausa
     }
 
     public abstract void ActivarAtaque();
@@ -426,6 +439,7 @@ public abstract class Jugador : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, areaRadius);
     }
+
     public void Mover(Vector3 direccion)
     {
         // Normalizar la dirección para evitar que las velocidades se sumen
@@ -443,4 +457,3 @@ public abstract class Jugador : MonoBehaviour
         transform.Translate(movimiento, Space.World);
     }
 }
-

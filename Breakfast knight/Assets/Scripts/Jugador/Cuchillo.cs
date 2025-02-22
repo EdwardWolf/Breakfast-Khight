@@ -3,6 +3,7 @@ using UnityEngine;
 public class Cuchillo : Arma
 {
     [SerializeField] private ArmaData armaData;
+    private Animator animator;
 
     private void Awake()
     {
@@ -18,6 +19,7 @@ public class Cuchillo : Arma
     {
         // Implementación del ataque de la cuchara
         Debug.Log(nombreArma + " atacando con " + daño + " de daño.");
+        animator.SetTrigger("Atacar");
     }
 
     public override void Pasiva()
