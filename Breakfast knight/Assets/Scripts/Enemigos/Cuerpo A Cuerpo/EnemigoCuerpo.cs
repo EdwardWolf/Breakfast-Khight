@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemigoCuerpo : Enemigo
 {
     public GameObject otroObjetoPrefab;
-    private bool soltandoObjeto = false; // Variable para evitar múltiples corrutinas
+    private Coroutine soltarObjetoCoroutine; // Variable para almacenar la corrutina
 
     protected override void Start()
     {
@@ -15,9 +15,9 @@ public class EnemigoCuerpo : Enemigo
     {
         while (persiguiendoJugador)
         {
-            yield return new WaitForSeconds(intervalo);
-            if (puedeSoltarObjeto)
+            if(!isDamaging)
             {
+                yield return new WaitForSeconds(intervalo);
                 Vector3 dropPosition = this.dropPosition != null ? this.dropPosition.position : transform.position;
                 RaycastHit hit;
                 if (Physics.Raycast(dropPosition, Vector3.down, out hit))
@@ -34,19 +34,21 @@ public class EnemigoCuerpo : Enemigo
                     charco.IniciarDisminucion();
                 }
             }
+             
         }
-        soltandoObjeto = false; // Restablecer la variable cuando la corrutina termine
     }
 
     protected override void Update()
     {
         base.Update();
-        if (persiguiendoJugador && puedeSoltarObjeto && !soltandoObjeto)
+        if (persiguiendoJugador && soltarObjetoCoroutine == null)
         {
-            soltandoObjeto = true; // Marcar que la corrutina está en ejecución
-            StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+            soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+        }
+        else if (!persiguiendoJugador && soltarObjetoCoroutine != null)
+        {
+            StopCoroutine(soltarObjetoCoroutine);
+            soltarObjetoCoroutine = null;
         }
     }
 }
-
-

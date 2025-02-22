@@ -80,6 +80,24 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ArmaAnterior"",
+                    ""type"": ""Button"",
+                    ""id"": ""c6ec1c96-037a-4f30-892c-5703cd5cca63"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ArmaSiguiente"",
+                    ""type"": ""Button"",
+                    ""id"": ""c513ed99-d2c5-41e9-b084-d20de91979d2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -97,7 +115,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a7742a38-dfc1-425b-a7ce-33275ed8fd9e"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -214,6 +232,28 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Pausa"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""85ca855a-1ab2-42b2-ad09-0ebec6bdd5aa"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ArmaAnterior"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f9e5db62-4984-4092-ad2d-f707d7d723a6"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ArmaSiguiente"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -228,6 +268,8 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         m_Player_Shield = m_Player.FindAction("Shield", throwIfNotFound: true);
         m_Player_AtaqueCargado = m_Player.FindAction("AtaqueCargado", throwIfNotFound: true);
         m_Player_Pausa = m_Player.FindAction("Pausa", throwIfNotFound: true);
+        m_Player_ArmaAnterior = m_Player.FindAction("ArmaAnterior", throwIfNotFound: true);
+        m_Player_ArmaSiguiente = m_Player.FindAction("ArmaSiguiente", throwIfNotFound: true);
     }
 
     ~@GameInputs()
@@ -300,6 +342,8 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Shield;
     private readonly InputAction m_Player_AtaqueCargado;
     private readonly InputAction m_Player_Pausa;
+    private readonly InputAction m_Player_ArmaAnterior;
+    private readonly InputAction m_Player_ArmaSiguiente;
     public struct PlayerActions
     {
         private @GameInputs m_Wrapper;
@@ -310,6 +354,8 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         public InputAction @Shield => m_Wrapper.m_Player_Shield;
         public InputAction @AtaqueCargado => m_Wrapper.m_Player_AtaqueCargado;
         public InputAction @Pausa => m_Wrapper.m_Player_Pausa;
+        public InputAction @ArmaAnterior => m_Wrapper.m_Player_ArmaAnterior;
+        public InputAction @ArmaSiguiente => m_Wrapper.m_Player_ArmaSiguiente;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -337,6 +383,12 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             @Pausa.started += instance.OnPausa;
             @Pausa.performed += instance.OnPausa;
             @Pausa.canceled += instance.OnPausa;
+            @ArmaAnterior.started += instance.OnArmaAnterior;
+            @ArmaAnterior.performed += instance.OnArmaAnterior;
+            @ArmaAnterior.canceled += instance.OnArmaAnterior;
+            @ArmaSiguiente.started += instance.OnArmaSiguiente;
+            @ArmaSiguiente.performed += instance.OnArmaSiguiente;
+            @ArmaSiguiente.canceled += instance.OnArmaSiguiente;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -359,6 +411,12 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             @Pausa.started -= instance.OnPausa;
             @Pausa.performed -= instance.OnPausa;
             @Pausa.canceled -= instance.OnPausa;
+            @ArmaAnterior.started -= instance.OnArmaAnterior;
+            @ArmaAnterior.performed -= instance.OnArmaAnterior;
+            @ArmaAnterior.canceled -= instance.OnArmaAnterior;
+            @ArmaSiguiente.started -= instance.OnArmaSiguiente;
+            @ArmaSiguiente.performed -= instance.OnArmaSiguiente;
+            @ArmaSiguiente.canceled -= instance.OnArmaSiguiente;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -384,5 +442,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         void OnShield(InputAction.CallbackContext context);
         void OnAtaqueCargado(InputAction.CallbackContext context);
         void OnPausa(InputAction.CallbackContext context);
+        void OnArmaAnterior(InputAction.CallbackContext context);
+        void OnArmaSiguiente(InputAction.CallbackContext context);
     }
 }

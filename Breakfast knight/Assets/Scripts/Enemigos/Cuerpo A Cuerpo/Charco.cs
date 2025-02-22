@@ -12,6 +12,7 @@ public class Charco : MonoBehaviour
     private Jugador jugador; // Referencia al jugador
     public float reduccionVelocidad = 0.3f; // Reducción de velocidad (30%)
     private bool debufoAplicado = false; // Para evitar acumulación de debufos
+    public float duracion = 1f; // Duración del debufo
 
     private void Start()
     {
@@ -61,7 +62,7 @@ public class Charco : MonoBehaviour
             jugador = other.GetComponent<Jugador>();
             if (jugador != null)
             {
-                jugador.AplicarDebufoVelocidad(reduccionVelocidad); // Usar el nuevo método
+                jugador.AplicarDebufoVelocidad(reduccionVelocidad,duracion); // Usar el nuevo método
                 debufoAplicado = true; // Marcar que el debufo ha sido aplicado
             }
         }

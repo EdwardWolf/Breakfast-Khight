@@ -63,6 +63,7 @@ public class CaballeroLigero : Jugador
         {
             DesactivarEscudo();
         }
+
     }
 
     //Activar de regreso para el movimiento en funcion a la direccion
