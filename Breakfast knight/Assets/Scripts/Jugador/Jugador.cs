@@ -50,6 +50,7 @@ public abstract class Jugador : MonoBehaviour
 
     [SerializeField] private AudioSource audioSource; // Referencia al componente AudioSource
     [SerializeField] private AudioClip sonidoGolpeEscudo; // Clip de audio para el sonido del golpe en el escudo
+    [SerializeField] private AudioClip sonidoAtaque; // Clip de audio para el sonido del ataque
 
     public bool juegoPausado = false; // Variable para rastrear el estado del juego (pausado o no)
 
@@ -457,3 +458,4 @@ public abstract class Jugador : MonoBehaviour
         transform.Translate(movimiento, Space.World);
     }
 }
+
