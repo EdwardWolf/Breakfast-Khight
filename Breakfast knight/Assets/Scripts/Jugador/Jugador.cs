@@ -46,17 +46,26 @@ public abstract class Jugador : MonoBehaviour
     public bool debufoVelocidadAplicado = false; // Variable para rastrear el debufo de velocidad
 
     private Coroutine regeneracionEscudoCoroutine; // Variable para almacenar la corrutina de regeneración del escudo
+    private Coroutine debufoVelocidadCoroutine; // Variable para almacenar la corrutina del debufo de velocidad
 
     [SerializeField] private AudioSource audioSource; // Referencia al componente AudioSource
     [SerializeField] private AudioClip sonidoGolpeEscudo; // Clip de audio para el sonido del golpe en el escudo
+    [SerializeField] private AudioClip sonidoAtaque; // Clip de audio para el sonido del ataque
 
     public bool juegoPausado = false; // Variable para rastrear el estado del juego (pausado o no)
+
+    // Referencias a las imágenes de las armas en la UI
+    public Image[] imagenesArmas;
+
+    public GameObject[] prefabsArmas = new GameObject[3];
+    private Arma[] armas = new Arma[3];
+    private int armaActual = 0;
 
     protected virtual void Start()
     {
         camara = Camera.main; // Obtener la cámara principal
         audioSource = camara.GetComponent<AudioSource>(); // Obtener el AudioSource de la cámara principal
-        panelPausa.SetActive(false); // oculta el panel de pausa
+        panelPausa.SetActive(false); // Ocultar el panel de pausa
         // Asignar los valores iniciales de las estadísticas.
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
@@ -91,18 +100,44 @@ public abstract class Jugador : MonoBehaviour
         playerInputActions.Player.AtaqueCargado.started += OnAttackChargedStarted;
         playerInputActions.Player.AtaqueCargado.canceled += OnAttackChargedCanceled;
         playerInputActions.Player.Attack.started += OnAttackStarted;
-        playerInputActions.Player.Pausa.started += OnPausePressed; 
+        playerInputActions.Player.Pausa.started += OnPausePressed;
+        playerInputActions.Player.ArmaAnterior.started += OnArmaAnterior; // Asignar la acción de cambiar al arma anterior
+        playerInputActions.Player.ArmaSiguiente.started += OnArmaSiguiente; // Asignar la acción de cambiar al arma siguiente
+
         playerInputActions.Enable();
+
+        for (int i = 0; i < prefabsArmas.Length; i++)
+        {
+            if (prefabsArmas[i] != null)
+            {
+                GameObject armaInstanciada = Instantiate(prefabsArmas[i], transform);
+                armas[i] = armaInstanciada.GetComponent<Arma>();
+                armaInstanciada.SetActive(i == armaActual);
+            }
+        }
+        ActualizarUIArmas();
     }
 
-    public void AplicarDebufoVelocidad(float reduccionVelocidad)
+    public void AplicarDebufoVelocidad(float reduccionVelocidad, float duracion)
     {
         if (!debufoVelocidadAplicado)
         {
             _velocidadMovimiento *= (1 - reduccionVelocidad);
             debufoVelocidadAplicado = true;
+            if (debufoVelocidadCoroutine != null)
+            {
+                StopCoroutine(debufoVelocidadCoroutine);
+            }
+            debufoVelocidadCoroutine = StartCoroutine(RemoverDebufoVelocidadDespuesDeTiempo(duracion));
         }
     }
+
+    private IEnumerator RemoverDebufoVelocidadDespuesDeTiempo(float duracion)
+    {
+        yield return new WaitForSeconds(duracion);
+        RemoverDebufoVelocidad();
+    }
+
     public void RemoverDebufoVelocidad()
     {
         if (debufoVelocidadAplicado)
@@ -111,23 +146,32 @@ public abstract class Jugador : MonoBehaviour
             debufoVelocidadAplicado = false;
         }
     }
+
     private void OnDestroy()
     {
         playerInputActions.Player.AtaqueCargado.started -= OnAttackChargedStarted;
         playerInputActions.Player.AtaqueCargado.canceled -= OnAttackChargedCanceled;
         playerInputActions.Player.Attack.started -= OnAttackStarted;
         playerInputActions.Player.Pausa.started -= OnPausePressed; // Desasignar la acción de pausa
+        playerInputActions.Player.ArmaAnterior.started -= OnArmaAnterior; // Desasignar la acción de cambiar al arma anterior
+        playerInputActions.Player.ArmaSiguiente.started -= OnArmaSiguiente; // Desasignar la acción de cambiar al arma siguiente
         playerInputActions.Disable();
     }
 
     private void OnAttackChargedStarted(InputAction.CallbackContext context)
     {
-        IniciarCarga();
+        if (!juegoPausado)
+        {
+            IniciarCarga();
+        }
     }
 
     private void OnAttackChargedCanceled(InputAction.CallbackContext context)
     {
-        CancelarCarga();
+        if (!juegoPausado)
+        {
+            CancelarCarga();
+        }
     }
 
     private void OnAttackStarted(InputAction.CallbackContext context)
@@ -147,6 +191,55 @@ public abstract class Jugador : MonoBehaviour
         }
     }
 
+    private void OnArmaAnterior(InputAction.CallbackContext context)
+    {
+        if (!juegoPausado)
+        {
+            CambiarArmaAnterior();
+        }
+    }
+
+    private void OnArmaSiguiente(InputAction.CallbackContext context)
+    {
+        if (!juegoPausado)
+        {
+            CambiarArmaSiguiente();
+        }
+    }
+
+    public void CambiarArmaAnterior()
+    {
+        armas[armaActual].gameObject.SetActive(false);
+        armaActual = (armaActual - 1 + armas.Length) % armas.Length;
+        armas[armaActual].gameObject.SetActive(true);
+        ActualizarUIArmas();
+    }
+
+    public void CambiarArmaSiguiente()
+    {
+        armas[armaActual].gameObject.SetActive(false);
+        armaActual = (armaActual + 1) % armas.Length;
+        armas[armaActual].gameObject.SetActive(true);
+        ActualizarUIArmas();
+    }
+
+    private void ActualizarUIArmas()
+    {
+        for (int i = 0; i < imagenesArmas.Length; i++)
+        {
+            if (i == armaActual)
+            {
+                imagenesArmas[i].color = Color.white; // Resaltar el arma seleccionada
+                imagenesArmas[i].transform.localScale = new Vector3(1.2f, 1.2f, 1.2f); // Aumentar el tamaño del arma seleccionada
+            }
+            else
+            {
+                imagenesArmas[i].color = Color.gray; // Atenuar las armas no seleccionadas
+                imagenesArmas[i].transform.localScale = new Vector3(1f, 1f, 1f); // Restablecer el tamaño de las armas no seleccionadas
+            }
+        }
+    }
+
     public void ReducirVida(float cantidad)
     {
         vidaActual -= cantidad;
@@ -162,7 +255,8 @@ public abstract class Jugador : MonoBehaviour
         {
             // Manejar la muerte del jugador
             derrota.SetActive(true);
-            PausarJuego();
+            // No llamar a PausarJuego aquí
+            Time.timeScale = 0f; // Pausar el juego sin mostrar el panel de pausa
         }
     }
 
@@ -254,7 +348,7 @@ public abstract class Jugador : MonoBehaviour
     {
         Time.timeScale = 1f; // Reanudar el juego
         juegoPausado = false;
-        panelPausa.SetActive(false); // oculta el panel de pausa
+        panelPausa.SetActive(false); // Ocultar el panel de pausa
     }
 
     public abstract void ActivarAtaque();
@@ -346,6 +440,7 @@ public abstract class Jugador : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, areaRadius);
     }
+
     public void Mover(Vector3 direccion)
     {
         // Normalizar la dirección para evitar que las velocidades se sumen

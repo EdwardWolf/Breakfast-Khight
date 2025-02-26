@@ -4,11 +4,10 @@ using UnityEngine;
 
 public abstract class Arma : MonoBehaviour
 {
-
     // Atributos del arma.
     public string nombreArma;
     public float daño;
-    public float alcance;
+    public float velocidadDeAtaque;
 
     public abstract void Atacar();
 
@@ -18,7 +17,5 @@ public abstract class Arma : MonoBehaviour
 
     public virtual void Activa()
     {
-    } 
-
-
+    }
 }

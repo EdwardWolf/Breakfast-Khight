@@ -58,6 +58,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ArmaAnterior",
+                    "type": "Button",
+                    "id": "c6ec1c96-037a-4f30-892c-5703cd5cca63",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ArmaSiguiente",
+                    "type": "Button",
+                    "id": "c513ed99-d2c5-41e9-b084-d20de91979d2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -75,7 +93,7 @@
                 {
                     "name": "",
                     "id": "a7742a38-dfc1-425b-a7ce-33275ed8fd9e",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -190,6 +208,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Pausa",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "85ca855a-1ab2-42b2-ad09-0ebec6bdd5aa",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ArmaAnterior",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f9e5db62-4984-4092-ad2d-f707d7d723a6",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ArmaSiguiente",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

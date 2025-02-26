@@ -4,19 +4,21 @@ using UnityEngine;
 public class EnemigoCuerpo : Enemigo
 {
     public GameObject otroObjetoPrefab;
-    private bool soltandoObjeto = false; // Variable para evitar múltiples corrutinas
+    private Coroutine soltarObjetoCoroutine; // Variable para almacenar la corrutina
+    private bool haAlcanzadoAlJugador = false; // Variable para controlar si ha alcanzado al jugador
 
     protected override void Start()
     {
         base.Start();
+        soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
     }
 
     private IEnumerator SoltarObjetoCadaIntervalo(float intervalo)
     {
-        while (persiguiendoJugador)
+        while (true)
         {
             yield return new WaitForSeconds(intervalo);
-            if (puedeSoltarObjeto)
+            if (persiguiendoJugador && puedeSoltarObjeto)
             {
                 Vector3 dropPosition = this.dropPosition != null ? this.dropPosition.position : transform.position;
                 RaycastHit hit;
@@ -35,18 +37,30 @@ public class EnemigoCuerpo : Enemigo
                 }
             }
         }
-        soltandoObjeto = false; // Restablecer la variable cuando la corrutina termine
     }
 
     protected override void Update()
     {
         base.Update();
-        if (persiguiendoJugador && puedeSoltarObjeto && !soltandoObjeto)
+        // No es necesario detener y reiniciar la corrutina aquí
+    }
+
+    public override void PerseguirJugador()
+    {
+        base.PerseguirJugador();
+        if (haAlcanzadoAlJugador)
         {
-            soltandoObjeto = true; // Marcar que la corrutina está en ejecución
-            StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+            if (soltarObjetoCoroutine != null)
+            {
+                StopCoroutine(soltarObjetoCoroutine);
+            }
+            soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+            haAlcanzadoAlJugador = false;
         }
     }
+
+    public void AlcanzarJugador()
+    {
+        haAlcanzadoAlJugador = true;
+    }
 }
-
-
