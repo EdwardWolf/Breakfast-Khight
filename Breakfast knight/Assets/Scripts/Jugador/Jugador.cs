@@ -61,6 +61,10 @@ public abstract class Jugador : MonoBehaviour
     private Arma[] armas = new Arma[3];
     private int armaActual = 0;
 
+    private bool ralentizadoBala = false; //Variable para decir si el jugador esta relentizado por la bala
+    public bool aturdidoBala = false; //Variable para decir si el jugador esta aturdido por la bala
+
+
     protected virtual void Start()
     {
         camara = Camera.main; // Obtener la cámara principal
@@ -116,6 +120,47 @@ public abstract class Jugador : MonoBehaviour
             }
         }
         ActualizarUIArmas();
+    }
+
+    public void AplicarRalentizacion(float factor, float duracion)
+    {
+        if (!ralentizadoBala)
+        {
+            StartCoroutine(Ralentizar(factor, duracion));
+        }
+    }
+
+    private IEnumerator Ralentizar(float factor, float duracion)
+    {
+        ralentizadoBala = true;
+        _velocidadMovimiento = _velocidadMovimiento * factor;
+        // Asigna la velocidad reducida al jugador
+
+        yield return new WaitForSeconds(duracion);
+
+        // Restaura la velocidad original del jugador
+        ralentizadoBala = false;
+        _velocidadMovimiento = stats.velocidadMovimiento;
+    }
+
+    public void AplicarAturdimiento (float duracion)
+    {
+        if(!aturdidoBala)
+        {
+            StartCoroutine(Aturdir(duracion));
+        }   
+    }
+
+    private IEnumerator Aturdir(float duracion)
+    {
+        aturdidoBala = true;
+        _velocidadMovimiento = 0;
+
+        // Asigna la velocidad reducida al jugador
+        yield return new WaitForSeconds(duracion);
+        // Restaura la velocidad original del jugador
+        aturdidoBala = false;
+        _velocidadMovimiento = stats.velocidadMovimiento;
     }
 
     public void AplicarDebufoVelocidad(float reduccionVelocidad, float duracion)

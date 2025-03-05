@@ -5,11 +5,14 @@ using UnityEngine;
 public class Bala : MonoBehaviour
 {
     public AttackHandler attackHandler;
-    [SerializeField] private float damage = 10f; // Daño que la bala inflige al jugador
-    [SerializeField] private float shieldDamage = 5f; // Daño que la bala inflige al escudo
+    [SerializeField] public float damage = 10f; // Daño que la bala inflige al jugador
+    [SerializeField] public float shieldDamage = 5f; // Daño que la bala inflige al escudo
     [SerializeField] private float tiempoDeVida = 5f; // Tiempo de vida de la bala en segundos
     public AudioSource audioSource; // Referencia al componente AudioSource
     public AudioClip impactoClip; // Clip de audio para el sonido del impacto
+    [SerializeField] private bool habilitarRalentizacion = true; // Habilitar efecto de ralentización
+    [SerializeField] private float duracionRalentizacion = 2f; // Duración del efecto de ralentización
+    [SerializeField] private float factorRalentizacion = 0.5f; // Factor de ralentización
 
     public void SetAttackHandler(AttackHandler handler)
     {
@@ -29,7 +32,6 @@ public class Bala : MonoBehaviour
     private void Start()
     {
         // Obtener el AttackHandler del tercer nivel de padres
-        //Transform parent = transform.parent?.parent?.parent;
         Transform parent = transform.parent;
         if (parent != null)
         {
@@ -40,7 +42,7 @@ public class Bala : MonoBehaviour
         StartCoroutine(RegresarBalaDespuesDeTiempo(tiempoDeVida));
     }
 
-    private IEnumerator RegresarBalaDespuesDeTiempo(float tiempo)
+    public IEnumerator RegresarBalaDespuesDeTiempo(float tiempo)
     {
         yield return new WaitForSeconds(tiempo);
         if (attackHandler != null && attackHandler.ataqueActual != null)
@@ -49,7 +51,7 @@ public class Bala : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -58,6 +60,12 @@ public class Bala : MonoBehaviour
             if (jugador != null)
             {
                 jugador.ReducirVida(damage);
+
+                // Aplicar el efecto de ralentización si está habilitado
+                if (habilitarRalentizacion)
+                {
+                    jugador.AplicarRalentizacion(factorRalentizacion, duracionRalentizacion);
+                }
             }
 
             // Reproducir el sonido del impacto
@@ -97,6 +105,3 @@ public class Bala : MonoBehaviour
         }
     }
 }
-
-
-

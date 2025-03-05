@@ -177,7 +177,7 @@ public class Enemigo : MonoBehaviour
         }
     }
 
-    void ActualizarBarraDeVida()
+    public void ActualizarBarraDeVida()
     {
         if (barraDeVida != null)
         {
@@ -185,7 +185,7 @@ public class Enemigo : MonoBehaviour
         }
     }
 
-    void DesactivarEnemigo()
+    public void DesactivarEnemigo()
     {
         // Desactivar el objeto del enemigo
         gameObject.SetActive(false);

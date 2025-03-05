@@ -76,7 +76,7 @@ public class CaballeroLigero : Jugador
 
     public override void ActivarAtaque()
     {
-        if (!escudoActivo)
+        if (!escudoActivo && !aturdidoBala)
         {
             armas.SetTrigger("Ataque");
             // Ataque simple
@@ -93,7 +93,7 @@ public class CaballeroLigero : Jugador
 
     private void ActivarEscudo()
     {
-        if (!escudoActivo)
+        if (!escudoActivo && !aturdidoBala)
         {
             armas.SetTrigger("EscudoActivado");
             Escudo.enabled = true;
@@ -105,7 +105,7 @@ public class CaballeroLigero : Jugador
 
     private void DesactivarEscudo()
     {
-        if (escudoActivo)
+        if (escudoActivo && !aturdidoBala)
         {
             armas.SetTrigger("EscudoDesactivado");
             Escudo.enabled = false;
@@ -115,6 +115,14 @@ public class CaballeroLigero : Jugador
         }
     }
 
+
+    private IEnumerator ActivarColliderEspada()
+    {
+        Espada.enabled = true;
+        yield return new WaitForSeconds(0.5f); // Ajusta el tiempo según la duración del golpe
+        Espada.enabled = false;
+    }
+    
     private void GirarHaciaMouse()
     {
         Plane playerPlane = new Plane(Vector3.up, transform.position);
@@ -125,13 +133,6 @@ public class CaballeroLigero : Jugador
             Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
-    }
-
-    private IEnumerator ActivarColliderEspada()
-    {
-        Espada.enabled = true;
-        yield return new WaitForSeconds(0.5f); // Ajusta el tiempo según la duración del golpe
-        Espada.enabled = false;
     }
 }
 
