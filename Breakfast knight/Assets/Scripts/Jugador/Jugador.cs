@@ -15,7 +15,7 @@ public abstract class Jugador : MonoBehaviour
     private int golpesRestantes; // Variable para almacenar los golpes restantes con el ataque incrementado
     [SerializeField] private Material materialBase; // Material base
     [SerializeField] private Material materialAumento; // Material de aumento de ataque
-    public Renderer renderer; // Referencia al Renderer del objeto
+    public new Renderer renderer; // Referencia al Renderer del objeto
     public GameObject derrota; // Referencia al objeto de derrota
     public float areaRadius = 5f; // Radio del área de efecto del ataque cargado
     public float pushForce = 10f; // Fuerza de empuje del ataque cargado
@@ -25,7 +25,7 @@ public abstract class Jugador : MonoBehaviour
     public bool isCharging = false;
     public float chargeTime;
     public float maxChargeTime = 3f; // Tiempo máximo de carga
-    private bool escudoActivo = false;
+    public bool escudoActivo = false;
     private float tiempoRegeneracion = 5f; // Tiempo de espera para comenzar la regeneración
     private float velocidadRegeneracion = 5f; // Velocidad de regeneración de la resistencia del escudo
     private float valorMinimoEscudo = 10f; // Valor mínimo de resistencia del escudo para poder usarlo
@@ -63,8 +63,6 @@ public abstract class Jugador : MonoBehaviour
 
     private bool ralentizadoBala = false; //Variable para decir si el jugador esta relentizado por la bala
     public bool aturdidoBala = false; //Variable para decir si el jugador esta aturdido por la bala
-
-
     protected virtual void Start()
     {
         camara = Camera.main; // Obtener la cámara principal
@@ -295,6 +293,10 @@ public abstract class Jugador : MonoBehaviour
             corazonesActuales = nuevosCorazones;
             OnVidaCambiada?.Invoke(corazonesActuales);
         }
+        else
+        {
+            StartCoroutine(CambiarMaterialTemporalmente(transform, materialPDaño, 0.5f));
+        }
 
         if (vidaActual <= 0)
         {
@@ -304,7 +306,6 @@ public abstract class Jugador : MonoBehaviour
             Time.timeScale = 0f; // Pausar el juego sin mostrar el panel de pausa
         }
     }
-
     public void ReducirResistenciaEscudo(float cantidad)
     {
         resistenciaEscudoActual -= cantidad;
@@ -501,6 +502,29 @@ public abstract class Jugador : MonoBehaviour
         // Mover al jugador en la dirección rotada sin importar la dirección a la que está mirando
         Vector3 movimiento = new Vector3(direccionRotada.x, 0, direccionRotada.z) * _velocidadMovimiento * Time.deltaTime;
         transform.Translate(movimiento, Space.World);
+    }
+
+    [SerializeField] private Material materialPlayer; // Material base
+    [SerializeField] private Material materialPDaño; // 
+    private IEnumerator CambiarMaterialTemporalmente(Transform parent, Material materialPDaño, float duracion)
+    {
+        CambiarMaterialDeHijos(parent, materialPDaño);
+        yield return new WaitForSeconds(duracion); // Esperar la duración especificada
+        CambiarMaterialDeHijos(parent, materialPlayer);
+    }
+
+    public void CambiarMaterialDeHijos(Transform parent, Material materialPDaño)
+    {
+        foreach (Transform child in parent)
+        {
+            foreach (Transform grandChild in child)
+            {
+                foreach (Renderer renderer in grandChild.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.material = materialPDaño;
+                }
+            }
+        }
     }
 }
 

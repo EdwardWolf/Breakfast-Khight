@@ -8,6 +8,7 @@ TagManager:
   - Enemigo
   - Escudo
   - Puerta
+  - Item
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - UI
   - Player
   - Enemigo
-  - 
+  - Item
   - 
   - 
   - 

@@ -6,7 +6,7 @@ public class BalaStun : Bala
 {
     [SerializeField] private float duracionAturdimiento = 2f; // Duración del efecto de aturdimiento
 
-    private void OnTriggerEnter(Collider other)
+    private new void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {

@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 534483814519483440}
+  - component: {fileID: 3752447366525759935}
   - component: {fileID: 8759199061693916073}
   - component: {fileID: 4357720218047266912}
   - component: {fileID: 3879804700900447977}
-  - component: {fileID: 3664891988037903395}
   - component: {fileID: 1030523867481225523}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Aderezo (Chocolate)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,6 +38,26 @@ Transform:
   - {fileID: 9033334417306564351}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3752447366525759935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314813060356092051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 426019553510f894ab9ebfed600fb341, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionDistance: 3
+  interactionTime: 2
+  interactionTimer: 0
+  jugador: {fileID: 0}
+  enemigo: {fileID: 0}
+  interactionProgressBar: {fileID: 506146485795256765}
+  incrementoAtaque: 100
+  cantidadGolpes: 5
 --- !u!33 &8759199061693916073
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -111,23 +131,6 @@ CapsuleCollider:
   m_Height: 16.770689
   m_Direction: 1
   m_Center: {x: -0.035026073, y: 0, z: -0.00000011920929}
---- !u!114 &3664891988037903395
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 314813060356092051}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e90e650cdefd55a44a65ec49ce06cedf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionDistance: 3
-  interactionTime: 2
-  incrementoAtaque: 100
-  cantidadGolpes: 5
-  interactionProgressBar: {fileID: 506146485795256765}
 --- !u!114 &1030523867481225523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,7 +162,7 @@ GameObject:
   - component: {fileID: 730133877172967145}
   - component: {fileID: 5542343834888298253}
   - component: {fileID: 7499760631274519482}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,7 +263,7 @@ GameObject:
   - component: {fileID: 460797781719719993}
   - component: {fileID: 3240364113253420465}
   - component: {fileID: 506146485795256765}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -335,7 +338,7 @@ GameObject:
   - component: {fileID: 9033334417306564351}
   - component: {fileID: 2760567092544273438}
   - component: {fileID: 1887825637667914525}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}

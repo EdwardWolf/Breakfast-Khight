@@ -352,13 +352,24 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
+  aderezoLayer:
+    serializedVersion: 2
+    m_Bits: 256
   playerTransform: {fileID: 0}
   vidaE: 0
   damage: 0
   velocidadMovimiento: 0
   usarRadioDeAtaque: 1
   barraDeVida: {fileID: 2736929630848678896}
-  aderezoPrefab: {fileID: 314813060356092051, guid: 203865cd49b9d8843a424b7b73cba8ac, type: 3}
+  aderezosPrefabs:
+  - {fileID: 314813060356092051, guid: 203865cd49b9d8843a424b7b73cba8ac, type: 3}
+  - {fileID: 314813060356092051, guid: 2bb3af57676a91347ad980157b9a29d6, type: 3}
+  - {fileID: 314813060356092051, guid: 2b2d4ad58b4130e4bb6e0b61694347df, type: 3}
+  - {fileID: 314813060356092051, guid: 30d39cb69bebaab4d8b49f76f9e0f863, type: 3}
+  - {fileID: 314813060356092051, guid: c81c390be35aedb49ac913143402073c, type: 3}
+  - {fileID: 314813060356092051, guid: 8bf59f6d8b170fe4d9144106468b2413, type: 3}
+  - {fileID: 314813060356092051, guid: d3ff78ee389177249a1c8e2a4efc665e, type: 3}
+  - {fileID: 314813060356092051, guid: 9b33678e560e3824f970f243b3147fcd, type: 3}
   dropChanceMin: 0.1
   dropChanceMax: 0.5
   dropPosition: {fileID: 2356957444021245349}
@@ -371,6 +382,9 @@ MonoBehaviour:
   puedeSoltarObjeto: 1
   audioSource: {fileID: 0}
   golpeClip: {fileID: 8300000, guid: ff6457436fe2d1a49a6fc3c1078cf5d9, type: 3}
+  probabilidadUsoAderezo: 1
+  interactionProgressBar: {fileID: 0}
+  interactionTime: 2
   sectionManager: {fileID: 0}
   tiempoPreparacion: 2
   velocidadEmbestida: 10

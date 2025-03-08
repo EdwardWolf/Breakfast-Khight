@@ -122,7 +122,7 @@ MonoBehaviour:
   attackHandler: {fileID: 0}
   damage: 10
   shieldDamage: 5
-  tiempoDeVida: 5
+  tiempoDeVida: 2
   audioSource: {fileID: 0}
   impactoClip: {fileID: 8300000, guid: dbd98ffcc75c9fe4d9b72cb58e132865, type: 3}
 --- !u!54 &5992699015641796833

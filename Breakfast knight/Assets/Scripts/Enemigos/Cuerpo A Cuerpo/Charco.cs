@@ -6,7 +6,7 @@ public class Charco : MonoBehaviour
     public float tiempoDeEspera = 2f; // Tiempo de espera antes de comenzar a disminuir el albedo
     public float velocidadDeDisminucion = 0.5f; // Velocidad a la que disminuye el albedo
 
-    private Renderer renderer;
+    private new Renderer renderer;
     private Material material;
     private Color colorInicial;
     private Jugador jugador; // Referencia al jugador
@@ -62,7 +62,7 @@ public class Charco : MonoBehaviour
             jugador = other.GetComponent<Jugador>();
             if (jugador != null)
             {
-                jugador.AplicarDebufoVelocidad(reduccionVelocidad,duracion); // Usar el nuevo método
+                jugador.AplicarDebufoVelocidad(reduccionVelocidad, duracion); // Usar el nuevo método
                 debufoAplicado = true; // Marcar que el debufo ha sido aplicado
             }
         }

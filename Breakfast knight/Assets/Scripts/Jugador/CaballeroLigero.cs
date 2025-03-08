@@ -5,18 +5,24 @@ using System.Collections.Generic;
 
 public class CaballeroLigero : Jugador
 {
-    private bool escudoActivo = false;
+    //private bool escudoActivo = false;
     public Collider Espada; // Referencia al collider del golpe
     public Collider Escudo; // Referencia al collider del escudo
     private GameInputs playerInputActions;
     public Animator animator; // Referencia al componente Animator
-    public Animator armas; // Referencia al componente Animator
-
+    //public Animator armas; // Referencia al componente Animator
+    private float attackLayerWeight = 0f;
+    private float escudoLayerWeight = 0f;
+    private float chargeLayerWeight = 0f;
+    private float cargadoLayerWeight = 0f;
+    public float attackTransitionSpeed = 5f; // Velocidad a la que el layer de ataque cambia su peso
+    private bool isAttacking = false;
     private void Awake()
     {
 
         playerInputActions = new GameInputs();
         Escudo.enabled = false;
+        animator = GetComponentInChildren<Animator>(); // Obtener el componente Animator del hijo
 
     }
     private void Update()
@@ -29,8 +35,22 @@ public class CaballeroLigero : Jugador
         Vector3 movimiento = PlayerController.GetMoveInput();
         Mover(movimiento);
 
+        if (movimiento != Vector3.zero)
+        {
+            animator.SetBool("Caminar",true); // Activar la animación de caminar
+
+        }
+        else
+        {
+            animator.SetBool("Caminar", false); // Desactivar la animación de caminar
+        }
+
         if (isCharging)
         {
+            chargeLayerWeight = 1f;
+            animator.SetLayerWeight(3, chargeLayerWeight);
+            animator.SetBool("Carga", true);
+
             chargeTime += Time.deltaTime;
             if (cargaBarra != null)
             {
@@ -39,7 +59,13 @@ public class CaballeroLigero : Jugador
 
             if (chargeTime >= maxChargeTime)
             {
+                chargeLayerWeight = 0f;
+                animator.SetLayerWeight(3,chargeLayerWeight);
+                animator.SetBool("Carga", false);
                 AtaqueCargadoArea();
+                animator.SetTrigger("AtaqueCargado");
+                cargadoLayerWeight = 1f;
+                animator.SetLayerWeight(4,cargadoLayerWeight);
                 isCharging = false;
                 chargeTime = 0f;
                 if (cargaBarra != null)
@@ -47,6 +73,12 @@ public class CaballeroLigero : Jugador
                     cargaBarra.fillAmount = 0f;
                 }
             }
+        }
+        else
+        {
+            chargeLayerWeight = 0f;
+            animator.SetLayerWeight(3, chargeLayerWeight);
+            animator.SetBool("Carga", false);
         }
 
         //RegenerarResistenciaEscudo();
@@ -64,6 +96,11 @@ public class CaballeroLigero : Jugador
             DesactivarEscudo();
         }
 
+        // Ajustar el peso del Attack Layer (index 1)
+        animator.SetLayerWeight(1, attackLayerWeight);
+        animator.SetLayerWeight(2, escudoLayerWeight);
+        animator.SetLayerWeight(3, chargeLayerWeight);
+        animator.SetLayerWeight(4, cargadoLayerWeight);
     }
 
     //Activar de regreso para el movimiento en funcion a la direccion
@@ -78,11 +115,43 @@ public class CaballeroLigero : Jugador
     {
         if (!escudoActivo && !aturdidoBala)
         {
-            armas.SetTrigger("Ataque");
-            // Ataque simple
-            animator.SetTrigger("Ataque"); // Activar la animación de ataque
+            if (animator != null)
+            {
+                //attackLayerWeight = Mathf.Lerp(attackLayerWeight, 1f, Time.deltaTime * attackTransitionSpeed);
+                attackLayerWeight = 1f;
+
+                animator.SetTrigger("Ataque"); // Activar la animación de ataque
+                StartCoroutine(WaitAndResetAttackLayerWeight(1f));
+            }
             StartCoroutine(ActivarColliderEspada());
         }
+        else
+        {
+            attackLayerWeight = 0f;
+            //attackLayerWeight = Mathf.Lerp(attackLayerWeight, 0f, Time.deltaTime * attackTransitionSpeed);
+        }
+        animator.SetLayerWeight(1, attackLayerWeight); // Ajustar el peso del Attack Layer (index 1)
+
+        // Aquí puedes revisar si la animación de ataque ha terminado y resetear el estado
+        if (animator.GetCurrentAnimatorStateInfo(1).normalizedTime >= 1f && !animator.IsInTransition(1))
+        {
+            isAttacking = false;
+        }
+    }
+    //Verifica el estatus de la trancision de la animacion
+    //private IEnumerator WaitAndResetAttackLayerWeight()
+    //{
+    //    // Esperar a que la animación de ataque termine
+    //    while (animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1f || animator.IsInTransition(1))
+    //    {
+    //        yield return null;
+    //    }
+    //    attackLayerWeight = 0f;
+    //}
+    private IEnumerator WaitAndResetAttackLayerWeight(float waitTime)
+    {
+        yield return new WaitForSecondsRealtime(waitTime);
+        attackLayerWeight = 0f;
     }
 
     public override void ActivarInteraction()
@@ -95,11 +164,13 @@ public class CaballeroLigero : Jugador
     {
         if (!escudoActivo && !aturdidoBala)
         {
-            armas.SetTrigger("EscudoActivado");
+            Debug.Log("escudo Activo");
             Escudo.enabled = true;
             escudoActivo = true;
             _velocidadMovimiento /= 2; // Reducir la velocidad a la mitad
             animator.SetTrigger("EscudoActivado"); // Activar la animación de escudo activado
+            escudoLayerWeight = 1f;
+            animator.SetLayerWeight(2, escudoLayerWeight); // Ajustar el peso de Defensa Layer (index 1)
         }
     }
 
@@ -107,11 +178,15 @@ public class CaballeroLigero : Jugador
     {
         if (escudoActivo && !aturdidoBala)
         {
-            armas.SetTrigger("EscudoDesactivado");
+            Debug.Log("Escudo desactivado");
+            //armas.SetTrigger("EscudoDesactivado");
             Escudo.enabled = false;
             escudoActivo = false;
             _velocidadMovimiento = stats.velocidadMovimiento; // Restaurar la velocidad original
             animator.SetTrigger("EscudoDesactivado"); // Activar la animación de escudo desactivado
+            escudoLayerWeight = 0f;
+            animator.SetLayerWeight(2, escudoLayerWeight); // Ajustar el peso de Defensa Layer (index 1)
+
         }
     }
 
