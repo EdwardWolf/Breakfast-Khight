@@ -13,9 +13,6 @@ public abstract class Jugador : MonoBehaviour
     [SerializeField] protected float velocidadAtaque;
     [SerializeField] public float ataque; // Añadir una variable para el ataque
     private int golpesRestantes; // Variable para almacenar los golpes restantes con el ataque incrementado
-    [SerializeField] private Material materialBase; // Material base
-    [SerializeField] private Material materialAumento; // Material de aumento de ataque
-    public new Renderer renderer; // Referencia al Renderer del objeto
     public GameObject derrota; // Referencia al objeto de derrota
     public float areaRadius = 5f; // Radio del área de efecto del ataque cargado
     public float pushForce = 10f; // Fuerza de empuje del ataque cargado
@@ -33,6 +30,7 @@ public abstract class Jugador : MonoBehaviour
     public float tiempoUltimoDaño = 2f;
     public Camera camara; // Referencia a la cámara principal
     public GameObject panelPausa; // Referencia al panel de pausa
+    [SerializeField] private Transform puntoInstanciacionArma; // Punto de instanciación del arma
 
     public UIManager uiManager;
 
@@ -63,12 +61,17 @@ public abstract class Jugador : MonoBehaviour
 
     private bool ralentizadoBala = false; //Variable para decir si el jugador esta relentizado por la bala
     public bool aturdidoBala = false; //Variable para decir si el jugador esta aturdido por la bala
+
+    public Collider armaCollider; // Referencia al Collider del arma actual
+
+    private bool isAttacking = false; // Variable para controlar el estado de la animación de ataque
+
     protected virtual void Start()
     {
         camara = Camera.main; // Obtener la cámara principal
         audioSource = camara.GetComponent<AudioSource>(); // Obtener el AudioSource de la cámara principal
         panelPausa.SetActive(false); // Ocultar el panel de pausa
-        // Asignar los valores iniciales de las estadísticas.
+                                     // Asignar los valores iniciales de las estadísticas.
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
         _velocidadMovimiento = stats.velocidadMovimiento;
@@ -77,11 +80,6 @@ public abstract class Jugador : MonoBehaviour
         corazonesActuales = Mathf.CeilToInt(vidaActual / valorCorazon);
         OnVidaCambiada?.Invoke(corazonesActuales);
         derrota.SetActive(false);
-
-        if (renderer != null)
-        {
-            renderer.material = materialBase; // Asignar el material base al inicio
-        }
 
         if (cargaBarra != null)
         {
@@ -112,12 +110,14 @@ public abstract class Jugador : MonoBehaviour
         {
             if (prefabsArmas[i] != null)
             {
-                GameObject armaInstanciada = Instantiate(prefabsArmas[i], transform);
+                GameObject armaInstanciada = Instantiate(prefabsArmas[i], puntoInstanciacionArma);
                 armas[i] = armaInstanciada.GetComponent<Arma>();
                 armaInstanciada.SetActive(i == armaActual);
             }
         }
         ActualizarUIArmas();
+        ActualizarArmaCollider(); // Actualizar el Collider del arma actual
+
     }
 
     public void AplicarRalentizacion(float factor, float duracion)
@@ -141,12 +141,12 @@ public abstract class Jugador : MonoBehaviour
         _velocidadMovimiento = stats.velocidadMovimiento;
     }
 
-    public void AplicarAturdimiento (float duracion)
+    public void AplicarAturdimiento(float duracion)
     {
-        if(!aturdidoBala)
+        if (!aturdidoBala)
         {
             StartCoroutine(Aturdir(duracion));
-        }   
+        }
     }
 
     private IEnumerator Aturdir(float duracion)
@@ -203,7 +203,7 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnAttackChargedStarted(InputAction.CallbackContext context)
     {
-        if (!juegoPausado)
+        if (!juegoPausado && vidaActual > 0)
         {
             IniciarCarga();
         }
@@ -211,7 +211,7 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnAttackChargedCanceled(InputAction.CallbackContext context)
     {
-        if (!juegoPausado)
+        if (!juegoPausado && vidaActual > 0)
         {
             CancelarCarga();
         }
@@ -236,7 +236,7 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnArmaAnterior(InputAction.CallbackContext context)
     {
-        if (!juegoPausado)
+        if (!juegoPausado && vidaActual>0)
         {
             CambiarArmaAnterior();
         }
@@ -244,18 +244,26 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnArmaSiguiente(InputAction.CallbackContext context)
     {
-        if (!juegoPausado)
+        if (!juegoPausado && vidaActual > 0)
         {
             CambiarArmaSiguiente();
         }
     }
 
+    private void ActualizarArmaCollider()
+    {
+        if (armas[armaActual] != null)
+        {
+            armaCollider = armas[armaActual].GetComponent<Collider>();
+        }
+    }
     public void CambiarArmaAnterior()
     {
         armas[armaActual].gameObject.SetActive(false);
         armaActual = (armaActual - 1 + armas.Length) % armas.Length;
         armas[armaActual].gameObject.SetActive(true);
         ActualizarUIArmas();
+        ActualizarArmaCollider(); // Actualizar el Collider del arma actual
     }
 
     public void CambiarArmaSiguiente()
@@ -264,6 +272,7 @@ public abstract class Jugador : MonoBehaviour
         armaActual = (armaActual + 1) % armas.Length;
         armas[armaActual].gameObject.SetActive(true);
         ActualizarUIArmas();
+        ActualizarArmaCollider(); // Actualizar el Collider del arma actual
     }
 
     private void ActualizarUIArmas()
@@ -293,10 +302,6 @@ public abstract class Jugador : MonoBehaviour
             corazonesActuales = nuevosCorazones;
             OnVidaCambiada?.Invoke(corazonesActuales);
         }
-        else
-        {
-            StartCoroutine(CambiarMaterialTemporalmente(transform, materialPDaño, 0.5f));
-        }
 
         if (vidaActual <= 0)
         {
@@ -306,6 +311,7 @@ public abstract class Jugador : MonoBehaviour
             Time.timeScale = 0f; // Pausar el juego sin mostrar el panel de pausa
         }
     }
+
     public void ReducirResistenciaEscudo(float cantidad)
     {
         resistenciaEscudoActual -= cantidad;
@@ -345,7 +351,7 @@ public abstract class Jugador : MonoBehaviour
         yield return new WaitForSeconds(tiempoRegeneracion);
 
         // Regenerar la resistencia del escudo
-        while (resistenciaEscudoActual < stats.resistenciaEscudo)
+        while (resistenciaEscudoActual < stats.resistenciaEscudo && vidaActual > 0)
         {
             resistenciaEscudoActual += velocidadRegeneracion * Time.deltaTime;
             if (resistenciaEscudoActual > stats.resistenciaEscudo)
@@ -371,23 +377,18 @@ public abstract class Jugador : MonoBehaviour
     {
         incrementoAtaqueTemporal = cantidad;
         golpesRestantes = golpes;
-        CambiarMaterial(materialAumento); // Cambiar al material de aumento de ataque
         uiManager.MostrarIncrementoAtaque(cantidad, golpes); // Actualizar la UI
-    }
-
-    private void CambiarMaterial(Material nuevoMaterial)
-    {
-        if (renderer != null)
-        {
-            renderer.material = nuevoMaterial;
-        }
     }
 
     public void PausarJuego()
     {
-        Time.timeScale = 0f; // Pausar el juego
-        juegoPausado = true;
-        panelPausa.SetActive(true); // Mostrar el panel de pausa
+        if(vidaActual > 0)
+        {
+            Time.timeScale = 0f; // Pausar el juego
+            juegoPausado = true;
+            panelPausa.SetActive(true); // Mostrar el panel de pausa
+        }
+
     }
 
     public void ReanudarJuego()
@@ -399,12 +400,12 @@ public abstract class Jugador : MonoBehaviour
 
     public abstract void ActivarAtaque();
 
-    //public abstract void ActivarAtaqueCargado();
+
     public abstract void ActivarInteraction();
 
     protected void AtaqueCargadoArea()
     {
-        if (incrementoAtaqueTemporal > 0)
+        if (incrementoAtaqueTemporal > 0 && vidaActual > 0)
         {
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, areaRadius);
             foreach (Collider hitCollider in hitColliders)
@@ -425,7 +426,6 @@ public abstract class Jugador : MonoBehaviour
             if (golpesRestantes <= 0)
             {
                 incrementoAtaqueTemporal = 0; // Restablecer el incremento de ataque temporal
-                CambiarMaterial(materialBase); // Cambiar al material base
             }
         }
         else
@@ -436,7 +436,7 @@ public abstract class Jugador : MonoBehaviour
 
     public void IniciarCarga()
     {
-        if (incrementoAtaqueTemporal > 0)
+        if (incrementoAtaqueTemporal > 0 && vidaActual > 0)
         {
             isCharging = true;
             chargeTime = 0f;
@@ -503,28 +503,4 @@ public abstract class Jugador : MonoBehaviour
         Vector3 movimiento = new Vector3(direccionRotada.x, 0, direccionRotada.z) * _velocidadMovimiento * Time.deltaTime;
         transform.Translate(movimiento, Space.World);
     }
-
-    [SerializeField] private Material materialPlayer; // Material base
-    [SerializeField] private Material materialPDaño; // 
-    private IEnumerator CambiarMaterialTemporalmente(Transform parent, Material materialPDaño, float duracion)
-    {
-        CambiarMaterialDeHijos(parent, materialPDaño);
-        yield return new WaitForSeconds(duracion); // Esperar la duración especificada
-        CambiarMaterialDeHijos(parent, materialPlayer);
-    }
-
-    public void CambiarMaterialDeHijos(Transform parent, Material materialPDaño)
-    {
-        foreach (Transform child in parent)
-        {
-            foreach (Transform grandChild in child)
-            {
-                foreach (Renderer renderer in grandChild.GetComponentsInChildren<Renderer>())
-                {
-                    renderer.material = materialPDaño;
-                }
-            }
-        }
-    }
 }
-

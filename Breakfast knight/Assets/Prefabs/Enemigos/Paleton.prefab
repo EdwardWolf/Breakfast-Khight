@@ -125,6 +125,8 @@ MonoBehaviour:
   probabilidadUsoAderezo: 1
   interactionProgressBar: {fileID: 0}
   interactionTime: 2
+  probabilidadAlejarse: 0.3
+  distanciaAlejarse: 5
   sectionManager: {fileID: 0}
   attackHandler: {fileID: 0}
 --- !u!114 &2765718099733149342
@@ -5139,7 +5141,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -962.68, y: -536.53}
+  m_AnchoredPosition: {x: -962.68, y: -535.7}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5887488802787588137

@@ -48,6 +48,11 @@ public class Enemigo : MonoBehaviour
     public float probabilidadAlejarse = 0.3f; // Probabilidad de alejarse (0-1)
     public float distanciaAlejarse = 5f; // Distancia a la que se alejará el enemigo
 
+    public Collider escudoCollider; // Referencia al collider del escudo
+
+    private Coroutine dañoCoroutine;
+    private Coroutine reducirResistenciaEscudoCoroutine;
+
     protected virtual void Awake()
     {
         camara = Camera.main; // Obtener la cámara principal
@@ -82,7 +87,7 @@ public class Enemigo : MonoBehaviour
             {
                 if (!isDamaging)
                 {
-                    StartCoroutine(DJugador());
+                    dañoCoroutine = StartCoroutine(DJugador());
                 }
             }
             else
@@ -145,8 +150,7 @@ public class Enemigo : MonoBehaviour
     public bool IsPlayerInAttackRange()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, attackRadius, playerLayer);
-        bool inRange = hits.Length > 0;
-        return inRange;
+        return hits.Length > 0;
     }
 
     public virtual void Atacck()
@@ -287,6 +291,12 @@ public class Enemigo : MonoBehaviour
             // Dibujar una esfera en el punto donde está el enemigo con el radio de ataque
             Gizmos.DrawWireSphere(transform.position, attackRadius);
         }
+
+        if (escudoCollider != null)
+        {
+            Gizmos.color = Color.black;
+            Gizmos.DrawWireCube(escudoCollider.bounds.center, escudoCollider.bounds.size);
+        }
     }
 
     private void DropAderezo()
@@ -309,20 +319,34 @@ public class Enemigo : MonoBehaviour
         }
     }
 
+    public float shieldDamage = 10f; // Daño al escudo
+    public bool enContactoConEscudo = false;
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && !enContactoConEscudo)
         {
             Debug.Log("Enemigo ha colisionado con el jugador");
             jugador = collision.gameObject.GetComponent<Jugador>();
             if (jugador != null && !isDamaging)
             {
-                StartCoroutine(EsperarYHacerDanio());
+                dañoCoroutine = StartCoroutine(EsperarYHacerDanio());
             }
             // Detener el movimiento del enemigo
             velocidadMovimiento = 0f;
             // Dejar de soltar el objeto adicional
             puedeSoltarObjeto = false;
+        }
+        else if (escudoCollider != null && collision.collider == escudoCollider && escudoCollider.enabled)
+        {
+            Debug.Log("Enemigo ha colisionado con el escudo");
+            enContactoConEscudo = true;
+            jugador = collision.gameObject.GetComponentInParent<Jugador>();
+            velocidadMovimiento = 0f;
+            if (jugador != null)
+            {
+                reducirResistenciaEscudoCoroutine = StartCoroutine(EsperarYReducirResistenciaEscudo());
+            }
         }
     }
 
@@ -330,14 +354,31 @@ public class Enemigo : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            Debug.Log("Enemigo ha dejado de colisionar con el jugador");
             jugador = null;
             isDamaging = false;
-            StopAllCoroutines();
+            if (dañoCoroutine != null)
+            {
+                StopCoroutine(dañoCoroutine);
+                dañoCoroutine = null;
+            }
             velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Restaurar la velocidad de movimiento del enemigo
             puedeSoltarObjeto = true;
             if (this is EnemigoCuerpo enemigoCuerpo)
             {
                 enemigoCuerpo.AlcanzarJugador();
+            }
+        }
+        else if (escudoCollider != null && collision.collider == escudoCollider)
+        {
+            velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Restaurar la velocidad de movimiento del enemigo
+
+            Debug.Log("Enemigo ha dejado de colisionar con el escudo");
+            enContactoConEscudo = false;
+            if (reducirResistenciaEscudoCoroutine != null)
+            {
+                StopCoroutine(reducirResistenciaEscudoCoroutine);
+                reducirResistenciaEscudoCoroutine = null;
             }
         }
     }
@@ -347,10 +388,37 @@ public class Enemigo : MonoBehaviour
         yield return new WaitForSeconds(1f); // Esperar un segundo
         if (jugador != null)
         {
-            StartCoroutine(DJugador()); // Iniciar la corrutina para hacer daño al jugador
+            dañoCoroutine = StartCoroutine(DJugador()); // Iniciar la corrutina para hacer daño al jugador
+        }
+    }
+
+    private IEnumerator EsperarYReducirResistenciaEscudo()
+    {
+        while (enContactoConEscudo)
+        {
+            yield return new WaitForSeconds(1f); // Esperar un segundo
+            if (jugador != null)
+            {
+                jugador.ReducirResistenciaEscudo(shieldDamage); // Reducir la resistencia del escudo
+            }
         }
     }
 
     public SectionManager sectionManager; // Referencia al SectionManager
-}
 
+    private Coroutine ralentizacionCoroutine;
+    public void AplicarRalentizacion(float factor, float duracion)
+    {
+        if (ralentizacionCoroutine != null)
+        {
+            StopCoroutine(ralentizacionCoroutine);
+        }
+        ralentizacionCoroutine = StartCoroutine(Ralentizar(factor, duracion));
+    }
+    private IEnumerator Ralentizar(float factor, float duracion)
+    {
+        velocidadMovimiento *= factor;
+        yield return new WaitForSeconds(duracion);
+        velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Inicializar la velocidad de movimiento
+    }
+}

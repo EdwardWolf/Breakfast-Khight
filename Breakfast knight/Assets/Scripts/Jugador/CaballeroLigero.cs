@@ -6,7 +6,6 @@ using System.Collections.Generic;
 public class CaballeroLigero : Jugador
 {
     //private bool escudoActivo = false;
-    public Collider Espada; // Referencia al collider del golpe
     public Collider Escudo; // Referencia al collider del escudo
     private GameInputs playerInputActions;
     public Animator animator; // Referencia al componente Animator
@@ -113,10 +112,11 @@ public class CaballeroLigero : Jugador
 
     public override void ActivarAtaque()
     {
-        if (!escudoActivo && !aturdidoBala)
+        if (!escudoActivo && !aturdidoBala && !isAttacking)
         {
             if (animator != null)
             {
+                isAttacking = true; // Iniciar la animación de ataque
                 //attackLayerWeight = Mathf.Lerp(attackLayerWeight, 1f, Time.deltaTime * attackTransitionSpeed);
                 attackLayerWeight = 1f;
 
@@ -127,6 +127,7 @@ public class CaballeroLigero : Jugador
         }
         else
         {
+            isAttacking = false;
             attackLayerWeight = 0f;
             //attackLayerWeight = Mathf.Lerp(attackLayerWeight, 0f, Time.deltaTime * attackTransitionSpeed);
         }
@@ -193,9 +194,9 @@ public class CaballeroLigero : Jugador
 
     private IEnumerator ActivarColliderEspada()
     {
-        Espada.enabled = true;
+        armaCollider.enabled = true;
         yield return new WaitForSeconds(0.5f); // Ajusta el tiempo según la duración del golpe
-        Espada.enabled = false;
+        armaCollider.enabled = false;
     }
     
     private void GirarHaciaMouse()
@@ -207,6 +208,21 @@ public class CaballeroLigero : Jugador
             Vector3 targetPoint = ray.GetPoint(hitDist);
             Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
+    }
+
+    private IEnumerator FinalizarAtaque()
+    {
+        // Esperar la duración de la animación de ataque
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        isAttacking = false; // Finalizar la animación de ataque
+    }
+
+    private void OnAttackStarted(InputAction.CallbackContext context)
+    {
+        if (!juegoPausado)
+        {
+            ActivarAtaque();
         }
     }
 }

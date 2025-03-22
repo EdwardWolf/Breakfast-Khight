@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class EnemigoCuerpo : Enemigo
 {
+    public CaballeroLigero cab;
     public GameObject otroObjetoPrefab;
     private Coroutine soltarObjetoCoroutine; // Variable para almacenar la corrutina
     private bool haAlcanzadoAlJugador = false; // Variable para controlar si ha alcanzado al jugador
-
     protected override void Start()
     {
         base.Start();
@@ -63,4 +63,6 @@ public class EnemigoCuerpo : Enemigo
     {
         haAlcanzadoAlJugador = true;
     }
+
+
 }
