@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vida: 90
   resistenciaEscudo: 50
-  velocidadMovimiento: 7
+  velocidadMovimiento: 2
   velocidadAtaque: 5
   ataque: 30

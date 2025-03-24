@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 6412134807111852500}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.3911495, y: 6.26, z: -9.73}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.57574, y: 0.57574, z: 0.57574}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -125,6 +125,9 @@ MonoBehaviour:
   tiempoDeVida: 2
   audioSource: {fileID: 0}
   impactoClip: {fileID: 8300000, guid: dbd98ffcc75c9fe4d9b72cb58e132865, type: 3}
+  habilitarRalentizacion: 1
+  duracionRalentizacion: 2
+  factorRalentizacion: 0.5
 --- !u!54 &5992699015641796833
 Rigidbody:
   m_ObjectHideFlags: 0
