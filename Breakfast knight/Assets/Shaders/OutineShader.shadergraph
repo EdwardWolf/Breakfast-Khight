@@ -11,6 +11,9 @@
         },
         {
             "m_Id": "7c2409d0bf53425ab96de10484ec1f11"
+        },
+        {
+            "m_Id": "ded904d1dc994fdea35dfaab855f8a4a"
         }
     ],
     "m_Keywords": [],
@@ -74,6 +77,9 @@
         },
         {
             "m_Id": "b47cbdbb51944b5b89909f7482086a40"
+        },
+        {
+            "m_Id": "a27d8156f1d44cd5a15efaf7b1224b0b"
         }
     ],
     "m_GroupDatas": [],
@@ -161,6 +167,20 @@
                     "m_Id": "3e22f668e24d425985af597d91f5b1d9"
                 },
                 "m_SlotId": 1
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "a27d8156f1d44cd5a15efaf7b1224b0b"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "5858dea61bb64bd08d3edad22b6483ce"
+                },
+                "m_SlotId": 2
             }
         },
         {
@@ -271,6 +291,21 @@
             "m_Id": "36a14064330b4b1f9cf8406f0f63d341"
         }
     ]
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "006c534247644f998d98654505482258",
+    "m_Id": 0,
+    "m_DisplayName": "Intencidad",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
 }
 
 {
@@ -704,6 +739,9 @@
         },
         {
             "m_Id": "7c2409d0bf53425ab96de10484ec1f11"
+        },
+        {
+            "m_Id": "ded904d1dc994fdea35dfaab855f8a4a"
         }
     ]
 }
@@ -1455,6 +1493,42 @@
 }
 
 {
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "a27d8156f1d44cd5a15efaf7b1224b0b",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": 405.0000305175781,
+            "y": -111.99999237060547,
+            "width": 129.99996948242188,
+            "height": 34.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "006c534247644f998d98654505482258"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "ded904d1dc994fdea35dfaab855f8a4a"
+    }
+}
+
+{
     "m_SGVersion": 1,
     "m_Type": "UnityEditor.ShaderGraph.ColorNode",
     "m_ObjectId": "a2cd8b7e20c14e459ad1bcd5f46add06",
@@ -1748,7 +1822,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "Power",
     "m_StageCapability": 3,
-    "m_Value": 1.0,
+    "m_Value": 0.8500000238418579,
     "m_DefaultValue": 1.0,
     "m_Labels": []
 }
@@ -1883,6 +1957,34 @@
     },
     "m_Labels": [],
     "m_Space": 0
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "ded904d1dc994fdea35dfaab855f8a4a",
+    "m_Guid": {
+        "m_GuidSerialized": "eab95b50-542d-4ef9-8832-c1efccee33d1"
+    },
+    "m_Name": "Intencidad",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Intencidad",
+    "m_DefaultReferenceName": "_Intencidad",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    }
 }
 
 {
