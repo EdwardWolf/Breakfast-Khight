@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Tako
   m_EditorClassIdentifier: 
   vida: 200
-  velocidadMovimiento: 3
+  velocidadMovimiento: 1
   velocidadAtaque: 1
   "da\xF1o": 10

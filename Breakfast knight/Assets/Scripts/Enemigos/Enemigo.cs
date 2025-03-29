@@ -28,7 +28,7 @@ public class Enemigo : MonoBehaviour
     public float tiempoParaSoltarObjeto = 5f; // Tiempo que debe pasar antes de soltar el objeto
     public bool persiguiendoJugador = false; // Indica si el enemigo está persiguiendo al jugador
     public bool puedeSoltarObjeto = true; // Booleano para activar o desactivar la funcionalidad de soltar el objeto
-    private Animator animator; // Referencia al componente Animator
+    public Animator animator; // Referencia al componente Animator
     public AudioSource audioSource; // Referencia al componente AudioSource
     public AudioClip golpeClip; // Clip de audio para el sonido del golpe
 
@@ -48,10 +48,10 @@ public class Enemigo : MonoBehaviour
     public float probabilidadAlejarse = 0.3f; // Probabilidad de alejarse (0-1)
     public float distanciaAlejarse = 5f; // Distancia a la que se alejará el enemigo
 
-    public Collider escudoCollider; // Referencia al collider del escudo
-
     private Coroutine dañoCoroutine;
     private Coroutine reducirResistenciaEscudoCoroutine;
+
+    public float fuerzaEmpuje = 5f; // Fuerza de empuje al jugador
 
     protected virtual void Awake()
     {
@@ -180,6 +180,17 @@ public class Enemigo : MonoBehaviour
                 damageParticleSystem.Play();
             }
 
+            // Empujar al jugador hacia atrás
+            if (jugador != null)
+            {
+                Vector3 direccionEmpuje = (jugador.transform.position - transform.position).normalized;
+                Rigidbody rbJugador = jugador.GetComponent<Rigidbody>();
+                if (rbJugador != null)
+                {
+                    rbJugador.AddForce(direccionEmpuje * fuerzaEmpuje, ForceMode.Impulse);
+                }
+            }
+
             // Esperar el cooldown del ataque
             yield return new WaitForSeconds(atackCooldown);
 
@@ -201,6 +212,7 @@ public class Enemigo : MonoBehaviour
         isDamaging = false;
     }
 
+
     void LookAtPlayer()
     {
         Vector3 direction = (playerTransform.position - transform.position).normalized;
@@ -215,8 +227,12 @@ public class Enemigo : MonoBehaviour
     }
     public virtual void PerseguirJugador()
     {
-        Vector3 direction = (playerTransform.position - transform.position).normalized;
-        transform.position += direction * velocidadMovimiento * Time.deltaTime;
+        if(playerTransform != null)
+        {
+            Vector3 direction = (playerTransform.position - transform.position).normalized;
+            transform.position += direction * velocidadMovimiento * Time.deltaTime;
+        }
+
     }
 
     public void PerseguirAderezo()
@@ -291,12 +307,6 @@ public class Enemigo : MonoBehaviour
             // Dibujar una esfera en el punto donde está el enemigo con el radio de ataque
             Gizmos.DrawWireSphere(transform.position, attackRadius);
         }
-
-        if (escudoCollider != null)
-        {
-            Gizmos.color = Color.black;
-            Gizmos.DrawWireCube(escudoCollider.bounds.center, escudoCollider.bounds.size);
-        }
     }
 
     private void DropAderezo()
@@ -322,8 +332,9 @@ public class Enemigo : MonoBehaviour
     public float shieldDamage = 10f; // Daño al escudo
     public bool enContactoConEscudo = false;
 
-    private void OnCollisionEnter(Collision collision)
+    protected virtual void OnCollisionEnter(Collision collision)
     {
+
         if (collision.gameObject.CompareTag("Player") && !enContactoConEscudo)
         {
             Debug.Log("Enemigo ha colisionado con el jugador");
@@ -336,10 +347,11 @@ public class Enemigo : MonoBehaviour
             velocidadMovimiento = 0f;
             // Dejar de soltar el objeto adicional
             puedeSoltarObjeto = false;
+
         }
-        else if (escudoCollider != null && collision.collider == escudoCollider && escudoCollider.enabled)
+        else if (collision.gameObject.CompareTag("Escudo"))
         {
-            Debug.Log("Enemigo ha colisionado con el escudo");
+            
             enContactoConEscudo = true;
             jugador = collision.gameObject.GetComponentInParent<Jugador>();
             velocidadMovimiento = 0f;
@@ -350,7 +362,7 @@ public class Enemigo : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit(Collision collision)
+    protected virtual void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -369,7 +381,7 @@ public class Enemigo : MonoBehaviour
                 enemigoCuerpo.AlcanzarJugador();
             }
         }
-        else if (escudoCollider != null && collision.collider == escudoCollider)
+        else if (collision.gameObject.CompareTag("Escudo"))
         {
             velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Restaurar la velocidad de movimiento del enemigo
 

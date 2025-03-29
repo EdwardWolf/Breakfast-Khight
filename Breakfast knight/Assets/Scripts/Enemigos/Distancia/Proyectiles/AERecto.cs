@@ -10,7 +10,7 @@ public class AERecto : AtaqueEnemigo
 
     private void Awake()
     {
-        jugador = GameObject.FindGameObjectWithTag("Player").transform;
+        jugador = GameObject.FindGameObjectWithTag("Point").transform;
     }
     
     public override void Atacar()

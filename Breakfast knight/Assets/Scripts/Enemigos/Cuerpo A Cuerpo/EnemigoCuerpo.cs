@@ -63,6 +63,30 @@ public class EnemigoCuerpo : Enemigo
     {
         haAlcanzadoAlJugador = true;
     }
+    protected override void OnCollisionEnter(Collision collision)
+    {
+        base.OnCollisionEnter(collision);
+        if (collision.gameObject.CompareTag("Escudo"))
+        {
+            enContactoConEscudo = true;
+            if (soltarObjetoCoroutine != null)
+            {
+                StopCoroutine(soltarObjetoCoroutine);
+            }
+        }
+    }
 
+    protected override void OnCollisionExit(Collision collision)
+    {
+        base.OnCollisionExit(collision);
+        if (collision.gameObject.CompareTag("Escudo"))
+        {
+            enContactoConEscudo = false;
+            if (soltarObjetoCoroutine == null)
+            {
+                soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+            }
+        }
+    }
 
 }

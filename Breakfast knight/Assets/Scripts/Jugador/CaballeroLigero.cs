@@ -7,6 +7,7 @@ public class CaballeroLigero : Jugador
 {
     //private bool escudoActivo = false;
     public Collider Escudo; // Referencia al collider del escudo
+
     private GameInputs playerInputActions;
     public Animator animator; // Referencia al componente Animator
     //public Animator armas; // Referencia al componente Animator
@@ -16,28 +17,31 @@ public class CaballeroLigero : Jugador
     private float cargadoLayerWeight = 0f;
     public float attackTransitionSpeed = 5f; // Velocidad a la que el layer de ataque cambia su peso
     private bool isAttacking = false;
+    public ParticleSystem carga;
+
+    [SerializeField] private Material materialEscudoActivo; // Material del escudo activo
+    [SerializeField] private Material materialEscudoNormal; // Material del escudo normal
+
     private void Awake()
     {
-
         playerInputActions = new GameInputs();
         Escudo.enabled = false;
         animator = GetComponentInChildren<Animator>(); // Obtener el componente Animator del hijo
-
     }
+
     private void Update()
     {
         cargaBarra.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
                  camara.transform.rotation * Vector3.up);
 
         GirarHaciaMouse();
-        
+
         Vector3 movimiento = PlayerController.GetMoveInput();
         Mover(movimiento);
 
         if (movimiento != Vector3.zero)
         {
-            animator.SetBool("Caminar",true); // Activar la animación de caminar
-
+            animator.SetBool("Caminar", true); // Activar la animación de caminar
         }
         else
         {
@@ -46,6 +50,10 @@ public class CaballeroLigero : Jugador
 
         if (isCharging)
         {
+            if (!carga.isPlaying)
+            {
+                carga.Play();
+            }
             chargeLayerWeight = 1f;
             animator.SetLayerWeight(3, chargeLayerWeight);
             animator.SetBool("Carga", true);
@@ -59,12 +67,12 @@ public class CaballeroLigero : Jugador
             if (chargeTime >= maxChargeTime)
             {
                 chargeLayerWeight = 0f;
-                animator.SetLayerWeight(3,chargeLayerWeight);
+                animator.SetLayerWeight(3, chargeLayerWeight);
                 animator.SetBool("Carga", false);
                 AtaqueCargadoArea();
                 animator.SetTrigger("AtaqueCargado");
                 cargadoLayerWeight = 1f;
-                animator.SetLayerWeight(4,cargadoLayerWeight);
+                animator.SetLayerWeight(4, cargadoLayerWeight);
                 isCharging = false;
                 chargeTime = 0f;
                 if (cargaBarra != null)
@@ -75,18 +83,26 @@ public class CaballeroLigero : Jugador
         }
         else
         {
+            if (carga.isPlaying)
+            {
+                carga.Stop();
+            }
             chargeLayerWeight = 0f;
             animator.SetLayerWeight(3, chargeLayerWeight);
             animator.SetBool("Carga", false);
         }
 
-        //RegenerarResistenciaEscudo();
+        // Verificar si la resistencia del escudo es cero y desactivar el escudo
+        if (resistenciaEscudoActual <= 0 && escudoActivo)
+        {
+            DesactivarEscudo();
+        }
 
         if (PlayerController.Interaccion())
         {
             ActivarInteraction();
         }
-        if (PlayerController.Shield())
+        if (PlayerController.Shield() && resistenciaEscudoActual > 0)
         {
             ActivarEscudo();
         }
@@ -139,16 +155,7 @@ public class CaballeroLigero : Jugador
             isAttacking = false;
         }
     }
-    //Verifica el estatus de la trancision de la animacion
-    //private IEnumerator WaitAndResetAttackLayerWeight()
-    //{
-    //    // Esperar a que la animación de ataque termine
-    //    while (animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1f || animator.IsInTransition(1))
-    //    {
-    //        yield return null;
-    //    }
-    //    attackLayerWeight = 0f;
-    //}
+
     private IEnumerator WaitAndResetAttackLayerWeight(float waitTime)
     {
         yield return new WaitForSecondsRealtime(waitTime);
@@ -169,36 +176,39 @@ public class CaballeroLigero : Jugador
             Escudo.enabled = true;
             escudoActivo = true;
             _velocidadMovimiento /= 2; // Reducir la velocidad a la mitad
-            animator.SetTrigger("EscudoActivado"); // Activar la animación de escudo activado
+            animator.SetBool("Escudo", true); // Activar la animación de escudo activado
             escudoLayerWeight = 1f;
             animator.SetLayerWeight(2, escudoLayerWeight); // Ajustar el peso de Defensa Layer (index 1)
+
+            // Cambiar el material del escudo
+            EscudoR.material = materialEscudoActivo;
         }
     }
 
     private void DesactivarEscudo()
     {
-        if (escudoActivo && !aturdidoBala)
+        if (escudoActivo)
         {
             Debug.Log("Escudo desactivado");
-            //armas.SetTrigger("EscudoDesactivado");
             Escudo.enabled = false;
             escudoActivo = false;
             _velocidadMovimiento = stats.velocidadMovimiento; // Restaurar la velocidad original
-            animator.SetTrigger("EscudoDesactivado"); // Activar la animación de escudo desactivado
+            animator.SetBool("Escudo", false); // Desactivar la animación de escudo activado
             escudoLayerWeight = 0f;
             animator.SetLayerWeight(2, escudoLayerWeight); // Ajustar el peso de Defensa Layer (index 1)
 
+            // Restaurar el material del escudo
+            EscudoR.material = materialEscudoNormal;
         }
     }
-
 
     private IEnumerator ActivarColliderEspada()
     {
         armaCollider.enabled = true;
-        yield return new WaitForSeconds(0.5f); // Ajusta el tiempo según la duración del golpe
+        yield return new WaitForSeconds(1f); // Ajusta el tiempo según la duración del golpe
         armaCollider.enabled = false;
     }
-    
+
     private void GirarHaciaMouse()
     {
         Plane playerPlane = new Plane(Vector3.up, transform.position);
@@ -226,4 +236,3 @@ public class CaballeroLigero : Jugador
         }
     }
 }
-

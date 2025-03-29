@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -9.610315, y: 2.62, z: -9.689471}
-  m_LocalScale: {x: 1, y: 0.097765, z: 1}
+  m_LocalScale: {x: 0.32, y: 0.031284798, z: 0.32}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3818316820015228556}
@@ -368,7 +368,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2049243308617988808}
   serializedVersion: 8
-  lengthInSec: 4.51
+  lengthInSec: 10.57
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -443,7 +443,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 0.15
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -991,7 +991,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 17
+    type: 0
     angle: 25.04
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
@@ -1078,7 +1078,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1
+      value: 0.70531845
       mode: 0
       spread: 0
       speed:
@@ -1197,7 +1197,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 9.3
+      scalar: 4.79
       minScalar: 10
       maxCurve:
         serializedVersion: 2

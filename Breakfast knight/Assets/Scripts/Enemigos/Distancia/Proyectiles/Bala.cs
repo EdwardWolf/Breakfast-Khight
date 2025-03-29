@@ -10,10 +10,7 @@ public class Bala : MonoBehaviour
     [SerializeField] private float tiempoDeVida = 5f; // Tiempo de vida de la bala en segundos
     public AudioSource audioSource; // Referencia al componente AudioSource
     public AudioClip impactoClip; // Clip de audio para el sonido del impacto
-    [SerializeField] private bool habilitarRalentizacion = true; // Habilitar efecto de ralentización
-    [SerializeField] private float duracionRalentizacion = 2f; // Duración del efecto de ralentización
-    [SerializeField] private float factorRalentizacion = 0.5f; // Factor de ralentización
-
+    
     public void SetAttackHandler(AttackHandler handler)
     {
         attackHandler = handler;
@@ -41,6 +38,18 @@ public class Bala : MonoBehaviour
         // Iniciar la corrutina para regresar la bala después de un tiempo
         StartCoroutine(RegresarBalaDespuesDeTiempo(tiempoDeVida));
     }
+    private void OnEnable()
+    {
+        // Obtener el AttackHandler del tercer nivel de padres
+        Transform parent = transform.parent;
+        if (parent != null)
+        {
+            attackHandler = parent.GetComponent<AttackHandler>();
+        }
+
+        // Iniciar la corrutina para regresar la bala después de un tiempo
+        StartCoroutine(RegresarBalaDespuesDeTiempo(tiempoDeVida));
+    }
 
     public IEnumerator RegresarBalaDespuesDeTiempo(float tiempo)
     {
@@ -51,7 +60,7 @@ public class Bala : MonoBehaviour
         }
     }
 
-    public void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -60,12 +69,6 @@ public class Bala : MonoBehaviour
             if (jugador != null)
             {
                 jugador.ReducirVida(damage);
-
-                // Aplicar el efecto de ralentización si está habilitado
-                if (habilitarRalentizacion)
-                {
-                    jugador.AplicarRalentizacion(factorRalentizacion, duracionRalentizacion);
-                }
             }
 
             // Reproducir el sonido del impacto

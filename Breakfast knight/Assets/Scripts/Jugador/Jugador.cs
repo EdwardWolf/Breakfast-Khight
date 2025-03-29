@@ -25,12 +25,13 @@ public abstract class Jugador : MonoBehaviour
     public bool escudoActivo = false;
     private float tiempoRegeneracion = 5f; // Tiempo de espera para comenzar la regeneración
     private float velocidadRegeneracion = 5f; // Velocidad de regeneración de la resistencia del escudo
-    private float valorMinimoEscudo = 10f; // Valor mínimo de resistencia del escudo para poder usarlo
+    public float valorMinimoEscudo = 10f; // Valor mínimo de resistencia del escudo para poder usarlo
     private const float valorCorazon = 10f; // Valor de cada corazón
     public float tiempoUltimoDaño = 2f;
     public Camera camara; // Referencia a la cámara principal
     public GameObject panelPausa; // Referencia al panel de pausa
     [SerializeField] private Transform puntoInstanciacionArma; // Punto de instanciación del arma
+    public Renderer EscudoR; // Referencia al renderer del escudo
 
     public UIManager uiManager;
 
@@ -64,7 +65,11 @@ public abstract class Jugador : MonoBehaviour
 
     public Collider armaCollider; // Referencia al Collider del arma actual
 
-    private bool isAttacking = false; // Variable para controlar el estado de la animación de ataque
+    private bool invulnerable = false; // Variable para rastrear el estado de invulnerabilidad
+    [SerializeField] private Material materialNormal; // Material normal del jugador
+    [SerializeField] private Material materialDaño; // Material del jugador al recibir daño
+    public List<Renderer> renderers; // Lista de renderers del jugador
+    public List<Renderer> renderersNoAfectados; // Lista de renderers que no deben cambiar de material
 
     protected virtual void Start()
     {
@@ -106,6 +111,8 @@ public abstract class Jugador : MonoBehaviour
 
         playerInputActions.Enable();
 
+        renderersNoAfectados = new List<Renderer>(); // Inicializar la lista de renderers no afectados
+
         for (int i = 0; i < prefabsArmas.Length; i++)
         {
             if (prefabsArmas[i] != null)
@@ -113,12 +120,28 @@ public abstract class Jugador : MonoBehaviour
                 GameObject armaInstanciada = Instantiate(prefabsArmas[i], puntoInstanciacionArma);
                 armas[i] = armaInstanciada.GetComponent<Arma>();
                 armaInstanciada.SetActive(i == armaActual);
+
+                // Agregar los renderers de las armas a la lista de renderers no afectados
+                Renderer[] armaRenderers = armaInstanciada.GetComponentsInChildren<Renderer>();
+                renderersNoAfectados.AddRange(armaRenderers);
             }
         }
         ActualizarUIArmas();
         ActualizarArmaCollider(); // Actualizar el Collider del arma actual
+                                  // Agregar el renderer del escudo a la lista de renderers no afectados
+        Renderer escudoRenderer = EscudoR.GetComponent<Renderer>();
+        if (escudoRenderer != null)
+        {
+            renderersNoAfectados.Add(escudoRenderer);
+        }
 
+        // Agregar los renderers de las partículas a la lista de renderers no afectados
+        ParticleSystemRenderer[] particleRenderers = GetComponentsInChildren<ParticleSystemRenderer>();
+        renderersNoAfectados.AddRange(particleRenderers);
+
+        renderers = new List<Renderer>(GetComponentsInChildren<Renderer>());
     }
+
 
     public void AplicarRalentizacion(float factor, float duracion)
     {
@@ -294,6 +317,8 @@ public abstract class Jugador : MonoBehaviour
 
     public void ReducirVida(float cantidad)
     {
+        if (invulnerable) return; // Si el jugador es invulnerable, no recibir daño
+
         vidaActual -= cantidad;
         int nuevosCorazones = Mathf.CeilToInt(vidaActual / valorCorazon);
 
@@ -310,6 +335,32 @@ public abstract class Jugador : MonoBehaviour
             // No llamar a PausarJuego aquí
             Time.timeScale = 0f; // Pausar el juego sin mostrar el panel de pausa
         }
+        else
+        {
+            StartCoroutine(InvulnerabilidadTemporal()); // Iniciar la corrutina de invulnerabilidad temporal
+        }
+    }
+    private IEnumerator InvulnerabilidadTemporal()
+    {
+        invulnerable = true;
+        foreach (Renderer rend in renderers)
+        {
+            if (!renderersNoAfectados.Contains(rend))
+            {
+                rend.material = materialDaño; // Cambiar el material al recibir daño
+            }
+        }
+
+        yield return new WaitForSeconds(0.5f); // Esperar medio segundo
+
+        foreach (Renderer rend in renderers)
+        {
+            if (!renderersNoAfectados.Contains(rend))
+            {
+                rend.material = materialNormal; // Restaurar el material normal
+            }
+        }
+        invulnerable = false;
     }
 
     public void ReducirResistenciaEscudo(float cantidad)
@@ -343,6 +394,9 @@ public abstract class Jugador : MonoBehaviour
             StopCoroutine(regeneracionEscudoCoroutine);
         }
         regeneracionEscudoCoroutine = StartCoroutine(RegenerarResistenciaEscudo());
+
+        // Reiniciar el temporizador de último daño
+        tiempoUltimoDaño = 0f;
     }
 
     private IEnumerator RegenerarResistenciaEscudo()
@@ -364,10 +418,10 @@ public abstract class Jugador : MonoBehaviour
                 barraResistenciaEscudo.fillAmount = resistenciaEscudoActual / stats.resistenciaEscudo;
             }
 
-            if (resistenciaEscudoActual >= valorMinimoEscudo)
-            {
-                escudoActivo = true;
-            }
+            //if (resistenciaEscudoActual >= valorMinimoEscudo)
+            //{
+            //    escudoActivo = true;
+            //}
 
             yield return null;
         }

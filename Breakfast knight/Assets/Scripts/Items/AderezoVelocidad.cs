@@ -11,13 +11,13 @@ public class AderezoVelocidad : Aderezo
     {
         if (jugador != null)
         {
-            StartCoroutine(AplicarIncrementoVelocidad());
+            StartCoroutine(AplicarIncrementoVelocidadJugador());
             gameObject.SetActive(false); // Desactivar el objeto instanciado
             Debug.Log("Velocidad del jugador incrementada temporalmente");
         }
     }
 
-    private IEnumerator AplicarIncrementoVelocidad()
+    private IEnumerator AplicarIncrementoVelocidadJugador()
     {
         if (jugador != null)
         {
@@ -25,22 +25,25 @@ public class AderezoVelocidad : Aderezo
             yield return new WaitForSeconds(duracionEfecto);
             jugador._velocidadMovimiento -= incrementoVelocidad;
         }
-        if(enemigo != null)
-        {
-            enemigo.velocidadMovimiento += incrementoVelocidad;
-            yield return new WaitForSeconds(duracionEfecto);
-            enemigo.velocidadMovimiento -= incrementoVelocidad;
-        }
     }
 
     protected override void IncrementarVelocidadEnemigo()
     {
         if (enemigo != null)
         {
-            StartCoroutine(AplicarIncrementoVelocidad());
+            StartCoroutine(AplicarIncrementoVelocidadEnemigo());
             gameObject.SetActive(false); // Desactivar el objeto instanciado
             Debug.Log("Velocidad del enemigo incrementada temporalmente");
         }
     }
 
+    private IEnumerator AplicarIncrementoVelocidadEnemigo()
+    {
+        if (enemigo != null)
+        {
+            enemigo.velocidadMovimiento += incrementoVelocidad;
+            yield return new WaitForSeconds(duracionEfecto);
+            enemigo.velocidadMovimiento -= incrementoVelocidad;
+        }
+    }
 }

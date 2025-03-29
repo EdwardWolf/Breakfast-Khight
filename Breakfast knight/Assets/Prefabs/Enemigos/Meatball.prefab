@@ -303,8 +303,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6216800487437215342}
   - {fileID: 166054494935239381}
@@ -359,6 +359,7 @@ MonoBehaviour:
   tiempoParaSoltarObjeto: 5
   persiguiendoJugador: 0
   puedeSoltarObjeto: 1
+  animator: {fileID: 0}
   audioSource: {fileID: 0}
   golpeClip: {fileID: 8300000, guid: ff6457436fe2d1a49a6fc3c1078cf5d9, type: 3}
   probabilidadUsoAderezo: 1
@@ -366,7 +367,7 @@ MonoBehaviour:
   interactionTime: 2
   probabilidadAlejarse: 0.3
   distanciaAlejarse: 5
-  escudoCollider: {fileID: 0}
+  fuerzaEmpuje: 5
   shieldDamage: 10
   enContactoConEscudo: 0
   sectionManager: {fileID: 0}
@@ -777,7 +778,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3246933886236218905
 Transform:
   m_ObjectHideFlags: 0
