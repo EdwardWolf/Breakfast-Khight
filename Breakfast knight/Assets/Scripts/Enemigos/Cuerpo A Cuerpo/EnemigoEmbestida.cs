@@ -9,7 +9,6 @@ public class EnemigoEmbestida : Enemigo
     private Vector3 ultimaPosicionJugador; // Última posición conocida del jugador
     private bool embistiendo = false; // Indica si el enemigo está embistiendo
 
-    private Animator animator; // Referencia al componente Animator
     private NavMeshAgent navMeshAgent; // Referencia al componente NavMeshAgent
     public LineRenderer lineRenderer; // Referencia al componente LineRenderer
 
@@ -29,7 +28,7 @@ public class EnemigoEmbestida : Enemigo
         }
     }
 
-    void Update()
+    protected override void Update()
     {
         if (!embistiendo)
         {
@@ -123,8 +122,9 @@ public class EnemigoEmbestida : Enemigo
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    protected override void OnCollisionEnter(Collision collision)
     {
+        base.OnCollisionEnter(collision);
         if (collision.gameObject.CompareTag("Player"))
         {
             Debug.Log("Enemigo ha colisionado con el jugador");
@@ -142,9 +142,6 @@ public class EnemigoEmbestida : Enemigo
                     lineRenderer.enabled = false;
                 }
 
-                // Detener el movimiento del enemigo
-                navMeshAgent.isStopped = true;
-
                 // Iniciar el daño al jugador
                 if (!isDamaging)
                 {
@@ -154,19 +151,19 @@ public class EnemigoEmbestida : Enemigo
         }
     }
 
-    private void OnCollisionExit(Collision collision)
+    protected override void OnCollisionExit(Collision collision)
     {
+        base.OnCollisionEnter(collision);
         if (collision.gameObject.CompareTag("Player"))
         {
             Debug.Log("Enemigo ha dejado de colisionar con el jugador");
             jugador = null;
             isDamaging = false;
-            embistiendo = true;
+            embistiendo = false;
 
             // Restaurar el movimiento del enemigo
             navMeshAgent.isStopped = false;
-            velocidadMovimiento = statsEnemigo.velocidadMovimiento;
-
+            navMeshAgent.speed = statsEnemigo.velocidadMovimiento;
         }
     }
 }

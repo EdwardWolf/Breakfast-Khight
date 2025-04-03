@@ -13,9 +13,6 @@ public abstract class Jugador : MonoBehaviour
     [SerializeField] protected float velocidadAtaque;
     [SerializeField] public float ataque; // Añadir una variable para el ataque
     private int golpesRestantes; // Variable para almacenar los golpes restantes con el ataque incrementado
-    [SerializeField] private Material materialBase; // Material base
-    [SerializeField] private Material materialAumento; // Material de aumento de ataque
-    public Renderer renderer; // Referencia al Renderer del objeto
     public GameObject derrota; // Referencia al objeto de derrota
     public float areaRadius = 5f; // Radio del área de efecto del ataque cargado
     public float pushForce = 10f; // Fuerza de empuje del ataque cargado
@@ -25,14 +22,16 @@ public abstract class Jugador : MonoBehaviour
     public bool isCharging = false;
     public float chargeTime;
     public float maxChargeTime = 3f; // Tiempo máximo de carga
-    private bool escudoActivo = false;
+    public bool escudoActivo = false;
     private float tiempoRegeneracion = 5f; // Tiempo de espera para comenzar la regeneración
     private float velocidadRegeneracion = 5f; // Velocidad de regeneración de la resistencia del escudo
-    private float valorMinimoEscudo = 10f; // Valor mínimo de resistencia del escudo para poder usarlo
+    public float valorMinimoEscudo = 10f; // Valor mínimo de resistencia del escudo para poder usarlo
     private const float valorCorazon = 10f; // Valor de cada corazón
     public float tiempoUltimoDaño = 2f;
     public Camera camara; // Referencia a la cámara principal
     public GameObject panelPausa; // Referencia al panel de pausa
+    [SerializeField] private Transform puntoInstanciacionArma; // Punto de instanciación del arma
+    public Renderer EscudoR; // Referencia al renderer del escudo
 
     public UIManager uiManager;
 
@@ -61,12 +60,23 @@ public abstract class Jugador : MonoBehaviour
     private Arma[] armas = new Arma[3];
     private int armaActual = 0;
 
+    private bool ralentizadoBala = false; //Variable para decir si el jugador esta relentizado por la bala
+    public bool aturdidoBala = false; //Variable para decir si el jugador esta aturdido por la bala
+
+    public Collider armaCollider; // Referencia al Collider del arma actual
+
+    private bool invulnerable = false; // Variable para rastrear el estado de invulnerabilidad
+    [SerializeField] private Material materialNormal; // Material normal del jugador
+    [SerializeField] private Material materialDaño; // Material del jugador al recibir daño
+    public List<Renderer> renderers; // Lista de renderers del jugador
+    public List<Renderer> renderersNoAfectados; // Lista de renderers que no deben cambiar de material
+
     protected virtual void Start()
     {
         camara = Camera.main; // Obtener la cámara principal
         audioSource = camara.GetComponent<AudioSource>(); // Obtener el AudioSource de la cámara principal
         panelPausa.SetActive(false); // Ocultar el panel de pausa
-        // Asignar los valores iniciales de las estadísticas.
+                                     // Asignar los valores iniciales de las estadísticas.
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
         _velocidadMovimiento = stats.velocidadMovimiento;
@@ -75,11 +85,6 @@ public abstract class Jugador : MonoBehaviour
         corazonesActuales = Mathf.CeilToInt(vidaActual / valorCorazon);
         OnVidaCambiada?.Invoke(corazonesActuales);
         derrota.SetActive(false);
-
-        if (renderer != null)
-        {
-            renderer.material = materialBase; // Asignar el material base al inicio
-        }
 
         if (cargaBarra != null)
         {
@@ -106,16 +111,77 @@ public abstract class Jugador : MonoBehaviour
 
         playerInputActions.Enable();
 
+        renderersNoAfectados = new List<Renderer>(); // Inicializar la lista de renderers no afectados
+
         for (int i = 0; i < prefabsArmas.Length; i++)
         {
             if (prefabsArmas[i] != null)
             {
-                GameObject armaInstanciada = Instantiate(prefabsArmas[i], transform);
+                GameObject armaInstanciada = Instantiate(prefabsArmas[i], puntoInstanciacionArma);
                 armas[i] = armaInstanciada.GetComponent<Arma>();
                 armaInstanciada.SetActive(i == armaActual);
+
+                // Agregar los renderers de las armas a la lista de renderers no afectados
+                Renderer[] armaRenderers = armaInstanciada.GetComponentsInChildren<Renderer>();
+                renderersNoAfectados.AddRange(armaRenderers);
             }
         }
         ActualizarUIArmas();
+        ActualizarArmaCollider(); // Actualizar el Collider del arma actual
+                                  // Agregar el renderer del escudo a la lista de renderers no afectados
+        Renderer escudoRenderer = EscudoR.GetComponent<Renderer>();
+        if (escudoRenderer != null)
+        {
+            renderersNoAfectados.Add(escudoRenderer);
+        }
+
+        // Agregar los renderers de las partículas a la lista de renderers no afectados
+        ParticleSystemRenderer[] particleRenderers = GetComponentsInChildren<ParticleSystemRenderer>();
+        renderersNoAfectados.AddRange(particleRenderers);
+
+        renderers = new List<Renderer>(GetComponentsInChildren<Renderer>());
+    }
+
+
+    public void AplicarRalentizacion(float factor, float duracion)
+    {
+        if (!ralentizadoBala)
+        {
+            StartCoroutine(Ralentizar(factor, duracion));
+        }
+    }
+
+    private IEnumerator Ralentizar(float factor, float duracion)
+    {
+        ralentizadoBala = true;
+        _velocidadMovimiento = _velocidadMovimiento * factor;
+        // Asigna la velocidad reducida al jugador
+
+        yield return new WaitForSeconds(duracion);
+
+        // Restaura la velocidad original del jugador
+        ralentizadoBala = false;
+        _velocidadMovimiento = stats.velocidadMovimiento;
+    }
+
+    public void AplicarAturdimiento(float duracion)
+    {
+        if (!aturdidoBala)
+        {
+            StartCoroutine(Aturdir(duracion));
+        }
+    }
+
+    private IEnumerator Aturdir(float duracion)
+    {
+        aturdidoBala = true;
+        _velocidadMovimiento = 0;
+
+        // Asigna la velocidad reducida al jugador
+        yield return new WaitForSeconds(duracion);
+        // Restaura la velocidad original del jugador
+        aturdidoBala = false;
+        _velocidadMovimiento = stats.velocidadMovimiento;
     }
 
     public void AplicarDebufoVelocidad(float reduccionVelocidad, float duracion)
@@ -160,7 +226,7 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnAttackChargedStarted(InputAction.CallbackContext context)
     {
-        if (!juegoPausado)
+        if (!juegoPausado && vidaActual > 0)
         {
             IniciarCarga();
         }
@@ -168,7 +234,7 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnAttackChargedCanceled(InputAction.CallbackContext context)
     {
-        if (!juegoPausado)
+        if (!juegoPausado && vidaActual > 0)
         {
             CancelarCarga();
         }
@@ -193,7 +259,7 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnArmaAnterior(InputAction.CallbackContext context)
     {
-        if (!juegoPausado)
+        if (!juegoPausado && vidaActual>0)
         {
             CambiarArmaAnterior();
         }
@@ -201,18 +267,26 @@ public abstract class Jugador : MonoBehaviour
 
     private void OnArmaSiguiente(InputAction.CallbackContext context)
     {
-        if (!juegoPausado)
+        if (!juegoPausado && vidaActual > 0)
         {
             CambiarArmaSiguiente();
         }
     }
 
+    private void ActualizarArmaCollider()
+    {
+        if (armas[armaActual] != null)
+        {
+            armaCollider = armas[armaActual].GetComponent<Collider>();
+        }
+    }
     public void CambiarArmaAnterior()
     {
         armas[armaActual].gameObject.SetActive(false);
         armaActual = (armaActual - 1 + armas.Length) % armas.Length;
         armas[armaActual].gameObject.SetActive(true);
         ActualizarUIArmas();
+        ActualizarArmaCollider(); // Actualizar el Collider del arma actual
     }
 
     public void CambiarArmaSiguiente()
@@ -221,6 +295,7 @@ public abstract class Jugador : MonoBehaviour
         armaActual = (armaActual + 1) % armas.Length;
         armas[armaActual].gameObject.SetActive(true);
         ActualizarUIArmas();
+        ActualizarArmaCollider(); // Actualizar el Collider del arma actual
     }
 
     private void ActualizarUIArmas()
@@ -242,6 +317,8 @@ public abstract class Jugador : MonoBehaviour
 
     public void ReducirVida(float cantidad)
     {
+        if (invulnerable) return; // Si el jugador es invulnerable, no recibir daño
+
         vidaActual -= cantidad;
         int nuevosCorazones = Mathf.CeilToInt(vidaActual / valorCorazon);
 
@@ -258,6 +335,32 @@ public abstract class Jugador : MonoBehaviour
             // No llamar a PausarJuego aquí
             Time.timeScale = 0f; // Pausar el juego sin mostrar el panel de pausa
         }
+        else
+        {
+            StartCoroutine(InvulnerabilidadTemporal()); // Iniciar la corrutina de invulnerabilidad temporal
+        }
+    }
+    private IEnumerator InvulnerabilidadTemporal()
+    {
+        invulnerable = true;
+        foreach (Renderer rend in renderers)
+        {
+            if (!renderersNoAfectados.Contains(rend))
+            {
+                rend.material = materialDaño; // Cambiar el material al recibir daño
+            }
+        }
+
+        yield return new WaitForSeconds(0.5f); // Esperar medio segundo
+
+        foreach (Renderer rend in renderers)
+        {
+            if (!renderersNoAfectados.Contains(rend))
+            {
+                rend.material = materialNormal; // Restaurar el material normal
+            }
+        }
+        invulnerable = false;
     }
 
     public void ReducirResistenciaEscudo(float cantidad)
@@ -291,6 +394,9 @@ public abstract class Jugador : MonoBehaviour
             StopCoroutine(regeneracionEscudoCoroutine);
         }
         regeneracionEscudoCoroutine = StartCoroutine(RegenerarResistenciaEscudo());
+
+        // Reiniciar el temporizador de último daño
+        tiempoUltimoDaño = 0f;
     }
 
     private IEnumerator RegenerarResistenciaEscudo()
@@ -299,7 +405,7 @@ public abstract class Jugador : MonoBehaviour
         yield return new WaitForSeconds(tiempoRegeneracion);
 
         // Regenerar la resistencia del escudo
-        while (resistenciaEscudoActual < stats.resistenciaEscudo)
+        while (resistenciaEscudoActual < stats.resistenciaEscudo && vidaActual > 0)
         {
             resistenciaEscudoActual += velocidadRegeneracion * Time.deltaTime;
             if (resistenciaEscudoActual > stats.resistenciaEscudo)
@@ -312,10 +418,10 @@ public abstract class Jugador : MonoBehaviour
                 barraResistenciaEscudo.fillAmount = resistenciaEscudoActual / stats.resistenciaEscudo;
             }
 
-            if (resistenciaEscudoActual >= valorMinimoEscudo)
-            {
-                escudoActivo = true;
-            }
+            //if (resistenciaEscudoActual >= valorMinimoEscudo)
+            //{
+            //    escudoActivo = true;
+            //}
 
             yield return null;
         }
@@ -325,23 +431,18 @@ public abstract class Jugador : MonoBehaviour
     {
         incrementoAtaqueTemporal = cantidad;
         golpesRestantes = golpes;
-        CambiarMaterial(materialAumento); // Cambiar al material de aumento de ataque
         uiManager.MostrarIncrementoAtaque(cantidad, golpes); // Actualizar la UI
-    }
-
-    private void CambiarMaterial(Material nuevoMaterial)
-    {
-        if (renderer != null)
-        {
-            renderer.material = nuevoMaterial;
-        }
     }
 
     public void PausarJuego()
     {
-        Time.timeScale = 0f; // Pausar el juego
-        juegoPausado = true;
-        panelPausa.SetActive(true); // Mostrar el panel de pausa
+        if(vidaActual > 0)
+        {
+            Time.timeScale = 0f; // Pausar el juego
+            juegoPausado = true;
+            panelPausa.SetActive(true); // Mostrar el panel de pausa
+        }
+
     }
 
     public void ReanudarJuego()
@@ -353,12 +454,12 @@ public abstract class Jugador : MonoBehaviour
 
     public abstract void ActivarAtaque();
 
-    //public abstract void ActivarAtaqueCargado();
+
     public abstract void ActivarInteraction();
 
     protected void AtaqueCargadoArea()
     {
-        if (incrementoAtaqueTemporal > 0)
+        if (incrementoAtaqueTemporal > 0 && vidaActual > 0)
         {
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, areaRadius);
             foreach (Collider hitCollider in hitColliders)
@@ -379,7 +480,6 @@ public abstract class Jugador : MonoBehaviour
             if (golpesRestantes <= 0)
             {
                 incrementoAtaqueTemporal = 0; // Restablecer el incremento de ataque temporal
-                CambiarMaterial(materialBase); // Cambiar al material base
             }
         }
         else
@@ -390,7 +490,7 @@ public abstract class Jugador : MonoBehaviour
 
     public void IniciarCarga()
     {
-        if (incrementoAtaqueTemporal > 0)
+        if (incrementoAtaqueTemporal > 0 && vidaActual > 0)
         {
             isCharging = true;
             chargeTime = 0f;
@@ -458,4 +558,3 @@ public abstract class Jugador : MonoBehaviour
         transform.Translate(movimiento, Space.World);
     }
 }
-

@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Knight
+  m_Mask: 01000000010000000100000000000000000000000100000001000000010000000100000000000000000000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Personaje_BK
+    m_Weight: 1
+  - m_Path: Personaje_BK/Camisa_low
+    m_Weight: 1
+  - m_Path: Personaje_BK/Carita_low
+    m_Weight: 1
+  - m_Path: Personaje_BK/Casquito_low
+    m_Weight: 1
+  - m_Path: Personaje_BK/Chaleco_low
+    m_Weight: 1
+  - m_Path: Personaje_BK/Chalequito_Cinto_low
+    m_Weight: 1
+  - m_Path: Personaje_BK/Cuello_low
+    m_Weight: 1
+  - m_Path: Personaje_BK/Funda_Botas_low
+    m_Weight: 1
+  - m_Path: Personaje_BK/Funda_Guantes_low
+    m_Weight: 1
+  - m_Path: Personaje_BK/Pantalon_low
+    m_Weight: 1
+  - m_Path: Personaje_BK/Pantaloncito_Cinto_low
+    m_Weight: 1
+  - m_Path: Root
+    m_Weight: 0
+  - m_Path: Root/L_leg_Jnt
+    m_Weight: 0
+  - m_Path: Root/L_leg_Jnt/L_knee_Jnt
+    m_Weight: 0
+  - m_Path: Root/L_leg_Jnt/L_knee_Jnt/L_ankle_Jnt
+    m_Weight: 0
+  - m_Path: Root/L_leg_Jnt/L_knee_Jnt/L_ankle_Jnt/L_instep_Jnt
+    m_Weight: 0
+  - m_Path: Root/L_leg_Jnt/L_knee_Jnt/L_ankle_Jnt/L_instep_Jnt/L_toe_Jnt
+    m_Weight: 0
+  - m_Path: Root/R_leg_Jnt1
+    m_Weight: 0
+  - m_Path: Root/R_leg_Jnt1/R_knee_Jnt1
+    m_Weight: 0
+  - m_Path: Root/R_leg_Jnt1/R_knee_Jnt1/R_ankle_Jnt1
+    m_Weight: 0
+  - m_Path: Root/R_leg_Jnt1/R_knee_Jnt1/R_ankle_Jnt1/R_instep_Jnt1
+    m_Weight: 0
+  - m_Path: Root/R_leg_Jnt1/R_knee_Jnt1/R_ankle_Jnt1/R_instep_Jnt1/R_toe_Jnt1
+    m_Weight: 0
+  - m_Path: Root/Spine1_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/L_shoulder_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/L_shoulder_Jnt/L_elbow_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/L_shoulder_Jnt/L_elbow_Jnt/L_wrist_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/L_shoulder_Jnt/L_elbow_Jnt/L_wrist_Jnt/L_hand_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/L_shoulder_Jnt/L_elbow_Jnt/L_wrist_Jnt/L_hand_Jnt/L_tendon
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/L_shoulder_Jnt/L_elbow_Jnt/L_wrist_Jnt/L_hand_Jnt/L_tendon/L_falangemano_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/L_shoulder_Jnt/L_elbow_Jnt/L_wrist_Jnt/L_pulgar_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/L_shoulder_Jnt/L_elbow_Jnt/L_wrist_Jnt/L_pulgar_Jnt/L_falange1_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/L_shoulder_Jnt/L_elbow_Jnt/L_wrist_Jnt/L_pulgar_Jnt/L_falange1_Jnt/L_falange2_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/Neck_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/Neck_Jnt/Head_Jnt
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/R_shoulder_Jnt1
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/R_shoulder_Jnt1/R_elbow_Jnt1
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/R_shoulder_Jnt1/R_elbow_Jnt1/R_wrist_Jnt1
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/R_shoulder_Jnt1/R_elbow_Jnt1/R_wrist_Jnt1/R_hand_Jnt1
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/R_shoulder_Jnt1/R_elbow_Jnt1/R_wrist_Jnt1/R_hand_Jnt1/R_tendon
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/R_shoulder_Jnt1/R_elbow_Jnt1/R_wrist_Jnt1/R_hand_Jnt1/R_tendon/R_falangemano_Jnt1
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/R_shoulder_Jnt1/R_elbow_Jnt1/R_wrist_Jnt1/R_pulgar_Jnt1
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/R_shoulder_Jnt1/R_elbow_Jnt1/R_wrist_Jnt1/R_pulgar_Jnt1/R_falange1_Jnt1
+    m_Weight: 1
+  - m_Path: Root/Spine1_Jnt/Chest_Jnt/R_shoulder_Jnt1/R_elbow_Jnt1/R_wrist_Jnt1/R_pulgar_Jnt1/R_falange1_Jnt1/R_falange2_Jnt1
+    m_Weight: 1
+  - m_Path: Root_Ctrl_Grp
+    m_Weight: 1
+  - m_Path: Root_Ctrl_Grp/Root_Ctrl_Zero
+    m_Weight: 1
+  - m_Path: Root_Ctrl_Grp/Root_Ctrl_Zero/Root_CV
+    m_Weight: 1

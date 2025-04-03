@@ -4,8 +4,7 @@ using UnityEngine;
 public class EnemigoDistancia : Enemigo
 {
     public AttackHandler attackHandler; // Añadir referencia a AttackHandler
-    private bool atacando = false; // Variable para evitar múltiples corrutinas
-    
+    public bool atacando = false; // Variable para evitar múltiples corrutinas
 
     protected override void Start()
     {

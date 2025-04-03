@@ -5,12 +5,12 @@ using UnityEngine;
 public class Bala : MonoBehaviour
 {
     public AttackHandler attackHandler;
-    [SerializeField] private float damage = 10f; // Daño que la bala inflige al jugador
-    [SerializeField] private float shieldDamage = 5f; // Daño que la bala inflige al escudo
+    [SerializeField] public float damage = 10f; // Daño que la bala inflige al jugador
+    [SerializeField] public float shieldDamage = 5f; // Daño que la bala inflige al escudo
     [SerializeField] private float tiempoDeVida = 5f; // Tiempo de vida de la bala en segundos
     public AudioSource audioSource; // Referencia al componente AudioSource
     public AudioClip impactoClip; // Clip de audio para el sonido del impacto
-
+    
     public void SetAttackHandler(AttackHandler handler)
     {
         attackHandler = handler;
@@ -29,7 +29,18 @@ public class Bala : MonoBehaviour
     private void Start()
     {
         // Obtener el AttackHandler del tercer nivel de padres
-        //Transform parent = transform.parent?.parent?.parent;
+        Transform parent = transform.parent;
+        if (parent != null)
+        {
+            attackHandler = parent.GetComponent<AttackHandler>();
+        }
+
+        // Iniciar la corrutina para regresar la bala después de un tiempo
+        StartCoroutine(RegresarBalaDespuesDeTiempo(tiempoDeVida));
+    }
+    private void OnEnable()
+    {
+        // Obtener el AttackHandler del tercer nivel de padres
         Transform parent = transform.parent;
         if (parent != null)
         {
@@ -40,7 +51,7 @@ public class Bala : MonoBehaviour
         StartCoroutine(RegresarBalaDespuesDeTiempo(tiempoDeVida));
     }
 
-    private IEnumerator RegresarBalaDespuesDeTiempo(float tiempo)
+    public IEnumerator RegresarBalaDespuesDeTiempo(float tiempo)
     {
         yield return new WaitForSeconds(tiempo);
         if (attackHandler != null && attackHandler.ataqueActual != null)
@@ -49,7 +60,7 @@ public class Bala : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -97,6 +108,3 @@ public class Bala : MonoBehaviour
         }
     }
 }
-
-
-
