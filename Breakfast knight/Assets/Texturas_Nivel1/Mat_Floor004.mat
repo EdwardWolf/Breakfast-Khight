@@ -22,7 +22,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Mat_Floor004
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 2100000, guid: 68061521e4f0b864bac28e9477f96b9e, type: 2}
+  m_Parent: {fileID: 2100000, guid: f14764b94e3b45c4183388c4628b27c0, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _NORMALMAP
