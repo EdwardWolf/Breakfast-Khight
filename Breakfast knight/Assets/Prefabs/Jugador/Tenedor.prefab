@@ -126,6 +126,7 @@ MonoBehaviour:
   nombreArma: 
   "da\xF1o": 0
   velocidadDeAtaque: 0
+  animator: {fileID: 5866666021909216657, guid: 39c255549651ac940a66d90ab26b0936, type: 3}
   armaData: {fileID: 11400000, guid: b25c5e8fa55095e4e9cd266588788afe, type: 2}
 --- !u!65 &8427305564759147312
 BoxCollider:

@@ -6,29 +6,33 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     public GameObject[] enemigos; // Array de prefabs de enemigos
-    public Transform[] spawnPoints; // Array de puntos de spawn
     public int poolSize = 10; // Tamaño del pool de enemigos
     public int maxActiveEnemies = 5; // Número máximo de enemigos activos al mismo tiempo
     public float spawnCooldown = 5f; // Tiempo de cooldown entre spawns en segundos
-    public float detectionRadius = 10f; // Radio de detección del jugador
     public LayerMask playerLayer; // Capa del jugador
+    public Transform pointA; // Primer punto del área de spawn
+    public Transform pointB; // Segundo punto del área de spawn
+    public Transform pointC; // Tercer punto del área de spawn
+    public Transform pointD; // Cuarto punto del área de spawn
     private float lastSpawnTime;
     private int spawnCount = 0;
     private Queue<GameObject> enemyPool; // Pool de enemigos
     private List<GameObject> activeEnemies; // Lista de enemigos activos
     private bool isPlayerInRange = false; // Indica si el jugador está en el rango de detección
+    private BoxCollider detectionBox; // BoxCollider para la detección
 
     private void Start()
     {
         lastSpawnTime = -spawnCooldown; // Permitir spawnear inmediatamente al inicio
         CrearPool();
         activeEnemies = new List<GameObject>();
+        detectionBox = gameObject.AddComponent<BoxCollider>();
+        detectionBox.isTrigger = true;
+        Debug.Log("Lista activeEnemies inicializada.");
     }
 
     private void Update()
     {
-        DetectPlayer();
-
         if (isPlayerInRange && Time.time >= lastSpawnTime + spawnCooldown && activeEnemies.Count < maxActiveEnemies)
         {
             SpawnEnemigo();
@@ -37,7 +41,6 @@ public class EnemySpawner : MonoBehaviour
 
             if (spawnCount >= 3)
             {
-                CambiarEnemigo();
                 spawnCount = 0;
             }
         }
@@ -61,11 +64,12 @@ public class EnemySpawner : MonoBehaviour
         if (enemyPool.Count > 0)
         {
             GameObject enemy = enemyPool.Dequeue();
-            int spawnIndex = UnityEngine.Random.Range(0, spawnPoints.Length);
-            enemy.transform.position = spawnPoints[spawnIndex].position;
-            enemy.transform.rotation = spawnPoints[spawnIndex].rotation;
+            Vector3 spawnPosition = GetRandomPositionInArea();
+            enemy.transform.position = spawnPosition;
+            enemy.transform.rotation = Quaternion.identity;
             enemy.SetActive(true);
             activeEnemies.Add(enemy);
+            Debug.Log("Enemigo spawneado y añadido a activeEnemies. Total de enemigos activos: " + activeEnemies.Count);
         }
         else
         {
@@ -73,29 +77,69 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    private Vector3 GetRandomPositionInArea()
+    {
+        float minX = Mathf.Min(pointA.position.x, pointB.position.x, pointC.position.x, pointD.position.x);
+        float maxX = Mathf.Max(pointA.position.x, pointB.position.x, pointC.position.x, pointD.position.x);
+        float minZ = Mathf.Min(pointA.position.z, pointB.position.z, pointC.position.z, pointD.position.z);
+        float maxZ = Mathf.Max(pointA.position.z, pointB.position.z, pointC.position.z, pointD.position.z);
+
+        float randomX = UnityEngine.Random.Range(minX, maxX);
+        float randomZ = UnityEngine.Random.Range(minZ, maxZ);
+
+        return new Vector3(randomX, transform.position.y, randomZ);
+    }
+
     public void RegresarEnemigo(GameObject enemy)
     {
         enemy.SetActive(false);
         enemyPool.Enqueue(enemy);
         activeEnemies.Remove(enemy);
+        Debug.Log("Enemigo regresado al pool y eliminado de activeEnemies. Total de enemigos activos: " + activeEnemies.Count);
+        CheckAndDeactivateSpawner();
     }
 
-    private void CambiarEnemigo()
+    private void CheckAndDeactivateSpawner()
     {
-        // Este método ya no es necesario si los enemigos son aleatorios en el pool
+        if (activeEnemies.Count == 0)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
-    private void DetectPlayer()
+    private void OnTriggerEnter(Collider other)
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayer);
-        isPlayerInRange = hits.Length > 0;
+        if (((1 << other.gameObject.layer) & playerLayer) != 0)
+        {
+            isPlayerInRange = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (((1 << other.gameObject.layer) & playerLayer) != 0)
+        {
+            isPlayerInRange = false;
+        }
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Cambiar el color de los Gizmos (opcional)
         Gizmos.color = Color.green;
-        // Dibujar una esfera en el punto donde está el spawner con el radio de detección
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        // Dibujar un cubo en el punto donde está el spawner con el tamaño del BoxCollider
+        if (detectionBox != null)
+        {
+            Gizmos.DrawWireCube(transform.position + detectionBox.center, detectionBox.size);
+        }
+
+        // Dibujar el área de spawn
+        if (pointA != null && pointB != null && pointC != null && pointD != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(pointA.position, pointB.position);
+            Gizmos.DrawLine(pointB.position, pointC.position);
+            Gizmos.DrawLine(pointC.position, pointD.position);
+            Gizmos.DrawLine(pointD.position, pointA.position);
+        }
     }
 }

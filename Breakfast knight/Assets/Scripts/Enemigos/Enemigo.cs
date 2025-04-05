@@ -13,7 +13,8 @@ public class Enemigo : MonoBehaviour
     public Transform playerTransform; // Añadir referencia al transform del jugador
     public float vidaE; // Vida del enemigo
     public float damage; // Daño del enemigo
-    public float velocidadMovimiento; // Velocidad de movimiento del enemigo
+    public float velocidadMovimientoInicial; // Velocidad de movimiento del enemigo
+    public float velocidadMovimientoActual; // Velocidad de movimiento del enemigo
     public bool usarRadioDeAtaque = true; // Booleano para activar o desactivar el radio de ataque
     public Image barraDeVida; // Referencia a la imagen de la barra de vida
     private Camera camara; // Añadir referencia a la cámara
@@ -47,12 +48,16 @@ public class Enemigo : MonoBehaviour
     [Range(0, 1)]
     public float probabilidadAlejarse = 0.3f; // Probabilidad de alejarse (0-1)
     public float distanciaAlejarse = 5f; // Distancia a la que se alejará el enemigo
+    public bool puedeAlejarse = true; // Booleano para activar o desactivar la opción de alejarse
 
     private Coroutine dañoCoroutine;
-    private Coroutine reducirResistenciaEscudoCoroutine;
+    public Coroutine reducirResistenciaEscudoCoroutine;
 
     public float fuerzaEmpuje = 5f; // Fuerza de empuje al jugador
 
+    private EnemySpawner spawner;
+
+    public Collider escudoCollider;
     protected virtual void Awake()
     {
         camara = Camera.main; // Obtener la cámara principal
@@ -66,9 +71,11 @@ public class Enemigo : MonoBehaviour
     {
         vidaE = statsEnemigo.vida; // Inicializar la vida del enemigo
         ActualizarBarraDeVida(); // Inicializar la barra de vida
-        velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Inicializar la velocidad de movimiento
+        velocidadMovimientoInicial = statsEnemigo.velocidadMovimiento; // Inicializar la velocidad de movimiento
+        velocidadMovimientoActual = velocidadMovimientoInicial; // Inicializar la velocidad de movimiento actual
         damage = statsEnemigo.daño; // Inicializar el daño
         animator = GetComponent<Animator>(); // Obtener el componente Animator
+        spawner = GetComponentInParent<EnemySpawner>();
     }
 
     protected virtual void Update()
@@ -78,7 +85,14 @@ public class Enemigo : MonoBehaviour
         DetectPlayer();
         if (aderezoTransform != null)
         {
-            PerseguirAderezo();
+            if (aderezoTransform.gameObject.activeSelf)
+            {
+                PerseguirAderezo();
+            }
+            else
+            {
+                aderezoTransform = null; // Resetear la referencia si el aderezo ya no está activo
+            }
         }
         else if (playerTransform != null)
         {
@@ -103,7 +117,20 @@ public class Enemigo : MonoBehaviour
         {
             persiguiendoJugador = false;
         }
+
+        // Verificar si el collider del escudo está desactivado y limpiar la referencia
+        if (escudoCollider != null && !escudoCollider.enabled)
+        {
+            enContactoConEscudo = false;
+            escudoCollider = null;
+            if (reducirResistenciaEscudoCoroutine != null)
+            {
+                StopCoroutine(reducirResistenciaEscudoCoroutine);
+                reducirResistenciaEscudoCoroutine = null;
+            }
+        }
     }
+
 
     public void IncrementarAtaque(float cantidad)
     {
@@ -128,24 +155,29 @@ public class Enemigo : MonoBehaviour
             jugador = null; // Resetear la referencia al componente Jugador
         }
 
-        Collider[] aderezoHits = Physics.OverlapSphere(transform.position, detectionRadius, aderezoLayer);
-        if (aderezoHits.Length > 0)
+        // Solo detectar aderezos si no se tiene uno actualmente
+        if (aderezoTransform == null)
         {
-            // Verificar la probabilidad de ir por el aderezo
-            if (Random.Range(1, 11) <= probabilidadUsoAderezo)
+            Collider[] aderezoHits = Physics.OverlapSphere(transform.position, detectionRadius, aderezoLayer);
+            if (aderezoHits.Length > 0)
             {
-                aderezoTransform = aderezoHits[0].transform; // Guardar la referencia al transform del aderezo
+                // Verificar la probabilidad de ir por el aderezo
+                if (Random.Range(1, 11) <= probabilidadUsoAderezo)
+                {
+                    aderezoTransform = aderezoHits[0].transform; // Guardar la referencia al transform del aderezo
+                }
+                else
+                {
+                    aderezoTransform = null; // Si no se cumple la probabilidad, resetear la referencia
+                }
             }
             else
             {
-                aderezoTransform = null; // Si no se cumple la probabilidad, resetear la referencia
+                aderezoTransform = null; // Si no hay aderezo, resetear la referencia
             }
         }
-        else
-        {
-            aderezoTransform = null; // Si no hay aderezo, resetear la referencia
-        }
     }
+
 
     public bool IsPlayerInAttackRange()
     {
@@ -164,7 +196,6 @@ public class Enemigo : MonoBehaviour
             }
         }
     }
-
     public virtual IEnumerator DJugador()
     {
         isDamaging = true;
@@ -180,7 +211,8 @@ public class Enemigo : MonoBehaviour
                 damageParticleSystem.Play();
             }
 
-            // Empujar al jugador hacia atrás
+            // Eliminar la lógica de empuje al jugador
+            /*
             if (jugador != null)
             {
                 Vector3 direccionEmpuje = (jugador.transform.position - transform.position).normalized;
@@ -190,6 +222,7 @@ public class Enemigo : MonoBehaviour
                     rbJugador.AddForce(direccionEmpuje * fuerzaEmpuje, ForceMode.Impulse);
                 }
             }
+            */
 
             // Esperar el cooldown del ataque
             yield return new WaitForSeconds(atackCooldown);
@@ -204,14 +237,13 @@ public class Enemigo : MonoBehaviour
             if (!IsPlayerInAttackRange())
             {
                 // Si el jugador está fuera de rango, perseguirlo
-                velocidadMovimiento = statsEnemigo.velocidadMovimiento;
+                velocidadMovimientoActual = velocidadMovimientoInicial;
                 PerseguirJugador();
                 break;
             }
         }
         isDamaging = false;
     }
-
 
     void LookAtPlayer()
     {
@@ -227,37 +259,63 @@ public class Enemigo : MonoBehaviour
     }
     public virtual void PerseguirJugador()
     {
-        if(playerTransform != null)
+        if (playerTransform != null)
         {
             Vector3 direction = (playerTransform.position - transform.position).normalized;
-            transform.position += direction * velocidadMovimiento * Time.deltaTime;
+            transform.position += direction * velocidadMovimientoActual * Time.deltaTime;
         }
 
     }
 
     public void PerseguirAderezo()
     {
-        LookAtAderezo();
-        if (!isInteractingWithAderezo)
+        if (aderezoTransform == null)
         {
+            // Si el aderezo ha sido destruido, dejar de perseguirlo
             isInteractingWithAderezo = false;
             interactionTimer = 0f;
+            UpdateProgressBar(0f);
+            return;
         }
 
-        interactionTimer += Time.deltaTime;
-        UpdateProgressBar(interactionTimer / interactionTime);
+        LookAtAderezo();
 
-        if (interactionTimer >= interactionTime)
+        if (!isInteractingWithAderezo)
         {
-            Destroy(aderezoTransform.gameObject);
-            aderezoTransform = null;
-            isInteractingWithAderezo = true;
-            UpdateProgressBar(0f);
+            Vector3 direction = (aderezoTransform.position - transform.position).normalized;
+            transform.position += direction * velocidadMovimientoActual * Time.deltaTime;
+
+            if (Vector3.Distance(transform.position, aderezoTransform.position) < 1f) // Ajusta la distancia según sea necesario
+            {
+                isInteractingWithAderezo = true;
+                interactionTimer = 0f;
+
+                // Obtener la referencia a la barra de interacción del aderezo
+                Aderezo aderezo = aderezoTransform.GetComponent<Aderezo>();
+                if (aderezo != null)
+                {
+                    interactionProgressBar = aderezo.interactionProgressBar;
+                    interactionProgressBar.gameObject.SetActive(true); // Asegurarse de que la barra de progreso esté visible
+                }
+            }
         }
         else
         {
-            Vector3 direction = (aderezoTransform.position - transform.position).normalized;
-            transform.position += direction * velocidadMovimiento * Time.deltaTime;
+            interactionTimer += Time.deltaTime;
+            UpdateProgressBar(interactionTimer / interactionTime);
+
+            if (interactionTimer >= interactionTime)
+            {
+                Destroy(aderezoTransform.gameObject);
+                aderezoTransform = null;
+                isInteractingWithAderezo = false;
+                interactionTimer = 0f;
+                UpdateProgressBar(0f);
+                if (interactionProgressBar != null)
+                {
+                    interactionProgressBar.gameObject.SetActive(false); // Ocultar la barra de progreso
+                }
+            }
         }
     }
 
@@ -268,6 +326,7 @@ public class Enemigo : MonoBehaviour
             interactionProgressBar.fillAmount = progress;
         }
     }
+
     public void RecibirDanio(float cantidad)
     {
         vidaE -= cantidad;
@@ -277,8 +336,25 @@ public class Enemigo : MonoBehaviour
             DropAderezo();
             DesactivarEnemigo();
         }
+        else
+        {
+            // Verificar la probabilidad de alejarse
+            if (puedeAlejarse && Random.value <= probabilidadAlejarse)
+            {
+                Alejarse();
+            }
+        }
     }
 
+    private void Alejarse()
+    {
+        // Calcular una dirección aleatoria para alejarse
+        Vector3 alejarseDireccion = (transform.position - jugador.transform.position).normalized;
+        Vector3 nuevaPosicion = transform.position + alejarseDireccion * distanciaAlejarse;
+
+        // Mover al enemigo a la nueva posición
+        transform.position = Vector3.Lerp(transform.position, nuevaPosicion, Time.deltaTime * velocidadMovimientoActual);
+    }
     public void ActualizarBarraDeVida()
     {
         if (barraDeVida != null)
@@ -291,7 +367,7 @@ public class Enemigo : MonoBehaviour
     {
         // Desactivar el objeto del enemigo
         gameObject.SetActive(false);
-        Debug.Log("Enemigo ha sido derrotado");
+        spawner.RegresarEnemigo(gameObject);
     }
 
     private void OnDrawGizmosSelected()
@@ -334,7 +410,6 @@ public class Enemigo : MonoBehaviour
 
     protected virtual void OnCollisionEnter(Collision collision)
     {
-
         if (collision.gameObject.CompareTag("Player") && !enContactoConEscudo)
         {
             Debug.Log("Enemigo ha colisionado con el jugador");
@@ -344,17 +419,16 @@ public class Enemigo : MonoBehaviour
                 dañoCoroutine = StartCoroutine(EsperarYHacerDanio());
             }
             // Detener el movimiento del enemigo
-            velocidadMovimiento = 0f;
+            velocidadMovimientoActual = 0f;
             // Dejar de soltar el objeto adicional
             puedeSoltarObjeto = false;
-
         }
         else if (collision.gameObject.CompareTag("Escudo"))
         {
-            
             enContactoConEscudo = true;
             jugador = collision.gameObject.GetComponentInParent<Jugador>();
-            velocidadMovimiento = 0f;
+            escudoCollider = collision.collider; // Obtener la referencia del collider del escudo
+            velocidadMovimientoActual = 0f;
             if (jugador != null)
             {
                 reducirResistenciaEscudoCoroutine = StartCoroutine(EsperarYReducirResistenciaEscudo());
@@ -374,7 +448,7 @@ public class Enemigo : MonoBehaviour
                 StopCoroutine(dañoCoroutine);
                 dañoCoroutine = null;
             }
-            velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Restaurar la velocidad de movimiento del enemigo
+            velocidadMovimientoActual = velocidadMovimientoInicial; // Restaurar la velocidad de movimiento del enemigo
             puedeSoltarObjeto = true;
             if (this is EnemigoCuerpo enemigoCuerpo)
             {
@@ -383,17 +457,25 @@ public class Enemigo : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Escudo"))
         {
-            velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Restaurar la velocidad de movimiento del enemigo
-
             Debug.Log("Enemigo ha dejado de colisionar con el escudo");
             enContactoConEscudo = false;
+            escudoCollider = null; // Limpiar la referencia del collider del escudo
+            velocidadMovimientoActual = velocidadMovimientoInicial; // Restaurar la velocidad de movimiento del enemigo
+            Debug.Log("Se restauro la velocidad");
             if (reducirResistenciaEscudoCoroutine != null)
             {
                 StopCoroutine(reducirResistenciaEscudoCoroutine);
                 reducirResistenciaEscudoCoroutine = null;
             }
+
+            // Asegurarse de que el enemigo vuelva a perseguir al jugador
+            if (playerTransform != null)
+            {
+                persiguiendoJugador = true;
+            }
         }
     }
+
 
     private IEnumerator EsperarYHacerDanio()
     {
@@ -404,17 +486,18 @@ public class Enemigo : MonoBehaviour
         }
     }
 
-    private IEnumerator EsperarYReducirResistenciaEscudo()
+    public IEnumerator EsperarYReducirResistenciaEscudo()
     {
         while (enContactoConEscudo)
         {
-            yield return new WaitForSeconds(1f); // Esperar un segundo
-            if (jugador != null)
+            yield return new WaitForSeconds(2f); // Esperar dos segundos
+            if (jugador != null && escudoCollider != null)
             {
                 jugador.ReducirResistenciaEscudo(shieldDamage); // Reducir la resistencia del escudo
             }
         }
     }
+
 
     public SectionManager sectionManager; // Referencia al SectionManager
 
@@ -429,8 +512,8 @@ public class Enemigo : MonoBehaviour
     }
     private IEnumerator Ralentizar(float factor, float duracion)
     {
-        velocidadMovimiento *= factor;
+        velocidadMovimientoActual *= factor;
         yield return new WaitForSeconds(duracion);
-        velocidadMovimiento = statsEnemigo.velocidadMovimiento; // Inicializar la velocidad de movimiento
+        velocidadMovimientoActual = velocidadMovimientoInicial; // Inicializar la velocidad de movimiento
     }
 }

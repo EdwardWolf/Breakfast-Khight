@@ -57,7 +57,7 @@ public class EnemigoDistancia : Enemigo
             if (!IsPlayerInAttackRange())
             {
                 // Si el jugador está fuera de rango, perseguirlo
-                velocidadMovimiento = statsEnemigo.velocidadMovimiento;
+                velocidadMovimientoInicial = statsEnemigo.velocidadMovimiento;
                 PerseguirJugador();
                 break;
             }

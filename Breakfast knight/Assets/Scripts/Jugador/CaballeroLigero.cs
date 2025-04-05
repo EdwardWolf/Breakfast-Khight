@@ -31,6 +31,11 @@ public class CaballeroLigero : Jugador
 
     private void Update()
     {
+        // Actualizar el valor de ataque del arma equipada
+        if (armas[armaActual] != null)
+        {
+            ataque = armas[armaActual].daño;
+        }
         cargaBarra.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
                  camara.transform.rotation * Vector3.up);
 
@@ -133,10 +138,25 @@ public class CaballeroLigero : Jugador
             if (animator != null)
             {
                 isAttacking = true; // Iniciar la animación de ataque
-                //attackLayerWeight = Mathf.Lerp(attackLayerWeight, 1f, Time.deltaTime * attackTransitionSpeed);
                 attackLayerWeight = 1f;
 
-                animator.SetTrigger("Ataque"); // Activar la animación de ataque
+                // Activar la animación correspondiente según el arma equipada
+                switch (armaActual)
+                {
+                    case 0:
+                        animator.SetTrigger("Cuchara");
+                        break;
+                    case 1:
+                        animator.SetTrigger("Cuchillo");
+                        break;
+                    case 2:
+                        animator.SetTrigger("Tenedor");
+                        break;
+                    //default:
+                    //    animator.SetTrigger("Ataque");
+                    //    break;
+                }
+
                 StartCoroutine(WaitAndResetAttackLayerWeight(1f));
             }
             StartCoroutine(ActivarColliderEspada());
@@ -145,7 +165,6 @@ public class CaballeroLigero : Jugador
         {
             isAttacking = false;
             attackLayerWeight = 0f;
-            //attackLayerWeight = Mathf.Lerp(attackLayerWeight, 0f, Time.deltaTime * attackTransitionSpeed);
         }
         animator.SetLayerWeight(1, attackLayerWeight); // Ajustar el peso del Attack Layer (index 1)
 
@@ -155,6 +174,7 @@ public class CaballeroLigero : Jugador
             isAttacking = false;
         }
     }
+
 
     private IEnumerator WaitAndResetAttackLayerWeight(float waitTime)
     {

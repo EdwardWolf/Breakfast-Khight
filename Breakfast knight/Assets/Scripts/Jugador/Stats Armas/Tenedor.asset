@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nombreArma: Tenedor
   "da\xF1o": 20
-  velocidadDeAtaque: 2
+  velocidadDeAtaque: 1

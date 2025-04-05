@@ -41,9 +41,9 @@ public class AderezoVelocidad : Aderezo
     {
         if (enemigo != null)
         {
-            enemigo.velocidadMovimiento += incrementoVelocidad;
+            enemigo.velocidadMovimientoInicial += incrementoVelocidad;
             yield return new WaitForSeconds(duracionEfecto);
-            enemigo.velocidadMovimiento -= incrementoVelocidad;
+            enemigo.velocidadMovimientoInicial -= incrementoVelocidad;
         }
     }
 }
