@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class EnemigoCuerpo : Enemigo
 {
-    public CaballeroLigero cab;
     public GameObject otroObjetoPrefab;
     private Coroutine soltarObjetoCoroutine; // Variable para almacenar la corrutina
     private bool haAlcanzadoAlJugador = false; // Variable para controlar si ha alcanzado al jugador
+
     protected override void Start()
     {
         base.Start();
@@ -47,32 +47,50 @@ public class EnemigoCuerpo : Enemigo
 
     public override void PerseguirJugador()
     {
-        base.PerseguirJugador();
-        if (haAlcanzadoAlJugador)
+        if (enContactoConEscudo)
         {
-            if (soltarObjetoCoroutine != null)
+            velocidadMovimientoActual = 0f;
+        }
+        else
+        {
+            base.PerseguirJugador();
+            if (haAlcanzadoAlJugador)
             {
-                StopCoroutine(soltarObjetoCoroutine);
+                velocidadMovimientoActual = 0f;
+                if (soltarObjetoCoroutine != null)
+                {
+                    StopCoroutine(soltarObjetoCoroutine);
+                }
+                soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+                haAlcanzadoAlJugador = false;
             }
-            soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
-            haAlcanzadoAlJugador = false;
+            else
+            {
+                velocidadMovimientoActual = velocidadMovimientoInicial;
+            }
         }
     }
+
 
     public void AlcanzarJugador()
     {
         haAlcanzadoAlJugador = true;
     }
+
     protected override void OnCollisionEnter(Collision collision)
     {
         base.OnCollisionEnter(collision);
         if (collision.gameObject.CompareTag("Escudo"))
         {
-            enContactoConEscudo = true;
+        //    enContactoConEscudo = true;
             if (soltarObjetoCoroutine != null)
             {
-                StopCoroutine(soltarObjetoCoroutine);
-            }
+               StopCoroutine(soltarObjetoCoroutine);
+           }
+        //    if (jugador != null)
+        //    {
+        //        reducirResistenciaEscudoCoroutine = StartCoroutine(EsperarYReducirResistenciaEscudo());
+        //    }
         }
     }
 
@@ -81,12 +99,16 @@ public class EnemigoCuerpo : Enemigo
         base.OnCollisionExit(collision);
         if (collision.gameObject.CompareTag("Escudo"))
         {
-            enContactoConEscudo = false;
+        //    enContactoConEscudo = false;
+        //    if (reducirResistenciaEscudoCoroutine != null)
+        //    {
+        //        StopCoroutine(reducirResistenciaEscudoCoroutine);
+        //        reducirResistenciaEscudoCoroutine = null;
+        //    }
             if (soltarObjetoCoroutine == null)
-            {
-                soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
-            }
+           {
+               soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+           }
         }
     }
-
 }

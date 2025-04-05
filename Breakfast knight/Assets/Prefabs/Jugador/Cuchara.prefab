@@ -68,6 +68,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 605729935009100257, guid: 24384b5bb3733314c8747f9bf8f89774, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 429aa258dacd3d641a69e7846183f11d, type: 2}
     - target: {fileID: 919132149155446097, guid: 24384b5bb3733314c8747f9bf8f89774, type: 3}
       propertyPath: m_Name
       value: Cuchara

@@ -16,4 +16,4 @@ MonoBehaviour:
   resistenciaEscudo: 50
   velocidadMovimiento: 3
   velocidadAtaque: 5
-  ataque: 30
+  ataque: 50

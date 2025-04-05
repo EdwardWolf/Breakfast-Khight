@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Cuchara
   m_EditorClassIdentifier: 
   nombreArma: Cuchara
-  "da\xF1o": 10
-  velocidadDeAtaque: 5
+  "da\xF1o": 35
+  velocidadDeAtaque: 1

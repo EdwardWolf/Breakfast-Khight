@@ -112,7 +112,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.probuilder": {
-      "version": "5.2.3",
+      "version": "5.2.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -228,7 +228,7 @@
       }
     },
     "com.unity.visualscripting": {
-      "version": "1.9.4",
+      "version": "1.9.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {

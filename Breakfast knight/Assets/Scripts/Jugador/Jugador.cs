@@ -57,8 +57,8 @@ public abstract class Jugador : MonoBehaviour
     public Image[] imagenesArmas;
 
     public GameObject[] prefabsArmas = new GameObject[3];
-    private Arma[] armas = new Arma[3];
-    private int armaActual = 0;
+    public Arma[] armas = new Arma[3];
+    public int armaActual = 0;
 
     private bool ralentizadoBala = false; //Variable para decir si el jugador esta relentizado por la bala
     public bool aturdidoBala = false; //Variable para decir si el jugador esta aturdido por la bala
@@ -76,12 +76,10 @@ public abstract class Jugador : MonoBehaviour
         camara = Camera.main; // Obtener la cámara principal
         audioSource = camara.GetComponent<AudioSource>(); // Obtener el AudioSource de la cámara principal
         panelPausa.SetActive(false); // Ocultar el panel de pausa
-                                     // Asignar los valores iniciales de las estadísticas.
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
         _velocidadMovimiento = stats.velocidadMovimiento;
         velocidadAtaque = stats.velocidadAtaque;
-        ataque = stats.ataque; // Inicializar el ataque
         corazonesActuales = Mathf.CeilToInt(vidaActual / valorCorazon);
         OnVidaCambiada?.Invoke(corazonesActuales);
         derrota.SetActive(false);
@@ -109,7 +107,7 @@ public abstract class Jugador : MonoBehaviour
         playerInputActions.Player.ArmaAnterior.started += OnArmaAnterior; // Asignar la acción de cambiar al arma anterior
         playerInputActions.Player.ArmaSiguiente.started += OnArmaSiguiente; // Asignar la acción de cambiar al arma siguiente
 
-        playerInputActions.Enable();
+        playerInputActions.Enable(); // Asegúrate de habilitar los controles aquí
 
         renderersNoAfectados = new List<Renderer>(); // Inicializar la lista de renderers no afectados
 
@@ -126,6 +124,12 @@ public abstract class Jugador : MonoBehaviour
                 renderersNoAfectados.AddRange(armaRenderers);
             }
         }
+        // Asignar el valor de ataque del arma equipada
+        if (armas[armaActual] != null)
+        {
+            ataque = armas[armaActual].daño;
+        }
+
         ActualizarUIArmas();
         ActualizarArmaCollider(); // Actualizar el Collider del arma actual
                                   // Agregar el renderer del escudo a la lista de renderers no afectados
@@ -221,7 +225,7 @@ public abstract class Jugador : MonoBehaviour
         playerInputActions.Player.Pausa.started -= OnPausePressed; // Desasignar la acción de pausa
         playerInputActions.Player.ArmaAnterior.started -= OnArmaAnterior; // Desasignar la acción de cambiar al arma anterior
         playerInputActions.Player.ArmaSiguiente.started -= OnArmaSiguiente; // Desasignar la acción de cambiar al arma siguiente
-        playerInputActions.Disable();
+        playerInputActions.Disable(); // Asegúrate de deshabilitar los controles aquí
     }
 
     private void OnAttackChargedStarted(InputAction.CallbackContext context)

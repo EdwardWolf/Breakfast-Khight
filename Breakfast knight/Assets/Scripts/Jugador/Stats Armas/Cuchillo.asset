@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Cuchillo
   m_EditorClassIdentifier: 
   nombreArma: Cuchillo
-  "da\xF1o": 7
-  velocidadDeAtaque: 15
+  "da\xF1o": 25
+  velocidadDeAtaque: 1

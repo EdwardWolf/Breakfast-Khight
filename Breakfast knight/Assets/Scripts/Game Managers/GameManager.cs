@@ -7,15 +7,9 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public List<SectionManager> sections; // Lista de secciones en el nivel
-
-    public void AddSection(SectionManager section)
-    {
-        if (!sections.Contains(section))
-        {
-            sections.Add(section);
-        }
-    }
-
+    public List<EnemySpawner> enemySpawners; // Lista de spawners de enemigos en el nivel
+    public List<Door> doors; // Lista de puertas en el nivel
+    public List<Key> keys; // Lista de llaves en el nivel
 
     private void Awake()
     {
@@ -31,33 +25,80 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        // Inicializar puertas, llaves, secciones y spawners si es necesario
+    }
+
     public void ReiniciarJuego()
     {
         // Reiniciar el tiempo de juego
         Time.timeScale = 1f;
         // Cargar la escena actual
         UnityEngine.SceneManagement.SceneManager.LoadScene("Principal");
-
     }
 
     public void PausarJuego()
     {
-        // Reiniciar el tiempo de juego
+        // Pausar el tiempo de juego
         Time.timeScale = 0f;
-
-
     }
 
-
-    public List<Door> doors; // Lista de puertas en el nivel
-    public List<Key> keys; // Lista de llaves en el nivel
-
-    private void Start()
+    // Métodos para administrar SectionManager
+    public void AddSection(SectionManager section)
     {
-        // Inicializar puertas y llaves si es necesario
-        // Inicializar secciones si es necesario
+        if (!sections.Contains(section))
+        {
+            sections.Add(section);
+        }
     }
 
+    public void RemoveSection(SectionManager section)
+    {
+        if (sections.Contains(section))
+        {
+            sections.Remove(section);
+        }
+    }
+
+    public void ActivateSection(SectionManager section)
+    {
+        section.gameObject.SetActive(true);
+    }
+
+    public void DeactivateSection(SectionManager section)
+    {
+        section.gameObject.SetActive(false);
+    }
+
+    // Métodos para administrar EnemySpawner
+    public void AddEnemySpawner(EnemySpawner spawner)
+    {
+        if (!enemySpawners.Contains(spawner))
+        {
+            enemySpawners.Add(spawner);
+        }
+    }
+
+    public void RemoveEnemySpawner(EnemySpawner spawner)
+    {
+        if (enemySpawners.Contains(spawner))
+        {
+            enemySpawners.Remove(spawner);
+        }
+    }
+
+    public void ActivateEnemySpawner(EnemySpawner spawner)
+    {
+        spawner.gameObject.SetActive(true);
+    }
+
+    public void DeactivateEnemySpawner(EnemySpawner spawner)
+    {
+        spawner.gameObject.SetActive(false);
+    }
+
+    // Métodos para administrar Door
     public void AddDoor(Door door)
     {
         if (!doors.Contains(door))
@@ -66,11 +107,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void AddKey(Key key)
+    public void RemoveDoor(Door door)
     {
-        if (!keys.Contains(key))
+        if (doors.Contains(door))
         {
-            keys.Add(key);
+            doors.Remove(door);
+        }
+    }
+
+    public void LockDoor(Door door)
+    {
+        if (doors.Contains(door))
+        {
+            door.Lock();
         }
     }
 
@@ -81,15 +130,31 @@ public class GameManager : MonoBehaviour
             door.Unlock();
         }
     }
+
+    // Métodos para administrar Key
+    public void AddKey(Key key)
+    {
+        if (!keys.Contains(key))
+        {
+            keys.Add(key);
+        }
+    }
+
+    public void RemoveKey(Key key)
+    {
+        if (keys.Contains(key))
+        {
+            keys.Remove(key);
+        }
+    }
+
+    public void ActivateKey(Key key)
+    {
+        key.gameObject.SetActive(true);
+    }
+
+    public void DeactivateKey(Key key)
+    {
+        key.gameObject.SetActive(false);
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
