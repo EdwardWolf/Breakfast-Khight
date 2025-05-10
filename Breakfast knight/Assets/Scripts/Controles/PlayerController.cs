@@ -3,14 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public static class PlayerController
+public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance { get; private set; }
     private static GameInputs playerInput;
 
-    static PlayerController()
+    private void Start()
     {
-        playerInput = new GameInputs();
-        playerInput.Enable();
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            Debug.Log("PlayerController instance created");
+            playerInput = new GameInputs();
+            playerInput.Enable();
+        }
+        else
+        {
+            Debug.Log("PlayerController instance already exists, destroying this one.");
+            Destroy(gameObject);
+        }
+
+        Debug.Log("PlayerController instance started and enables status: " + instance.enabled);
     }
 
     public static Vector3 GetMoveInput()

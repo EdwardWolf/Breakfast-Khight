@@ -16,7 +16,7 @@ public class CaballeroLigero : Jugador
     private float chargeLayerWeight = 0f;
     private float cargadoLayerWeight = 0f;
     public float attackTransitionSpeed = 5f; // Velocidad a la que el layer de ataque cambia su peso
-    private bool isAttacking = false;
+    public bool isAttacking = false;
     public ParticleSystem carga;
 
     [SerializeField] private Material materialEscudoActivo; // Material del escudo activo
@@ -121,7 +121,15 @@ public class CaballeroLigero : Jugador
         animator.SetLayerWeight(2, escudoLayerWeight);
         animator.SetLayerWeight(3, chargeLayerWeight);
         animator.SetLayerWeight(4, cargadoLayerWeight);
+
+        // Debugging: Imprimir valores del Animator
+        //Debug.Log($"isAttacking: {isAttacking}");
+        //Debug.Log($"Attack Layer Weight: {animator.GetLayerWeight(1)}");
+        //Debug.Log($"Current State: {animator.GetCurrentAnimatorStateInfo(1).normalizedTime}");
+        //Debug.Log($"Is In Transition: {animator.IsInTransition(1)}");
+    
     }
+
 
     //Activar de regreso para el movimiento en funcion a la direccion
     //public override void Mover(Vector3 direccion)
@@ -133,14 +141,12 @@ public class CaballeroLigero : Jugador
 
     public override void ActivarAtaque()
     {
-        if (!escudoActivo && !aturdidoBala && !isAttacking)
+        if (!escudoActivo && !aturdidoBala) // Eliminamos la verificación de isAttacking
         {
+            attackLayerWeight = 1f;
+
             if (animator != null)
             {
-                isAttacking = true; // Iniciar la animación de ataque
-                attackLayerWeight = 1f;
-
-                // Activar la animación correspondiente según el arma equipada
                 switch (armaActual)
                 {
                     case 0:
@@ -152,29 +158,26 @@ public class CaballeroLigero : Jugador
                     case 2:
                         animator.SetTrigger("Tenedor");
                         break;
-                    //default:
-                    //    animator.SetTrigger("Ataque");
-                    //    break;
                 }
-
-                StartCoroutine(WaitAndResetAttackLayerWeight(1f));
             }
-            StartCoroutine(ActivarColliderEspada());
-        }
-        else
-        {
-            isAttacking = false;
-            attackLayerWeight = 0f;
-        }
-        animator.SetLayerWeight(1, attackLayerWeight); // Ajustar el peso del Attack Layer (index 1)
 
-        // Aquí puedes revisar si la animación de ataque ha terminado y resetear el estado
-        if (animator.GetCurrentAnimatorStateInfo(1).normalizedTime >= 1f && !animator.IsInTransition(1))
-        {
-            isAttacking = false;
+            StartCoroutine(ActivarColliderEspada());
         }
     }
 
+    //private IEnumerator WaitAndResetAttackState()
+    //{
+    //    // Esperar hasta que la animación de ataque termine
+    //    while (animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1f || animator.IsInTransition(1))
+    //    {
+    //        yield return null; // Esperar al siguiente frame
+    //    }
+
+    //    // Restablecer el estado de ataque
+    //    isAttacking = false;
+    //    attackLayerWeight = 0f;
+    //    animator.SetLayerWeight(1, attackLayerWeight);
+    //}
 
     private IEnumerator WaitAndResetAttackLayerWeight(float waitTime)
     {

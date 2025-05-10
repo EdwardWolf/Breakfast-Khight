@@ -21,11 +21,23 @@ public class AderezoVelocidad : Aderezo
     {
         if (jugador != null)
         {
-            jugador._velocidadMovimiento += incrementoVelocidad;
+            jugador.velocidadActual += incrementoVelocidad;
+
+            // Esperar la duración del efecto
             yield return new WaitForSeconds(duracionEfecto);
-            jugador._velocidadMovimiento -= incrementoVelocidad;
+
+            // Verificar si el jugador sigue existiendo antes de restar la velocidad
+            if (jugador != null)
+            {
+                jugador.velocidadActual = jugador._velocidadMovimiento;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Referencia al jugador es nula. No se puede aplicar el incremento de velocidad.");
         }
     }
+
 
     protected override void IncrementarVelocidadEnemigo()
     {

@@ -329,10 +329,19 @@ public class Enemigo : MonoBehaviour
 
     public void RecibirDanio(float cantidad)
     {
+        // Reducir la vida del enemigo
         vidaE -= cantidad;
+
+        // Mostrar en consola el daño recibido y la vida restante
+        Debug.Log($"El enemigo {gameObject.name} recibió {cantidad} de daño. Vida restante: {vidaE}");
+
+        // Actualizar la barra de vida
         ActualizarBarraDeVida();
+
+        // Verificar si el enemigo ha muerto
         if (vidaE <= 0)
         {
+            Debug.Log($"El enemigo {gameObject.name} ha sido derrotado.");
             DropAderezo();
             DesactivarEnemigo();
         }
@@ -345,6 +354,7 @@ public class Enemigo : MonoBehaviour
             }
         }
     }
+
 
     private void Alejarse()
     {
@@ -412,6 +422,8 @@ public class Enemigo : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player") && !enContactoConEscudo)
         {
+            velocidadMovimientoActual = 0f;
+            persiguiendoJugador = false;
             Debug.Log("Enemigo ha colisionado con el jugador");
             jugador = collision.gameObject.GetComponent<Jugador>();
             if (jugador != null && !isDamaging)
@@ -443,6 +455,7 @@ public class Enemigo : MonoBehaviour
             Debug.Log("Enemigo ha dejado de colisionar con el jugador");
             jugador = null;
             isDamaging = false;
+
             if (dañoCoroutine != null)
             {
                 StopCoroutine(dañoCoroutine);

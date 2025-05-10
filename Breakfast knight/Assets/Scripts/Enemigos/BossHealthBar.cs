@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class BossHealthBar : MonoBehaviour
 {
     public Image healthBar; // Referencia a la imagen de la barra de vida
-    public Text bossNameText; // Referencia al texto del nombre del jefe
+    public TMP_Text bossNameText; // Referencia al texto del nombre del jefe
     private float maxHealth;
     private float currentHealth;
 

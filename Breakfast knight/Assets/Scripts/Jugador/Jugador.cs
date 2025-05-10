@@ -71,6 +71,8 @@ public abstract class Jugador : MonoBehaviour
     public List<Renderer> renderers; // Lista de renderers del jugador
     public List<Renderer> renderersNoAfectados; // Lista de renderers que no deben cambiar de material
 
+    public float velocidadActual;
+
     protected virtual void Start()
     {
         camara = Camera.main; // Obtener la cámara principal
@@ -79,6 +81,7 @@ public abstract class Jugador : MonoBehaviour
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
         _velocidadMovimiento = stats.velocidadMovimiento;
+        velocidadActual = _velocidadMovimiento;
         velocidadAtaque = stats.velocidadAtaque;
         corazonesActuales = Mathf.CeilToInt(vidaActual / valorCorazon);
         OnVidaCambiada?.Invoke(corazonesActuales);
@@ -158,14 +161,15 @@ public abstract class Jugador : MonoBehaviour
     private IEnumerator Ralentizar(float factor, float duracion)
     {
         ralentizadoBala = true;
-        _velocidadMovimiento = _velocidadMovimiento * factor;
+       velocidadActual = velocidadActual * factor;
+
         // Asigna la velocidad reducida al jugador
 
         yield return new WaitForSeconds(duracion);
 
         // Restaura la velocidad original del jugador
         ralentizadoBala = false;
-        _velocidadMovimiento = stats.velocidadMovimiento;
+        velocidadActual = _velocidadMovimiento;
     }
 
     public void AplicarAturdimiento(float duracion)
@@ -179,20 +183,20 @@ public abstract class Jugador : MonoBehaviour
     private IEnumerator Aturdir(float duracion)
     {
         aturdidoBala = true;
-        _velocidadMovimiento = 0;
+        velocidadActual = 0f;
 
         // Asigna la velocidad reducida al jugador
         yield return new WaitForSeconds(duracion);
         // Restaura la velocidad original del jugador
         aturdidoBala = false;
-        _velocidadMovimiento = stats.velocidadMovimiento;
+        velocidadActual = _velocidadMovimiento;
     }
 
     public void AplicarDebufoVelocidad(float reduccionVelocidad, float duracion)
     {
         if (!debufoVelocidadAplicado)
         {
-            _velocidadMovimiento *= (1 - reduccionVelocidad);
+            velocidadActual *= (1 - reduccionVelocidad);
             debufoVelocidadAplicado = true;
             if (debufoVelocidadCoroutine != null)
             {
@@ -212,7 +216,8 @@ public abstract class Jugador : MonoBehaviour
     {
         if (debufoVelocidadAplicado)
         {
-            _velocidadMovimiento = stats.velocidadMovimiento;
+            //_velocidadMovimiento = stats.velocidadMovimiento;
+            velocidadActual =_velocidadMovimiento;
             debufoVelocidadAplicado = false;
         }
     }
@@ -558,7 +563,7 @@ public abstract class Jugador : MonoBehaviour
         Vector3 direccionRotada = rotacion * direccion;
 
         // Mover al jugador en la dirección rotada sin importar la dirección a la que está mirando
-        Vector3 movimiento = new Vector3(direccionRotada.x, 0, direccionRotada.z) * _velocidadMovimiento * Time.deltaTime;
+        Vector3 movimiento = new Vector3(direccionRotada.x, 0, direccionRotada.z) * velocidadActual * Time.deltaTime;
         transform.Translate(movimiento, Space.World);
     }
 }
