@@ -2,6 +2,7 @@ using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class Aderezo : MonoBehaviour
 {
     public float interactionDistance = 3f; // Distancia de interacción
@@ -19,6 +20,16 @@ public class Aderezo : MonoBehaviour
     private void Start()
     {
         gameObject.SetActive(true); // Activar el objeto instanciado
+        interactionProgressBar = transform.Find("Canvas/Image").GetComponent<Image>();
+
+        if (interactionProgressBar != null)
+        {
+            interactionProgressBar.gameObject.SetActive(true); // Activar la barra de progreso
+        }
+        else
+        {
+            Debug.LogError("No se encontró el interactionProgressBar en la jerarquía.");
+        }
     }
 
     private void Awake()

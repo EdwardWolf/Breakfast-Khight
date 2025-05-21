@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4357720218047266912}
   - component: {fileID: 3879804700900447977}
   - component: {fileID: 1030523867481225523}
-  - component: {fileID: 3638989658210358436}
+  - component: {fileID: -786688410932683045}
   m_Layer: 8
   m_Name: Aderezo (Mermelada)
   m_TagString: Untagged
@@ -130,7 +130,7 @@ MonoBehaviour:
   m_IgnoreFromBuild: 1
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
---- !u!114 &3638989658210358436
+--- !u!114 &-786688410932683045
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 314813060356092051}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bcfb094c647e084a9b6cc75d5c1ee29, type: 3}
+  m_Script: {fileID: 11500000, guid: d0529368a37e4a242ae1120721c454fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   interactionDistance: 3
@@ -147,9 +147,8 @@ MonoBehaviour:
   interactionTimer: 0
   jugador: {fileID: 0}
   enemigo: {fileID: 0}
-  interactionProgressBar: {fileID: 506146485795256765}
-  incrementoVelocidad: 2
-  duracionEfecto: 5
+  interactionProgressBar: {fileID: 0}
+  cantidadRecuperacion: 20
 --- !u!1 &1391380943264148685
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public abstract class Jugador : MonoBehaviour
 {
     [SerializeField] public Stats stats;
-    [SerializeField] protected float vidaActual;
+    [SerializeField] public float vidaActual;
     [SerializeField] protected float resistenciaEscudoActual;
     [SerializeField] public float _velocidadMovimiento;
     [SerializeField] protected float velocidadAtaque;
