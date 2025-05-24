@@ -96,7 +96,8 @@ MonoBehaviour:
   playerTransform: {fileID: 0}
   vidaE: 0
   damage: 0
-  velocidadMovimiento: 0
+  velocidadMovimientoInicial: 0
+  velocidadMovimientoActual: 0
   usarRadioDeAtaque: 0
   barraDeVida: {fileID: 636513289733358477}
   aderezosPrefabs:
@@ -118,6 +119,7 @@ MonoBehaviour:
   tiempoParaSoltarObjeto: 5
   persiguiendoJugador: 0
   puedeSoltarObjeto: 1
+  animator: {fileID: 0}
   audioSource: {fileID: 0}
   golpeClip: {fileID: 8300000, guid: ff6457436fe2d1a49a6fc3c1078cf5d9, type: 3}
   probabilidadUsoAderezo: 1
@@ -125,12 +127,14 @@ MonoBehaviour:
   interactionTime: 2
   probabilidadAlejarse: 0.3
   distanciaAlejarse: 5
+  puedeAlejarse: 1
+  fuerzaEmpuje: 5
   escudoCollider: {fileID: 0}
   shieldDamage: 10
   enContactoConEscudo: 0
   sectionManager: {fileID: 0}
-  cab: {fileID: 0}
-  otroObjetoPrefab: {fileID: 8530985405293348726, guid: 3b37336d6f5c4354b92e215040e2a22e, type: 3}
+  Charco: {fileID: 8530985405293348726, guid: 3b37336d6f5c4354b92e215040e2a22e, type: 3}
+  haAlcanzadoAlJugador: 0
 --- !u!114 &2765718099733149342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,7 +181,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1796982255342016933}
   m_Enabled: 1
   m_AgentTypeID: -334000983
-  m_Radius: 1.33
+  m_Radius: 0.95
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50

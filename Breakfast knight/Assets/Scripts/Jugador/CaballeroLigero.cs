@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using UnityEngine.UI; // Asegúrate de incluir esta librería para trabajar con UI
+
 
 public class CaballeroLigero : Jugador
 {
@@ -22,6 +24,9 @@ public class CaballeroLigero : Jugador
     [SerializeField] private Material materialEscudoActivo; // Material del escudo activo
     [SerializeField] private Material materialEscudoNormal; // Material del escudo normal
 
+    public Image ataqueCargadoBarra; // Referencia a la barra de carga del ataque cargado
+
+
     private void Awake()
     {
         playerInputActions = new GameInputs();
@@ -31,6 +36,7 @@ public class CaballeroLigero : Jugador
 
     private void Update()
     {
+
         // Actualizar el valor de ataque del arma equipada
         if (armas[armaActual] != null)
         {
@@ -64,9 +70,11 @@ public class CaballeroLigero : Jugador
             animator.SetBool("Carga", true);
 
             chargeTime += Time.deltaTime;
-            if (cargaBarra != null)
+
+            // Actualizar la barra de carga del ataque cargado
+            if (ataqueCargadoBarra != null)
             {
-                cargaBarra.fillAmount = chargeTime / maxChargeTime;
+                ataqueCargadoBarra.fillAmount = chargeTime / maxChargeTime;
             }
 
             if (chargeTime >= maxChargeTime)
@@ -80,9 +88,11 @@ public class CaballeroLigero : Jugador
                 animator.SetLayerWeight(4, cargadoLayerWeight);
                 isCharging = false;
                 chargeTime = 0f;
-                if (cargaBarra != null)
+
+                // Reiniciar la barra de carga
+                if (ataqueCargadoBarra != null)
                 {
-                    cargaBarra.fillAmount = 0f;
+                    ataqueCargadoBarra.fillAmount = 0f;
                 }
             }
         }
@@ -95,8 +105,13 @@ public class CaballeroLigero : Jugador
             chargeLayerWeight = 0f;
             animator.SetLayerWeight(3, chargeLayerWeight);
             animator.SetBool("Carga", false);
-        }
 
+            // Reiniciar la barra de carga si se cancela
+            if (ataqueCargadoBarra != null)
+            {
+                ataqueCargadoBarra.fillAmount = 0f;
+            }
+        }
         // Verificar si la resistencia del escudo es cero y desactivar el escudo
         if (resistenciaEscudoActual <= 0 && escudoActivo)
         {
@@ -160,11 +175,30 @@ public class CaballeroLigero : Jugador
                         break;
                 }
             }
-
+            // Activar el TrailRenderer del arma
+            if (armas[armaActual] != null)
+            {
+                armas[armaActual].ActivarTrail();
+            }
             StartCoroutine(ActivarColliderEspada());
+            StartCoroutine(DesactivarTrailDespuesDeAtaque());
         }
     }
 
+    private IEnumerator DesactivarTrailDespuesDeAtaque()
+    {
+        // Esperar hasta que la animación de ataque termine
+        while (animator.GetCurrentAnimatorStateInfo(1).normalizedTime < 1f || animator.IsInTransition(1))
+        {
+            yield return null; // Esperar al siguiente frame
+        }
+
+        // Desactivar el TrailRenderer del arma
+        if (armas[armaActual] != null)
+        {
+            armas[armaActual].DesactivarTrail();
+        }
+    }
     //private IEnumerator WaitAndResetAttackState()
     //{
     //    // Esperar hasta que la animación de ataque termine

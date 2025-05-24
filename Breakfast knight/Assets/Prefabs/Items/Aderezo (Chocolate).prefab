@@ -56,6 +56,7 @@ MonoBehaviour:
   jugador: {fileID: 0}
   enemigo: {fileID: 0}
   interactionProgressBar: {fileID: 506146485795256765}
+  AderezoUI: {fileID: 21300000, guid: 23d741f6405510f4eba39a1a49ae3c72, type: 3}
   incrementoAtaque: 100
   cantidadGolpes: 5
 --- !u!33 &8759199061693916073

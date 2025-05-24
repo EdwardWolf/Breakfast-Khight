@@ -148,8 +148,10 @@ MonoBehaviour:
   jugador: {fileID: 0}
   enemigo: {fileID: 0}
   interactionProgressBar: {fileID: 506146485795256765}
-  incrementoVelocidad: 2
-  duracionEfecto: 5
+  AderezoUI: {fileID: 21300000, guid: d857e0aed7aaac04ba6e328dfcc442ab, type: 3}
+  incrementoVelocidad: 3
+  duracionEfecto: 2
+  velocidadEffectBar: {fileID: 0}
 --- !u!1 &1391380943264148685
 GameObject:
   m_ObjectHideFlags: 0

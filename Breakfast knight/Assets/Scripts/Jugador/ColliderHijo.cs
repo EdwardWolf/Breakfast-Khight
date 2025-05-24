@@ -5,19 +5,26 @@ using UnityEngine;
 public class ColliderHijo : MonoBehaviour
 {
     private Jugador jugador;
-    [SerializeField] private TrailRenderer trailRenderer; // Ahora es [SerializeField] para asignarlo desde el inspector
+    [SerializeField] private TrailRenderer trailRenderer;
+    [SerializeField] private GameObject hitParticlesPrefab;
+
+    private GameObject hitParticlesInstance;
+    private ParticleSystem hitParticleSystem;
+
+    private Transform enemigoActualTransform;
 
     private void Start()
     {
         jugador = GetComponentInParent<Jugador>();
 
-        //// Validar si el TrailRenderer está asignado
-        //if (trailRenderer != null)
-        //{
-        //    trailRenderer.enabled = false; // Desactivar el TrailRenderer al inicio
-        //}
+        // Instanciar el objeto de partículas una sola vez y desactivarlo
+        if (hitParticlesPrefab != null)
+        {
+            hitParticlesInstance = Instantiate(hitParticlesPrefab, Vector3.zero, Quaternion.identity);
+            hitParticlesInstance.SetActive(false);
+            hitParticleSystem = hitParticlesInstance.GetComponent<ParticleSystem>();
+        }
 
-        // Desactivar el collider al inicio
         GetComponent<Collider>().enabled = false;
     }
 
@@ -29,32 +36,33 @@ public class ColliderHijo : MonoBehaviour
             if (enemigo != null)
             {
                 Debug.Log("Golpeado enemigo");
-                // Aplicar daño al enemigo
-                enemigo.RecibirDanio(50f); // Usar el daño actual del jugador
-                //jugador.AsestarGolpe(); // Llamar a AsestarGolpe en el jugador
+                enemigo.RecibirDanio(15f);
+
+                Vector3 hitPoint = other.ClosestPoint(transform.position);
+                Vector3 hitDirection = (hitPoint - transform.position).normalized;
+                Quaternion rot = Quaternion.LookRotation(hitDirection);
+
+                // Si es otro enemigo, actualiza el padre del sistema de partículas
+                if (hitParticlesInstance != null)
+                {
+                    if (enemigoActualTransform != other.transform)
+                    {
+                        enemigoActualTransform = other.transform;
+                        hitParticlesInstance.transform.SetParent(enemigoActualTransform);
+                    }
+
+                    hitParticlesInstance.transform.position = hitPoint;
+                    hitParticlesInstance.transform.rotation = rot;
+                    hitParticlesInstance.SetActive(true);
+
+                    // Reiniciar el sistema de partículas
+                    if (hitParticleSystem != null)
+                    {
+                        hitParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                        hitParticleSystem.Play();
+                    }
+                }
             }
         }
     }
-
-    //// Método para activar el collider y el TrailRenderer
-    //public void ActivarCollider()
-    //{
-    //    GetComponent<Collider>().enabled = true;
-
-    //    if (trailRenderer != null)
-    //    {
-    //        trailRenderer.enabled = true;
-    //    }
-    //}
-
-    //// Método para desactivar el collider y el TrailRenderer
-    //public void DesactivarCollider()
-    //{
-    //    GetComponent<Collider>().enabled = false;
-
-    //    if (trailRenderer != null)
-    //    {
-    //        trailRenderer.enabled = false;
-    //    }
-    //}
 }

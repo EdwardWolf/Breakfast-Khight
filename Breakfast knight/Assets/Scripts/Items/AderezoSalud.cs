@@ -6,14 +6,14 @@ public class AderezoSalud : Aderezo
 {
     public float cantidadRecuperacion = 20f; // Cantidad de salud que recupera o aumenta
 
-    protected override void IncrementarAtaqueJugador()
+    protected override void ReuperarSaludJugador()
     {
         RecuperarSaludJugador();
     }
 
-    protected override void IncrementarAtaqueEnemigo()
+    protected override void ReuperarSaludEnemigo()
     {
-        AumentarVidaEnemigo();
+        RecuperarVidaEnemigo();
     }
 
     private void RecuperarSaludJugador()
@@ -26,16 +26,24 @@ public class AderezoSalud : Aderezo
             // Recuperar salud sin exceder la vida máxima
             jugador.vidaActual = Mathf.Min(vidaActual + cantidadRecuperacion, vidaMaxima);
             Debug.Log($"Salud del jugador después de usar el aderezo: {jugador.vidaActual}");
+            jugador.ActualizarBarraDeVida();
+            gameObject.SetActive(false); // Desactivar el objeto instanciado
         }
     }
 
-    private void AumentarVidaEnemigo()
+    private void RecuperarVidaEnemigo()
     {
         if (enemigo != null)
         {
-            enemigo.vidaE += cantidadRecuperacion; // Aumentar la vida del enemigo
-            enemigo.ActualizarBarraDeVida(); // Actualizar la barra de vida del enemigo
+            float vidaMaxima = enemigo.statsEnemigo.vida; // Vida máxima del enemigo
+            float vidaActual = enemigo.vidaE;
+
+            // Recuperar salud sin exceder la vida máxima
+            enemigo.vidaE = Mathf.Min(vidaActual + cantidadRecuperacion, vidaMaxima);
             Debug.Log($"Vida del enemigo después de usar el aderezo: {enemigo.vidaE}");
+            enemigo.ActualizarBarraDeVida();
+            gameObject.SetActive(false); // Desactivar el objeto instanciado
         }
     }
+
 }

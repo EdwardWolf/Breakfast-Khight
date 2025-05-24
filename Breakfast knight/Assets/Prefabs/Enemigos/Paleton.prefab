@@ -84,7 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e799b2287953f2440b39b5890d7c3c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  statsEnemigo: {fileID: 11400000, guid: 7a108cc28fd40754ea4ffb0de3b0f80d, type: 2}
+  statsEnemigo: {fileID: 11400000, guid: aeb3ccd5a99ee574faa59ece9bfd952e, type: 2}
   detectionRadius: 14.92
   attackRadius: 5.23
   playerLayer:
@@ -96,7 +96,8 @@ MonoBehaviour:
   playerTransform: {fileID: 0}
   vidaE: 0
   damage: 0
-  velocidadMovimiento: 0
+  velocidadMovimientoInicial: 0
+  velocidadMovimientoActual: 0
   usarRadioDeAtaque: 1
   barraDeVida: {fileID: 636513289733358477}
   aderezosPrefabs:
@@ -118,6 +119,7 @@ MonoBehaviour:
   tiempoParaSoltarObjeto: 5
   persiguiendoJugador: 0
   puedeSoltarObjeto: 1
+  animator: {fileID: 0}
   audioSource: {fileID: 0}
   golpeClip: {fileID: 8300000, guid: ff6457436fe2d1a49a6fc3c1078cf5d9, type: 3}
   probabilidadUsoAderezo: 1
@@ -125,10 +127,14 @@ MonoBehaviour:
   interactionTime: 2
   probabilidadAlejarse: 0.3
   distanciaAlejarse: 5
+  puedeAlejarse: 1
+  fuerzaEmpuje: 5
+  escudoCollider: {fileID: 0}
   shieldDamage: 10
   enContactoConEscudo: 0
   sectionManager: {fileID: 0}
   attackHandler: {fileID: 0}
+  atacando: 0
 --- !u!114 &2765718099733149342
 MonoBehaviour:
   m_ObjectHideFlags: 0

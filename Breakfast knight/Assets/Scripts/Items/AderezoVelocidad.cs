@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AderezoVelocidad : Aderezo
 {
@@ -11,32 +12,54 @@ public class AderezoVelocidad : Aderezo
     {
         if (jugador != null)
         {
-            StartCoroutine(AplicarIncrementoVelocidadJugador());
-            gameObject.SetActive(false); // Desactivar el objeto instanciado
+            jugador.AplicarBuffVelocidad(incrementoVelocidad, duracionEfecto);
+            jugador.BarrVelocidad(); // Actualizar la UI de velocidad del jugador
+            gameObject.SetActive(false);
             Debug.Log("Velocidad del jugador incrementada temporalmente");
         }
     }
+    //private IEnumerator AplicarIncrementoVelocidadJugador()
+    //{
+    //    if (jugador != null)
+    //    {
+    //        jugador.velocidadActual += incrementoVelocidad;
 
-    private IEnumerator AplicarIncrementoVelocidadJugador()
-    {
-        if (jugador != null)
-        {
-            jugador.velocidadActual += incrementoVelocidad;
+    //        if (velocidadEffectBar != null)
+    //        {
+    //            velocidadEffectBar.gameObject.SetActive(true);
+    //        }
 
-            // Esperar la duración del efecto
-            yield return new WaitForSeconds(duracionEfecto);
+    //        float tiempoTranscurrido = 0f;
+    //        while (tiempoTranscurrido < duracionEfecto)
+    //        {
+    //            tiempoTranscurrido += Time.deltaTime;
+    //            if (velocidadEffectBar != null)
+    //            {
+    //                Debug.Log("Velocidad del jugador Normal");
+    //                velocidadEffectBar.fillAmount = 1f - (tiempoTranscurrido / duracionEfecto);
+    //            }
+    //            yield return null;
+    //        }
 
-            // Verificar si el jugador sigue existiendo antes de restar la velocidad
-            if (jugador != null)
-            {
-                jugador.velocidadActual = jugador._velocidadMovimiento;
-            }
-        }
-        else
-        {
-            Debug.LogWarning("Referencia al jugador es nula. No se puede aplicar el incremento de velocidad.");
-        }
-    }
+    //        if (velocidadEffectBar != null)
+    //        {
+    //            velocidadEffectBar.fillAmount = 0f;
+    //            velocidadEffectBar.gameObject.SetActive(false);
+    //        }
+
+    //        if (jugador != null)
+    //        {
+    //            jugador.velocidadActual = jugador._velocidadMovimiento;
+    //        }
+
+    //        // Ahora sí, desactiva el objeto
+    //        gameObject.SetActive(false);
+    //    }
+    //    else
+    //    {
+    //        Debug.LogWarning("Referencia al jugador es nula. No se puede aplicar el incremento de velocidad.");
+    //    }
+    //}
 
 
     protected override void IncrementarVelocidadEnemigo()

@@ -14,6 +14,7 @@ public class Aderezo : MonoBehaviour
     private GameInputs playerInputActions;
     public Image interactionProgressBar; // Referencia a la barra de progreso
     private Camera camara; // Añadir referencia a la cámara
+    [SerializeField] private Sprite AderezoUI; // Prefab del objeto a instanciar
 
     private static Enemigo enemigoInteractuando; // Variable estática para almacenar el enemigo que está interactuando
 
@@ -52,7 +53,7 @@ public class Aderezo : MonoBehaviour
         playerInputActions.Disable();
     }
 
-    public void Update()
+    protected virtual void Update()
     {
         interactionProgressBar.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
         camara.transform.rotation * Vector3.up);
@@ -66,6 +67,7 @@ public class Aderezo : MonoBehaviour
 
                 if (interactionTimer >= interactionTime)
                 {
+                    Recoger(jugador);
                     RealizarInteraccionJugador();
                     isInteracting = false;
                     UpdateProgressBar(0f);
@@ -123,23 +125,34 @@ public class Aderezo : MonoBehaviour
     {
         // Este método será sobrescrito por AderezoVelocidad
     }
+    protected virtual void ReuperarSaludJugador()
+    {
+        // Este método será sobrescrito por AderezoSalud
+    }
+    protected virtual void ReuperarSaludEnemigo()
+    {
+        // Este método será sobrescrito por AderezoSalud
+    }
 
     private void RealizarInteraccionJugador()
     {
         IncrementarAtaqueJugador();
         IncrementarVelocidadJugador();
+        ReuperarSaludJugador();
     }
 
     private void RealizarInteraccionEnemigo()
     {
         IncrementarAtaqueEnemigo();
         IncrementarVelocidadEnemigo();
+        ReuperarSaludEnemigo();
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
         if (jugador != null && Vector3.Distance(transform.position, jugador.transform.position) <= interactionDistance)
         {
+            
             isInteracting = true;
             interactionTimer = 0f;
         }
@@ -197,4 +210,18 @@ public class Aderezo : MonoBehaviour
             }
         }
     }
+
+        // Método que se llama cuando el jugador recoge el aderezo
+        public virtual void Recoger(Jugador jugador)
+        {
+            // Notificar al UIManager
+            UIManager uiManager = FindObjectOfType<UIManager>();
+            if (uiManager != null)
+            {
+                uiManager.MostrarImagenAderezo(AderezoUI);
+            }
+            // Lógica adicional...
+            Destroy(gameObject);
+        }
+    
 }

@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class EnemigoCuerpo : Enemigo
 {
-    public GameObject otroObjetoPrefab;
+    [Header("Enemigo Cuerpo a Cuerpo --------------------")]
+    public GameObject Charco;
     private Coroutine soltarObjetoCoroutine; // Variable para almacenar la corrutina
-    private bool haAlcanzadoAlJugador = false; // Variable para controlar si ha alcanzado al jugador
+    public bool haAlcanzadoAlJugador = false; // Variable para controlar si ha alcanzado al jugador
 
     protected override void Start()
     {
@@ -27,7 +28,7 @@ public class EnemigoCuerpo : Enemigo
                     dropPosition.y = hit.point.y + 0.1f;
                 }
 
-                GameObject objetoInstanciado = Instantiate(otroObjetoPrefab, dropPosition, Quaternion.identity);
+                GameObject objetoInstanciado = Instantiate(Charco, dropPosition, Quaternion.identity);
 
                 // Iniciar la disminución del albedo si el objeto instanciado tiene el componente Charco
                 Charco charco = objetoInstanciado.GetComponent<Charco>();
@@ -79,6 +80,7 @@ public class EnemigoCuerpo : Enemigo
 
     protected override void OnCollisionEnter(Collision collision)
     {
+
         base.OnCollisionEnter(collision);
         if (collision.gameObject.CompareTag("Escudo"))
         {
