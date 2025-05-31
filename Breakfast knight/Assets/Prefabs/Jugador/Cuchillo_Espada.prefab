@@ -40,7 +40,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3293026073272644075}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -261,6 +261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trailRenderer: {fileID: 4118284305392838567}
+  hitParticlesPrefab: {fileID: 3068732418020444593, guid: 5cdfb76328526234dbe291f7488fc887, type: 3}
 --- !u!65 &864002045660035059
 BoxCollider:
   m_ObjectHideFlags: 0

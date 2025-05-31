@@ -68,18 +68,38 @@ public class UIManager : MonoBehaviour
         golpesText.text = "Golpes disponibles: " + golpesDisponibles;
     }
 
-    public void CambiarColorAtaqueImage(Color color, float duracion)
+    //Cambia el color de la imagen de ataque temporalmente
+    //public void CambiarColorAtaqueImage(Color color, float duracion)
+    //{
+    //    StartCoroutine(CambiarColorTemporalmente(color, duracion));
+    //}
+
+
+    //private IEnumerator CambiarColorTemporalmente(Color color, float duracion)
+    //{
+    //    Color colorOriginal = ataqueImage.color;
+    //    ataqueImage.color = color;
+    //    golpesText.text = "Sin potenciador";
+    //    yield return new WaitForSeconds(duracion);
+    //    ataqueImage.color = colorOriginal;
+    //    golpesText.text = "";
+    //}
+
+    public void ActivarTemporalmente(GameObject objeto, float duracion)
     {
-        StartCoroutine(CambiarColorTemporalmente(color, duracion));
+        StartCoroutine(ActivarObjetoTemporalmente(objeto, duracion));
     }
 
-    private IEnumerator CambiarColorTemporalmente(Color color, float duracion)
+    private IEnumerator ActivarObjetoTemporalmente(GameObject objeto, float duracion)
     {
-        Color colorOriginal = ataqueImage.color;
-        ataqueImage.color = color;
-        golpesText.text = "Sin potenciador";
+        objeto.SetActive(true);
         yield return new WaitForSeconds(duracion);
-        ataqueImage.color = colorOriginal;
-        golpesText.text = "";
+        objeto.SetActive(false);
+    }
+
+    public void MostrarImagenAderezo(Sprite sprite)
+    {
+        ataqueImage.sprite = sprite;
+        ataqueImage.gameObject.SetActive(true);
     }
 }

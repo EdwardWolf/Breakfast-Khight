@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Enemigo : MonoBehaviour
 {
+    [Header("Enemigo Basics ---------------------------")]
     public EnemigoStats statsEnemigo;
     public float detectionRadius;
     public float attackRadius;
@@ -67,6 +68,12 @@ public class Enemigo : MonoBehaviour
         }
     }
 
+    public void OnEnable()
+    {
+        // Asegurarse de que el objeto esté activo al habilitarlo
+        vidaE = statsEnemigo.vida;
+    }
+
     protected virtual void Start()
     {
         vidaE = statsEnemigo.vida; // Inicializar la vida del enemigo
@@ -97,21 +104,21 @@ public class Enemigo : MonoBehaviour
         else if (playerTransform != null)
         {
             LookAtPlayer();
-            if (usarRadioDeAtaque && IsPlayerInAttackRange())
-            {
-                if (!isDamaging)
-                {
-                    dañoCoroutine = StartCoroutine(DJugador());
-                }
-            }
-            else
-            {
+            //if (usarRadioDeAtaque && IsPlayerInAttackRange())
+            //{
+            //    if (!isDamaging)
+            //    {
+            //        dañoCoroutine = StartCoroutine(DJugador());
+            //    }
+            //}
+            //else
+            //{
                 if (!persiguiendoJugador)
                 {
                     persiguiendoJugador = true;
                 }
                 PerseguirJugador();
-            }
+           // }
         }
         else
         {
@@ -199,48 +206,18 @@ public class Enemigo : MonoBehaviour
     public virtual IEnumerator DJugador()
     {
         isDamaging = true;
-        while (jugador != null)
+        while (jugador != null && isDamaging)
         {
-            // Ejecutar el ataque
             Atacck();
             Debug.Log("Jugador ha recibido daño");
 
-            // Activar el sistema de partículas
             if (damageParticleSystem != null)
-            {
                 damageParticleSystem.Play();
-            }
 
-            // Eliminar la lógica de empuje al jugador
-            /*
-            if (jugador != null)
-            {
-                Vector3 direccionEmpuje = (jugador.transform.position - transform.position).normalized;
-                Rigidbody rbJugador = jugador.GetComponent<Rigidbody>();
-                if (rbJugador != null)
-                {
-                    rbJugador.AddForce(direccionEmpuje * fuerzaEmpuje, ForceMode.Impulse);
-                }
-            }
-            */
-
-            // Esperar el cooldown del ataque
             yield return new WaitForSeconds(atackCooldown);
 
-            // Desactivar el sistema de partículas después de un breve tiempo
             if (damageParticleSystem != null)
-            {
                 damageParticleSystem.Stop();
-            }
-
-            // Verificar si el jugador sigue en rango de ataque
-            if (!IsPlayerInAttackRange())
-            {
-                // Si el jugador está fuera de rango, perseguirlo
-                velocidadMovimientoActual = velocidadMovimientoInicial;
-                PerseguirJugador();
-                break;
-            }
         }
         isDamaging = false;
     }
@@ -285,7 +262,7 @@ public class Enemigo : MonoBehaviour
             Vector3 direction = (aderezoTransform.position - transform.position).normalized;
             transform.position += direction * velocidadMovimientoActual * Time.deltaTime;
 
-            if (Vector3.Distance(transform.position, aderezoTransform.position) < 1f) // Ajusta la distancia según sea necesario
+            if (Vector3.Distance(transform.position, aderezoTransform.position) < 0.6f) // Ajusta la distancia según sea necesario
             {
                 isInteractingWithAderezo = true;
                 interactionTimer = 0f;
@@ -377,6 +354,7 @@ public class Enemigo : MonoBehaviour
     {
         // Desactivar el objeto del enemigo
         gameObject.SetActive(false);
+
         spawner.RegresarEnemigo(gameObject);
     }
 
@@ -492,7 +470,7 @@ public class Enemigo : MonoBehaviour
 
     private IEnumerator EsperarYHacerDanio()
     {
-        yield return new WaitForSeconds(1f); // Esperar un segundo
+        yield return new WaitForSeconds(2f); // Esperar un segundo
         if (jugador != null)
         {
             dañoCoroutine = StartCoroutine(DJugador()); // Iniciar la corrutina para hacer daño al jugador

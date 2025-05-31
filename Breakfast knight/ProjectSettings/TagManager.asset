@@ -10,6 +10,7 @@ TagManager:
   - Puerta
   - Item
   - Point
+  - Boss
   layers:
   - Default
   - TransparentFX

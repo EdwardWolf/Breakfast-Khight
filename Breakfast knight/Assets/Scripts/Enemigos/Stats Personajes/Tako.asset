@@ -16,3 +16,7 @@ MonoBehaviour:
   velocidadMovimiento: 1
   velocidadAtaque: 1
   "da\xF1o": 10
+  "Da\xF1oAdicional": 10
+  VelocidadAdicional: 1
+  VidaAdicional: 50
+  VelocidadAtaqueAdicional: 1

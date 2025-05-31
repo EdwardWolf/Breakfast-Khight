@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public abstract class Jugador : MonoBehaviour
 {
     [SerializeField] public Stats stats;
-    [SerializeField] protected float vidaActual;
+    [SerializeField] public float vidaActual;
     [SerializeField] protected float resistenciaEscudoActual;
     [SerializeField] public float _velocidadMovimiento;
     [SerializeField] protected float velocidadAtaque;
@@ -15,7 +15,7 @@ public abstract class Jugador : MonoBehaviour
     private int golpesRestantes; // Variable para almacenar los golpes restantes con el ataque incrementado
     public GameObject derrota; // Referencia al objeto de derrota
     public float areaRadius = 5f; // Radio del área de efecto del ataque cargado
-    public float pushForce = 10f; // Fuerza de empuje del ataque cargado
+    public float pushForce = 5f; // Fuerza de empuje del ataque cargado
     public Image cargaBarra; // Referencia a la barra de carga
     public Image barraResistenciaEscudo; // Referencia a la barra de resistencia del escudo
     public GameObject ataqueCargadoEfecto; // Referencia al objeto del efecto del ataque cargado
@@ -73,8 +73,11 @@ public abstract class Jugador : MonoBehaviour
 
     public float velocidadActual;
 
+    public GameObject Equis;
+
     protected virtual void Start()
     {
+        Equis.SetActive(false); // Desactivar el objeto "Equis" al inicio
         camara = Camera.main; // Obtener la cámara principal
         audioSource = camara.GetComponent<AudioSource>(); // Obtener el AudioSource de la cámara principal
         panelPausa.SetActive(false); // Ocultar el panel de pausa
@@ -349,6 +352,15 @@ public abstract class Jugador : MonoBehaviour
             StartCoroutine(InvulnerabilidadTemporal()); // Iniciar la corrutina de invulnerabilidad temporal
         }
     }
+
+    public void ActualizarBarraDeVida()
+    {
+        // Calcula la cantidad de corazones actuales según la vida actual
+        int nuevosCorazones = Mathf.CeilToInt(vidaActual / 10f); // 10f es el valor de cada corazón
+
+        // Notifica a la UI para actualizar los corazones
+        OnVidaCambiada?.Invoke(nuevosCorazones);
+    }
     private IEnumerator InvulnerabilidadTemporal()
     {
         invulnerable = true;
@@ -493,7 +505,8 @@ public abstract class Jugador : MonoBehaviour
         }
         else
         {
-            uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
+            uiManager.ActivarTemporalmente(Equis, 1f); // Mostrar el objeto "Equis" durante 1 segundo
+            //uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
         }
     }
 
@@ -510,7 +523,8 @@ public abstract class Jugador : MonoBehaviour
         }
         else
         {
-            uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
+            uiManager.ActivarTemporalmente(Equis, 1f); // Mostrar el objeto "Equis" durante 1 segundo
+            //uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
         }
     }
 
@@ -566,4 +580,38 @@ public abstract class Jugador : MonoBehaviour
         Vector3 movimiento = new Vector3(direccionRotada.x, 0, direccionRotada.z) * velocidadActual * Time.deltaTime;
         transform.Translate(movimiento, Space.World);
     }
+
+    public void AplicarBuffVelocidad(float incremento, float duracion)
+    {
+        StartCoroutine(BuffVelocidadCoroutine(incremento, duracion));
+    }
+    public void BarrVelocidad()
+    {
+        StartCoroutine(BarraVelocidad());
+    }
+
+    [SerializeField] public Image velocidadEffectBar; // Nueva barra para el efecto
+    [SerializeField] private float duracionEfecto = 5f; // Duración del efecto de velocidad en segundos
+    private IEnumerator BuffVelocidadCoroutine(float incremento, float duracion)
+    {
+
+        velocidadActual += incremento;
+        yield return new WaitForSeconds(duracion);
+        velocidadActual -= incremento;
+    }
+
+    private IEnumerator BarraVelocidad()
+    {
+        velocidadEffectBar.gameObject.SetActive(true);
+        float tiempoTranscurrido = 0f;
+        while (tiempoTranscurrido < duracionEfecto)
+        {
+            tiempoTranscurrido += Time.deltaTime;
+            velocidadEffectBar.fillAmount = 1f - (tiempoTranscurrido / duracionEfecto);
+            yield return null;
+        }
+        velocidadEffectBar.fillAmount = 0f;
+        velocidadEffectBar.gameObject.SetActive(false);
+    }
+
 }
