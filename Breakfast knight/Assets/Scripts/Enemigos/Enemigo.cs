@@ -33,6 +33,12 @@ public class Enemigo : MonoBehaviour
     public Animator animator; // Referencia al componente Animator
     public AudioSource audioSource; // Referencia al componente AudioSource
     public AudioClip golpeClip; // Clip de audio para el sonido del golpe
+    public Image barraDeVidaFondo; // Referencia a la imagen de fondo (vida perdida)
+    public float tiempoBarraVisible = 2f; // Tiempo en segundos que la barra permanece visible tras recibir daño
+    public float tiempoUltimoDanio = -999f; // Marca el último momento en que recibió daño
+    private bool barraVisible = false;
+    public bool yaTomoAderezo = false; // Flag para controlar si ya tomó un aderezo
+
 
     // Nueva variable para la probabilidad de uso del aderezo
     [Range(1, 10)]
@@ -42,7 +48,8 @@ public class Enemigo : MonoBehaviour
     private Transform aderezoTransform;
     public Image interactionProgressBar;
 
-    private bool isInteractingWithAderezo = false;
+    public bool isInteractingWithAderezo = false;
+    public bool isOnWayToAderezo = false;
     private float interactionTimer = 0f;
     public float interactionTime = 2f; // Tiempo necesario para completar la interacción
 
@@ -76,65 +83,84 @@ public class Enemigo : MonoBehaviour
 
     protected virtual void Start()
     {
-        vidaE = statsEnemigo.vida; // Inicializar la vida del enemigo
-        ActualizarBarraDeVida(); // Inicializar la barra de vida
-        velocidadMovimientoInicial = statsEnemigo.velocidadMovimiento; // Inicializar la velocidad de movimiento
-        velocidadMovimientoActual = velocidadMovimientoInicial; // Inicializar la velocidad de movimiento actual
-        damage = statsEnemigo.daño; // Inicializar el daño
-        animator = GetComponent<Animator>(); // Obtener el componente Animator
+        vidaE = statsEnemigo.vida;
+        ActualizarBarraDeVida();
+        velocidadMovimientoInicial = statsEnemigo.velocidadMovimiento;
+        velocidadMovimientoActual = velocidadMovimientoInicial;
+        damage = statsEnemigo.daño;
+        animator = GetComponent<Animator>();
         spawner = GetComponentInParent<EnemySpawner>();
+
+        // Ocultar barras al inicio
+        if (barraDeVida != null) barraDeVida.gameObject.SetActive(false);
+        if (barraDeVidaFondo != null) barraDeVidaFondo.gameObject.SetActive(false);
+        barraVisible = false;
     }
 
     protected virtual void Update()
+{
+    barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
+                     camara.transform.rotation * Vector3.up);
+
+    if (barraDeVidaFondo != null)
     {
-        barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
-                         camara.transform.rotation * Vector3.up);
-        DetectPlayer();
-        if (aderezoTransform != null)
+        barraDeVidaFondo.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
+                                          camara.transform.rotation * Vector3.up);
+    }
+
+    DetectPlayer();
+    if (aderezoTransform != null)
+    {
+        if (aderezoTransform.gameObject.activeSelf)
         {
-            if (aderezoTransform.gameObject.activeSelf)
-            {
-                PerseguirAderezo();
-            }
-            else
-            {
-                aderezoTransform = null; // Resetear la referencia si el aderezo ya no está activo
-            }
-        }
-        else if (playerTransform != null)
-        {
-            LookAtPlayer();
-            //if (usarRadioDeAtaque && IsPlayerInAttackRange())
-            //{
-            //    if (!isDamaging)
-            //    {
-            //        dañoCoroutine = StartCoroutine(DJugador());
-            //    }
-            //}
-            //else
-            //{
-                if (!persiguiendoJugador)
-                {
-                    persiguiendoJugador = true;
-                }
-                PerseguirJugador();
-           // }
+            PerseguirAderezo();
         }
         else
         {
-            persiguiendoJugador = false;
+            aderezoTransform = null; // Resetear la referencia si el aderezo ya no está activo
+        }
+    }
+    else if (playerTransform != null)
+    {
+        LookAtPlayer();
+        if (!persiguiendoJugador)
+        {
+            persiguiendoJugador = true;
+        }
+        PerseguirJugador();
+    }
+    else
+    {
+        persiguiendoJugador = false;
+    }
+
+    // Verificar si el collider del escudo está desactivado y limpiar la referencia
+    if (escudoCollider != null && !escudoCollider.enabled)
+    {
+        enContactoConEscudo = false;
+        escudoCollider = null;
+        if (reducirResistenciaEscudoCoroutine != null)
+        {
+            StopCoroutine(reducirResistenciaEscudoCoroutine);
+            reducirResistenciaEscudoCoroutine = null;
+        }
+    }
+
+        if (barraDeVida != null)
+        {
+            barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
+                             camara.transform.rotation * Vector3.up);
+        }
+        if (barraDeVidaFondo != null)
+        {
+            barraDeVidaFondo.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
+                                              camara.transform.rotation * Vector3.up);
         }
 
-        // Verificar si el collider del escudo está desactivado y limpiar la referencia
-        if (escudoCollider != null && !escudoCollider.enabled)
+        // Ocultar barras si ha pasado el tiempo
+        if (barraVisible && (Time.time - tiempoUltimoDanio > tiempoBarraVisible))
         {
-            enContactoConEscudo = false;
-            escudoCollider = null;
-            if (reducirResistenciaEscudoCoroutine != null)
-            {
-                StopCoroutine(reducirResistenciaEscudoCoroutine);
-                reducirResistenciaEscudoCoroutine = null;
-            }
+            OcultarBarrasVida();
         }
     }
 
@@ -163,7 +189,7 @@ public class Enemigo : MonoBehaviour
         }
 
         // Solo detectar aderezos si no se tiene uno actualmente
-        if (aderezoTransform == null)
+        if (aderezoTransform == null && !yaTomoAderezo)
         {
             Collider[] aderezoHits = Physics.OverlapSphere(transform.position, detectionRadius, aderezoLayer);
             if (aderezoHits.Length > 0)
@@ -246,25 +272,44 @@ public class Enemigo : MonoBehaviour
 
     public void PerseguirAderezo()
     {
-        if (aderezoTransform == null)
+        if (yaTomoAderezo)
         {
+            // Si el enemigo ya tomó un aderezo, no perseguir más aderezos
+            isInteractingWithAderezo = false;
+            interactionTimer = 0f;
+            UpdateProgressBar(0f);
+            isOnWayToAderezo = false;
+            aderezoTransform = null; // <-- Esto es lo importante
+            if (interactionProgressBar != null)
+            {
+                interactionProgressBar.gameObject.SetActive(false); // Ocultar la barra de progreso
+            }
+            return;
+        }
+            if (aderezoTransform == null)
+        {
+            
             // Si el aderezo ha sido destruido, dejar de perseguirlo
             isInteractingWithAderezo = false;
             interactionTimer = 0f;
             UpdateProgressBar(0f);
+            isOnWayToAderezo = false;
             return;
+            
         }
 
         LookAtAderezo();
 
         if (!isInteractingWithAderezo)
         {
+            isOnWayToAderezo = true;
             Vector3 direction = (aderezoTransform.position - transform.position).normalized;
             transform.position += direction * velocidadMovimientoActual * Time.deltaTime;
 
             if (Vector3.Distance(transform.position, aderezoTransform.position) < 0.6f) // Ajusta la distancia según sea necesario
             {
                 isInteractingWithAderezo = true;
+                isOnWayToAderezo = false;
                 interactionTimer = 0f;
 
                 // Obtener la referencia a la barra de interacción del aderezo
@@ -314,6 +359,8 @@ public class Enemigo : MonoBehaviour
 
         // Actualizar la barra de vida
         ActualizarBarraDeVida();
+        MostrarBarrasVida();
+        tiempoUltimoDanio = Time.time;
 
         // Verificar si el enemigo ha muerto
         if (vidaE <= 0)
@@ -342,12 +389,32 @@ public class Enemigo : MonoBehaviour
         // Mover al enemigo a la nueva posición
         transform.position = Vector3.Lerp(transform.position, nuevaPosicion, Time.deltaTime * velocidadMovimientoActual);
     }
+    private Coroutine barraFondoCoroutine;
+
     public void ActualizarBarraDeVida()
     {
         if (barraDeVida != null)
         {
             barraDeVida.fillAmount = vidaE / statsEnemigo.vida;
         }
+        if (barraDeVidaFondo != null)
+        {
+            if (barraFondoCoroutine != null)
+                StopCoroutine(barraFondoCoroutine);
+            barraFondoCoroutine = StartCoroutine(ActualizarBarraFondo());
+        }
+    }
+
+    private IEnumerator ActualizarBarraFondo()
+    {
+        float objetivo = vidaE / statsEnemigo.vida;
+        float velocidad = 0.5f; // Ajusta la velocidad del efecto
+        while (barraDeVidaFondo.fillAmount > objetivo)
+        {
+            barraDeVidaFondo.fillAmount = Mathf.MoveTowards(barraDeVidaFondo.fillAmount, objetivo, velocidad * Time.deltaTime);
+            yield return null;
+        }
+        barraDeVidaFondo.fillAmount = objetivo;
     }
 
     public void DesactivarEnemigo()
@@ -378,18 +445,33 @@ public class Enemigo : MonoBehaviour
         float dropChance = Random.Range(dropChanceMin, dropChanceMax);
         if (Random.value <= dropChance && aderezosPrefabs.Count > 0)
         {
+            // Selecciona un aderezo aleatorio
             int randomIndex = Random.Range(0, aderezosPrefabs.Count);
             GameObject aderezoToDrop = aderezosPrefabs[randomIndex];
-            if (dropPosition != null)
+
+            // Verifica si es el aderezo de salud y si el jugador tiene la vida completa
+            if (aderezoToDrop.name.Contains("Aderezo (Mermelada)") && jugador != null && jugador.vidaActual >= jugador.stats.vida)
             {
-                Instantiate(aderezoToDrop, dropPosition.position, Quaternion.identity);
-                Debug.Log("Aderezo dropeado en la posición: " + dropPosition.position);
+                Debug.Log("No se dropea aderezo de salud porque el jugador tiene la vida completa.");
+                return; // No dropear nada
             }
-            else
+
+            // Instanciar el aderezo en la posición del enemigo o dropPosition
+            Vector3 spawnPos = dropPosition != null ? dropPosition.position : transform.position;
+            GameObject instancia = Instantiate(aderezoToDrop, spawnPos, Quaternion.identity);
+
+            // Aplicar fuerza en una dirección aleatoria
+            Rigidbody rb = instancia.GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                Instantiate(aderezoToDrop, transform.position, Quaternion.identity);
-                Debug.Log("Aderezo dropeado en la posición: " + transform.position);
+                // Dirección aleatoria en el plano XZ y un poco hacia arriba
+                Vector3 direccion = (Random.onUnitSphere + Vector3.up).normalized;
+                direccion.y = Mathf.Abs(direccion.y); // Asegura que la fuerza sea hacia arriba
+                float fuerza = 5f; // Ajusta la fuerza según lo que necesites
+                rb.AddForce(direccion * fuerza, ForceMode.Impulse);
             }
+
+            Debug.Log("Aderezo dropeado en la posición: " + spawnPos);
         }
     }
 
@@ -506,5 +588,25 @@ public class Enemigo : MonoBehaviour
         velocidadMovimientoActual *= factor;
         yield return new WaitForSeconds(duracion);
         velocidadMovimientoActual = velocidadMovimientoInicial; // Inicializar la velocidad de movimiento
+    }
+
+    private void MostrarBarrasVida()
+    {
+        if (!barraVisible)
+        {
+            if (barraDeVida != null) barraDeVida.gameObject.SetActive(true);
+            if (barraDeVidaFondo != null) barraDeVidaFondo.gameObject.SetActive(true);
+            barraVisible = true;
+        }
+    }
+
+    private void OcultarBarrasVida()
+    {
+        if (barraVisible)
+        {
+            if (barraDeVida != null) barraDeVida.gameObject.SetActive(false);
+            if (barraDeVidaFondo != null) barraDeVidaFondo.gameObject.SetActive(false);
+            barraVisible = false;
+        }
     }
 }

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69802df00aa3e974988ca33c4dd8bc88, type: 3}
   m_Name: Jugador
   m_EditorClassIdentifier: 
-  vida: 90
+  vida: 100
   resistenciaEscudo: 50
   velocidadMovimiento: 3
   velocidadAtaque: 5
-  ataque: 50
+  ataque: 200

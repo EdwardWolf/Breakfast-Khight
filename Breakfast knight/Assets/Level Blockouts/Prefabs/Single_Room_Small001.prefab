@@ -14531,8 +14531,7 @@ Transform:
   m_LocalPosition: {x: 2.25, y: -0.0001001358, z: -14.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 3122322935791758328}
+  m_Children: []
   m_Father: {fileID: 7816320229732227220}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &347727294718348255
@@ -21141,11 +21140,11 @@ Transform:
   m_GameObject: {fileID: 7470164402449946813}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8, y: 0, z: 0}
+  m_LocalPosition: {x: -5.75, y: -0.0001001358, z: -14.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4879336078917502184}
+  m_Father: {fileID: 7816320229732227220}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7542833924234371877
 MonoBehaviour:
@@ -22390,6 +22389,7 @@ Transform:
   - {fileID: 3164351313621801642}
   - {fileID: 7886556514023952}
   - {fileID: 4879336078917502184}
+  - {fileID: 3122322935791758328}
   - {fileID: 3223470571548308421}
   - {fileID: 1433218899130663769}
   - {fileID: 5236000158051503175}

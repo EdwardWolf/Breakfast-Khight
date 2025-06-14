@@ -75,12 +75,29 @@ public abstract class Jugador : MonoBehaviour
 
     public GameObject Equis;
 
+    private bool buffVelocidadActivo = false;
+    private Coroutine buffVelocidadCoroutine;
+    private float buffVelocidadIncrementoActual = 0f;
+
+    [SerializeField] public Image velocidadEffectBar; 
+    [SerializeField] private float duracionEfecto = 5f; 
+    [SerializeField] private AderezoVelocidad aderezoVelocidadActivo;
+    private float duracionAderezoVelocidadActivo = 0f;
+
+    // DASH
+    [SerializeField] private float dashDistancia = 5f;
+    [SerializeField] private float dashDuracion = 0.2f;
+    [SerializeField] private float dashCooldown = 2f;
+    private bool puedeHacerDash = true;
+    public Image dashDisponibleImage; 
+    [SerializeField] private Collider dashCollider; 
+
     protected virtual void Start()
     {
-        Equis.SetActive(false); // Desactivar el objeto "Equis" al inicio
-        camara = Camera.main; // Obtener la cámara principal
-        audioSource = camara.GetComponent<AudioSource>(); // Obtener el AudioSource de la cámara principal
-        panelPausa.SetActive(false); // Ocultar el panel de pausa
+        Equis.SetActive(false); 
+        camara = Camera.main; 
+        audioSource = camara.GetComponent<AudioSource>(); 
+        panelPausa.SetActive(false); 
         vidaActual = stats.vida;
         resistenciaEscudoActual = stats.resistenciaEscudo;
         _velocidadMovimiento = stats.velocidadMovimiento;
@@ -112,6 +129,7 @@ public abstract class Jugador : MonoBehaviour
         playerInputActions.Player.Pausa.started += OnPausePressed;
         playerInputActions.Player.ArmaAnterior.started += OnArmaAnterior; // Asignar la acción de cambiar al arma anterior
         playerInputActions.Player.ArmaSiguiente.started += OnArmaSiguiente; // Asignar la acción de cambiar al arma siguiente
+        playerInputActions.Player.Dash.started += OnDash; // Asignar la acción de dash
 
         playerInputActions.Enable(); // Asegúrate de habilitar los controles aquí
 
@@ -155,6 +173,7 @@ public abstract class Jugador : MonoBehaviour
 
     public void AplicarRalentizacion(float factor, float duracion)
     {
+        if (invulnerable) return; // No aplicar ralentización si es invulnerable (por ejemplo, durante el dash)
         if (!ralentizadoBala)
         {
             StartCoroutine(Ralentizar(factor, duracion));
@@ -234,6 +253,7 @@ public abstract class Jugador : MonoBehaviour
         playerInputActions.Player.ArmaAnterior.started -= OnArmaAnterior; // Desasignar la acción de cambiar al arma anterior
         playerInputActions.Player.ArmaSiguiente.started -= OnArmaSiguiente; // Desasignar la acción de cambiar al arma siguiente
         playerInputActions.Disable(); // Asegúrate de deshabilitar los controles aquí
+        playerInputActions.Player.Dash.started -= OnDash; // Desasignar la acción de dash
     }
 
     private void OnAttackChargedStarted(InputAction.CallbackContext context)
@@ -282,6 +302,17 @@ public abstract class Jugador : MonoBehaviour
         if (!juegoPausado && vidaActual > 0)
         {
             CambiarArmaSiguiente();
+        }
+    }
+    private void OnDash(InputAction.CallbackContext context)
+    {
+        if (!juegoPausado && vidaActual > 0)
+        {
+            if (escudoActivo == true && puedeHacerDash)
+            {
+                Vector3 direccion = transform.forward;
+                IntentarDash(direccion);
+            }
         }
     }
 
@@ -447,14 +478,33 @@ public abstract class Jugador : MonoBehaviour
             yield return null;
         }
     }
-
-    public void IncrementarAtaqueTemporal(float cantidad, int golpes)
+    private Coroutine buffAtaqueCoroutine;
+    public void IncrementarAtaqueTemporal(float cantidad, float duracion)
     {
         incrementoAtaqueTemporal = cantidad;
-        golpesRestantes = golpes;
-        uiManager.MostrarIncrementoAtaque(cantidad, golpes); // Actualizar la UI
-    }
+        uiManager.MostrarIncrementoAtaque(cantidad, duracion); // Actualizar la UI con duración
 
+        if (buffAtaqueCoroutine != null)
+            StopCoroutine(buffAtaqueCoroutine);
+        buffAtaqueCoroutine = StartCoroutine(BuffAtaqueTemporalCoroutine(cantidad, duracion));
+
+    }
+    private IEnumerator BuffAtaqueTemporalCoroutine(float cantidad, float duracion)
+    {
+        // Aplica el incremento temporal
+        incrementoAtaqueTemporal = cantidad;
+        float tiempoTranscurrido = 0f;
+
+        while (tiempoTranscurrido < duracion)
+        {
+            tiempoTranscurrido += Time.deltaTime;
+            yield return null;
+        }
+
+        // Quita el incremento al finalizar la duración
+        incrementoAtaqueTemporal = 0f;
+        uiManager.OcultarIncrementoAtaque();
+    }
     public void PausarJuego()
     {
         if(vidaActual > 0)
@@ -471,6 +521,8 @@ public abstract class Jugador : MonoBehaviour
         Time.timeScale = 1f; // Reanudar el juego
         juegoPausado = false;
         panelPausa.SetActive(false); // Ocultar el panel de pausa
+
+
     }
 
     public abstract void ActivarAtaque();
@@ -480,7 +532,7 @@ public abstract class Jugador : MonoBehaviour
 
     protected void AtaqueCargadoArea()
     {
-        if (incrementoAtaqueTemporal > 0 && vidaActual > 0)
+        if ((incrementoAtaqueTemporal > 0 || puedeAtaqueCargado) && vidaActual > 0)
         {
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, areaRadius);
             foreach (Collider hitCollider in hitColliders)
@@ -496,12 +548,11 @@ public abstract class Jugador : MonoBehaviour
                 }
             }
             // Decrementar los golpes restantes después de un ataque cargado
-            golpesRestantes--;
-            uiManager.UsarGolpe();
-            if (golpesRestantes <= 0)
-            {
-                incrementoAtaqueTemporal = 0; // Restablecer el incremento de ataque temporal
-            }
+            //golpesRestantes--;
+            //if (golpesRestantes <= 0)
+            //{
+            //    incrementoAtaqueTemporal = 0; // Restablecer el incremento de ataque temporal
+            //}
         }
         else
         {
@@ -509,22 +560,20 @@ public abstract class Jugador : MonoBehaviour
             //uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
         }
     }
-
     public void IniciarCarga()
     {
-        if (incrementoAtaqueTemporal > 0 && vidaActual > 0)
+        if (puedeAtaqueCargado && vidaActual > 0)
         {
             isCharging = true;
             chargeTime = 0f;
             if (ataqueCargadoEfecto != null)
             {
-                ataqueCargadoEfecto.SetActive(true); // Mostrar el efecto del ataque cargado
+                ataqueCargadoEfecto.SetActive(true);
             }
         }
         else
         {
-            uiManager.ActivarTemporalmente(Equis, 1f); // Mostrar el objeto "Equis" durante 1 segundo
-            //uiManager.CambiarColorAtaqueImage(Color.blue, 1f); // Cambiar el color de la imagen a azul por un segundo
+            uiManager.ActivarTemporalmente(Equis, 1f);
         }
     }
 
@@ -581,37 +630,140 @@ public abstract class Jugador : MonoBehaviour
         transform.Translate(movimiento, Space.World);
     }
 
-    public void AplicarBuffVelocidad(float incremento, float duracion)
+    public void AplicarBuffVelocidad(float incremento, float duracion, AderezoVelocidad aderezo = null)
     {
-        StartCoroutine(BuffVelocidadCoroutine(incremento, duracion));
+        if (buffVelocidadActivo)
+        {
+            if (buffVelocidadCoroutine != null)
+            {
+                StopCoroutine(buffVelocidadCoroutine);
+                velocidadActual -= buffVelocidadIncrementoActual;
+            }
+        }
+        buffVelocidadIncrementoActual = incremento;
+        aderezoVelocidadActivo = aderezo;
+        duracionAderezoVelocidadActivo = duracion; // <--- Guarda la duración real
+        buffVelocidadCoroutine = StartCoroutine(BuffVelocidadCoroutine(incremento, duracion));
     }
+
+
+    private IEnumerator BuffVelocidadCoroutine(float incremento, float duracion)
+    {
+        buffVelocidadActivo = true;
+        velocidadActual += incremento;
+        yield return new WaitForSeconds(duracion);
+        velocidadActual -= incremento;
+        buffVelocidadActivo = false;
+        buffVelocidadIncrementoActual = 0f;
+
+        // Oculta el aderezo si sigue activo
+        if (aderezoVelocidadActivo != null)
+        {
+            aderezoVelocidadActivo.OcultarAderezo();
+            aderezoVelocidadActivo = null;
+        }
+
+        if (uiManager != null)
+            uiManager.OcultarIncrementoVelocidad();
+    }
+
     public void BarrVelocidad()
     {
         StartCoroutine(BarraVelocidad());
     }
 
-    [SerializeField] public Image velocidadEffectBar; // Nueva barra para el efecto
-    [SerializeField] private float duracionEfecto = 5f; // Duración del efecto de velocidad en segundos
-    private IEnumerator BuffVelocidadCoroutine(float incremento, float duracion)
-    {
-
-        velocidadActual += incremento;
-        yield return new WaitForSeconds(duracion);
-        velocidadActual -= incremento;
-    }
-
     private IEnumerator BarraVelocidad()
     {
+        if (uiManager != null)
+            uiManager.MostrarIncrementoVelocidad(buffVelocidadIncrementoActual, duracionAderezoVelocidadActivo);
+
         velocidadEffectBar.gameObject.SetActive(true);
         float tiempoTranscurrido = 0f;
-        while (tiempoTranscurrido < duracionEfecto)
+        while (tiempoTranscurrido < duracionAderezoVelocidadActivo)
         {
             tiempoTranscurrido += Time.deltaTime;
-            velocidadEffectBar.fillAmount = 1f - (tiempoTranscurrido / duracionEfecto);
+            velocidadEffectBar.fillAmount = 1f - (tiempoTranscurrido / duracionAderezoVelocidadActivo);
             yield return null;
         }
         velocidadEffectBar.fillAmount = 0f;
         velocidadEffectBar.gameObject.SetActive(false);
+
+        if (uiManager != null)
+            uiManager.OcultarIncrementoVelocidad();
+    }
+    public void BarrAtaqueCargado(float duracion)
+    {
+        StartCoroutine(BarraAtaqueCargado(duracion));
     }
 
+    private IEnumerator BarraAtaqueCargado(float duracion)
+    {
+        if (uiManager != null)
+            uiManager.MostrarIncrementoAtaque(0, duracion);
+
+        barraAtaque.gameObject.SetActive(true);
+        float tiempoTranscurrido = 0f;
+        while (tiempoTranscurrido < duracion)
+        {
+            tiempoTranscurrido += Time.deltaTime;
+            barraAtaque.fillAmount = 1f - (tiempoTranscurrido / duracion);
+            yield return null;
+        }
+        barraAtaque.fillAmount = 0f;
+        barraAtaque.gameObject.SetActive(false);
+
+        if (uiManager != null)
+            uiManager.OcultarIncrementoAtaque();
+    }
+
+    public void IntentarDash(Vector3 direccion)
+    {
+        if (puedeHacerDash && escudoActivo && resistenciaEscudoActual > 0)
+        {
+            StartCoroutine(EjecutarDash(direccion));
+        }
+    }
+
+    private IEnumerator EjecutarDash(Vector3 direccion)
+    {
+        puedeHacerDash = false;
+        if (dashDisponibleImage != null)
+            dashDisponibleImage.enabled = false;
+
+        // Activar el collider del dash
+        if (dashCollider != null)
+            dashCollider.enabled = true;
+
+        // Hacer al jugador invulnerable durante el dash
+        invulnerable = true;
+
+        float tiempo = 0f;
+        Vector3 inicio = transform.position;
+        Vector3 destino = inicio + direccion.normalized * dashDistancia;
+
+        while (tiempo < dashDuracion)
+        {
+            transform.position = Vector3.Lerp(inicio, destino, tiempo / dashDuracion);
+            tiempo += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = destino;
+
+        // Desactivar el collider del dash
+        if (dashCollider != null)
+            dashCollider.enabled = false;
+
+        // Quitar invulnerabilidad al terminar el dash
+        invulnerable = false;
+
+        yield return new WaitForSeconds(dashCooldown);
+
+        puedeHacerDash = true;
+        if (dashDisponibleImage != null)
+            dashDisponibleImage.enabled = true;
+    }
+
+    public Image barraAtaque; // Referencia a la barra de ataque
+    public bool puedeAtaqueCargado = false;
+    public float tiempoTranscurridoDebug;
 }

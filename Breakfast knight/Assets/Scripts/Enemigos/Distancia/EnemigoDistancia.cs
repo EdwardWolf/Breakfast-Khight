@@ -16,7 +16,12 @@ public class EnemigoDistancia : Enemigo
     protected override void Update()
     {
         base.Update();
-        if (IsPlayerInAttackRange())
+        if (IsPlayerInAttackRange() && !isInteractingWithAderezo)
+        {
+            atacando = true;
+            attackHandler.ActivarAtaque();
+        }
+        if (IsPlayerInAttackRange() && !isOnWayToAderezo)
         {
             atacando = true;
             attackHandler.ActivarAtaque();

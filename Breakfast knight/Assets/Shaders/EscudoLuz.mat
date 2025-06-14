@@ -117,7 +117,7 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _Float: 44.64
+    - _Float: 29.7
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -134,7 +134,7 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _Value: 2
+    - _Value: 14.9
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
