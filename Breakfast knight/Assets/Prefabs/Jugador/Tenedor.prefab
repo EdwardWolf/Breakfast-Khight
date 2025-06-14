@@ -265,6 +265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trailRenderer: {fileID: 2453450279440923404}
+  hitParticlesPrefab: {fileID: 0}
 --- !u!114 &6790692098911005795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,5 +301,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.930342, y: 9.367714, z: 3.0366805}
-  m_Center: {x: -0.066645265, y: 12.843794, z: -0.14542496}
+  m_Size: {x: 2.930342, y: 18.912596, z: 3.0366805}
+  m_Center: {x: -0.06664524, y: 12.755309, z: -0.14542495}

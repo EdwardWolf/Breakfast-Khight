@@ -6,14 +6,16 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public Image ataqueImage;
-    public TMP_Text golpesText;
-    public int golpesDisponibles;
+    public Image barraVelocidad;
+    public Image barraAtaque;
+    public Image iconoAderezo; // Imagen que representa el ataque
+    public Sprite ItemVacio; // Imagen de vacío para el ataque
     public Image[] corazones; // Array de imágenes de corazones
     public Sprite corazonLleno;
     public Sprite corazonVacio;
     private const float valorCorazon = 10f; // Valor de cada corazón
-
+    public Sprite spriteAderezoVelocidad;
+    public Sprite spriteAderezoAtaque;
     private void OnEnable()
     {
         Jugador.OnVidaCambiada += ActualizarCorazones;
@@ -39,51 +41,26 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void MostrarIncrementoAtaque(float incremento, int golpes)
+    public void MostrarIncrementoAtaque(float incremento, float duracion)
     {
-        ataqueImage.gameObject.SetActive(true);
-        golpesDisponibles = golpes;
+        if (barraAtaque != null)
+            barraAtaque.gameObject.SetActive(true);
 
-        ActualizarTextoGolpes();
-        // lógica adicional para manejar diferentes tipos de armas
-
-    }
-
-    public void UsarGolpe()
-    {
-        if (golpesDisponibles > 0)
+        if (iconoAderezo != null && spriteAderezoAtaque != null)
         {
-            golpesDisponibles--;
-            ActualizarTextoGolpes();
-            if (golpesDisponibles == 0)
-            {
-                golpesText.text = "";
-                //ataqueImage.gameObject.SetActive(false);
-            }
+            iconoAderezo.sprite = spriteAderezoAtaque;
+            iconoAderezo.enabled = true;
         }
     }
 
-    private void ActualizarTextoGolpes()
+    public void OcultarIncrementoAtaque()
     {
-        golpesText.text = "Golpes disponibles: " + golpesDisponibles;
+        if (barraAtaque != null)
+            barraAtaque.gameObject.SetActive(false);
+
+        if (iconoAderezo != null && ItemVacio != null)
+            iconoAderezo.sprite = ItemVacio;
     }
-
-    //Cambia el color de la imagen de ataque temporalmente
-    //public void CambiarColorAtaqueImage(Color color, float duracion)
-    //{
-    //    StartCoroutine(CambiarColorTemporalmente(color, duracion));
-    //}
-
-
-    //private IEnumerator CambiarColorTemporalmente(Color color, float duracion)
-    //{
-    //    Color colorOriginal = ataqueImage.color;
-    //    ataqueImage.color = color;
-    //    golpesText.text = "Sin potenciador";
-    //    yield return new WaitForSeconds(duracion);
-    //    ataqueImage.color = colorOriginal;
-    //    golpesText.text = "";
-    //}
 
     public void ActivarTemporalmente(GameObject objeto, float duracion)
     {
@@ -97,9 +74,18 @@ public class UIManager : MonoBehaviour
         objeto.SetActive(false);
     }
 
-    public void MostrarImagenAderezo(Sprite sprite)
+    public void MostrarIncrementoVelocidad(float incremento, float duracion)
     {
-        ataqueImage.sprite = sprite;
-        ataqueImage.gameObject.SetActive(true);
+        barraVelocidad.gameObject.SetActive(true);
+        if (barraVelocidad != null && spriteAderezoVelocidad != null)
+        {
+            iconoAderezo.sprite = spriteAderezoVelocidad;
+        }
+    }
+
+    public void OcultarIncrementoVelocidad()
+    {
+        barraVelocidad.gameObject.SetActive(false);
+        iconoAderezo.sprite = ItemVacio; // Cambiar a la imagen de vacío
     }
 }

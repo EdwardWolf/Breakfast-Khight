@@ -6,66 +6,54 @@ using UnityEngine.UI;
 public class AderezoVelocidad : Aderezo
 {
     public float incrementoVelocidad = 2f; // Incremento de velocidad de movimiento
-    public float duracionEfecto = 5f; // Duración del efecto en segundos
+    public Material materialVelocidadEnemigo; // Asigna este material desde el Inspector
 
+    private Dictionary<Renderer, Material> materialesOriginales = new Dictionary<Renderer, Material>();
+
+    protected override void Awake()
+    {
+        base.Awake();
+        tieneDuracion = true;
+        // duracionEfecto = 5f;
+    }
+    protected override void Update()
+    {
+        base.Update();
+    }
     protected override void IncrementarVelocidadJugador()
     {
         if (jugador != null)
         {
-            jugador.AplicarBuffVelocidad(incrementoVelocidad, duracionEfecto);
+            jugador.AplicarBuffVelocidad(incrementoVelocidad, duracionEfecto, this);
             jugador.BarrVelocidad(); // Actualizar la UI de velocidad del jugador
-            gameObject.SetActive(false);
+
+            // Opcional: Mover el aderezo lejos para evitar interacción 
+            transform.position = new Vector3(10000, 10000, 10000);
+
             Debug.Log("Velocidad del jugador incrementada temporalmente");
         }
     }
-    //private IEnumerator AplicarIncrementoVelocidadJugador()
-    //{
-    //    if (jugador != null)
-    //    {
-    //        jugador.velocidadActual += incrementoVelocidad;
-
-    //        if (velocidadEffectBar != null)
-    //        {
-    //            velocidadEffectBar.gameObject.SetActive(true);
-    //        }
-
-    //        float tiempoTranscurrido = 0f;
-    //        while (tiempoTranscurrido < duracionEfecto)
-    //        {
-    //            tiempoTranscurrido += Time.deltaTime;
-    //            if (velocidadEffectBar != null)
-    //            {
-    //                Debug.Log("Velocidad del jugador Normal");
-    //                velocidadEffectBar.fillAmount = 1f - (tiempoTranscurrido / duracionEfecto);
-    //            }
-    //            yield return null;
-    //        }
-
-    //        if (velocidadEffectBar != null)
-    //        {
-    //            velocidadEffectBar.fillAmount = 0f;
-    //            velocidadEffectBar.gameObject.SetActive(false);
-    //        }
-
-    //        if (jugador != null)
-    //        {
-    //            jugador.velocidadActual = jugador._velocidadMovimiento;
-    //        }
-
-    //        // Ahora sí, desactiva el objeto
-    //        gameObject.SetActive(false);
-    //    }
-    //    else
-    //    {
-    //        Debug.LogWarning("Referencia al jugador es nula. No se puede aplicar el incremento de velocidad.");
-    //    }
-    //}
-
 
     protected override void IncrementarVelocidadEnemigo()
     {
-        if (enemigo != null)
-        {
+
+            if (enemigo != null && !enemigo.yaTomoAderezo)
+            {
+                enemigo.yaTomoAderezo = true;
+                // Guardar materiales originales y aplicar el nuevo material
+                if (materialVelocidadEnemigo != null)
+            {
+                materialesOriginales.Clear();
+                foreach (var rend in enemigo.GetComponentsInChildren<Renderer>())
+                {
+                    if (rend.GetComponent<ParticleSystem>() == null)
+                    {
+                        materialesOriginales[rend] = rend.material;
+                        rend.material = materialVelocidadEnemigo;
+                    }
+                }
+            }
+        
             StartCoroutine(AplicarIncrementoVelocidadEnemigo());
             gameObject.SetActive(false); // Desactivar el objeto instanciado
             Debug.Log("Velocidad del enemigo incrementada temporalmente");
@@ -79,6 +67,23 @@ public class AderezoVelocidad : Aderezo
             enemigo.velocidadMovimientoInicial += incrementoVelocidad;
             yield return new WaitForSeconds(duracionEfecto);
             enemigo.velocidadMovimientoInicial -= incrementoVelocidad;
+
+            // Restaurar materiales originales
+            foreach (var kvp in materialesOriginales)
+            {
+                if (kvp.Key != null)
+                    kvp.Key.material = kvp.Value;
+            }
         }
+    }
+
+    public virtual void Recoger(Jugador jugador)
+    {
+        Destroy(gameObject);
+    }
+
+    public void OcultarAderezo()
+    {
+        gameObject.SetActive(false);
     }
 }

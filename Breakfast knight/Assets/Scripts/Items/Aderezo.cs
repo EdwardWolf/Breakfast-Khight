@@ -1,6 +1,7 @@
 using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 
 public class Aderezo : MonoBehaviour
@@ -15,25 +16,34 @@ public class Aderezo : MonoBehaviour
     public Image interactionProgressBar; // Referencia a la barra de progreso
     private Camera camara; // Añadir referencia a la cámara
     [SerializeField] private Sprite AderezoUI; // Prefab del objeto a instanciar
-
+    public Image indicadorInteraccion; // Asigna esta imagen desde el inspector
     private static Enemigo enemigoInteractuando; // Variable estática para almacenar el enemigo que está interactuando
 
+
+    [Header("Configuración de duración")]
+    [SerializeField] protected bool tieneDuracion = false;
+    [SerializeField] protected float duracionEfecto = 5f;
     private void Start()
     {
-        gameObject.SetActive(true); // Activar el objeto instanciado
+        gameObject.SetActive(true);
         interactionProgressBar = transform.Find("Canvas/Image").GetComponent<Image>();
 
         if (interactionProgressBar != null)
         {
-            interactionProgressBar.gameObject.SetActive(true); // Activar la barra de progreso
+            interactionProgressBar.gameObject.SetActive(true);
         }
         else
         {
             Debug.LogError("No se encontró el interactionProgressBar en la jerarquía.");
         }
+
+        if (indicadorInteraccion != null)
+        {
+            indicadorInteraccion.gameObject.SetActive(false); // Oculta el indicador al inicio
+        }
     }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         camara = Camera.main; // Obtener la cámara principal    
         playerInputActions = new GameInputs();
@@ -55,6 +65,9 @@ public class Aderezo : MonoBehaviour
 
     protected virtual void Update()
     {
+        indicadorInteraccion.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
+                     camara.transform.rotation * Vector3.up);
+
         interactionProgressBar.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
         camara.transform.rotation * Vector3.up);
 
@@ -67,7 +80,7 @@ public class Aderezo : MonoBehaviour
 
                 if (interactionTimer >= interactionTime)
                 {
-                    Recoger(jugador);
+                    //Recoger(jugador);
                     RealizarInteraccionJugador();
                     isInteracting = false;
                     UpdateProgressBar(0f);
@@ -173,34 +186,90 @@ public class Aderezo : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    //por si quiero regresar a que sea un trigger en lugar de collision
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        jugador = other.GetComponent<Jugador>();
+    //        if (indicadorInteraccion != null)
+    //            indicadorInteraccion.gameObject.SetActive(true); // Muestra la imagen
+
+    //    }
+    //    if (other.CompareTag("Enemigo"))
+    //    {
+    //        if (enemigoInteractuando == null)
+    //        {
+    //            enemigo = other.GetComponent<Enemigo>();
+    //            enemigoInteractuando = enemigo; // Asignar la referencia del enemigo interactuando
+    //            isInteracting = true; // Iniciar la interacción automáticamente para el enemigo
+    //            interactionTimer = 0f;
+    //        }
+    //    }
+    //}
+
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        jugador = null;
+    //        UpdateProgressBar(0f);
+    //        if (indicadorInteraccion != null)
+    //            indicadorInteraccion.gameObject.SetActive(false); // Oculta la imagen
+    //    }
+    //    if (other.CompareTag("Enemigo"))
+    //    {
+    //        if (enemigo == other.GetComponent<Enemigo>())
+    //        {
+    //            enemigo = null;
+    //            enemigoInteractuando = null; // Liberar la referencia del enemigo interactuando
+    //            isInteracting = false; // Detener la interacción cuando el enemigo sale del rango
+    //            interactionTimer = 0f;
+    //            UpdateProgressBar(0f);
+    //        }
+    //    }
+    //}
+
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player"))
         {
-            jugador = other.GetComponent<Jugador>();
+            jugador = collision.gameObject.GetComponent<Jugador>();
+            if (indicadorInteraccion != null)
+                indicadorInteraccion.gameObject.SetActive(true); // Muestra la imagen
         }
-        if (other.CompareTag("Enemigo"))
+        if (collision.gameObject.CompareTag("Enemigo"))
         {
             if (enemigoInteractuando == null)
             {
-                enemigo = other.GetComponent<Enemigo>();
+                enemigo = collision.gameObject.GetComponent<Enemigo>();
                 enemigoInteractuando = enemigo; // Asignar la referencia del enemigo interactuando
                 isInteracting = true; // Iniciar la interacción automáticamente para el enemigo
                 interactionTimer = 0f;
             }
         }
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+            }
+        }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnCollisionExit(Collision collision)
     {
-        if (other.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player"))
         {
             jugador = null;
             UpdateProgressBar(0f);
+            if (indicadorInteraccion != null)
+                indicadorInteraccion.gameObject.SetActive(false); // Oculta la imagen
         }
-        if (other.CompareTag("Enemigo"))
+        if (collision.gameObject.CompareTag("Enemigo"))
         {
-            if (enemigo == other.GetComponent<Enemigo>())
+            if (enemigo == collision.gameObject.GetComponent<Enemigo>())
             {
                 enemigo = null;
                 enemigoInteractuando = null; // Liberar la referencia del enemigo interactuando
@@ -210,18 +279,4 @@ public class Aderezo : MonoBehaviour
             }
         }
     }
-
-        // Método que se llama cuando el jugador recoge el aderezo
-        public virtual void Recoger(Jugador jugador)
-        {
-            // Notificar al UIManager
-            UIManager uiManager = FindObjectOfType<UIManager>();
-            if (uiManager != null)
-            {
-                uiManager.MostrarImagenAderezo(AderezoUI);
-            }
-            // Lógica adicional...
-            Destroy(gameObject);
-        }
-    
 }

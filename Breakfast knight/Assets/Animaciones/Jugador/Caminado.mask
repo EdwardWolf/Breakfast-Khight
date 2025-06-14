@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Caminado
+  m_Mask: 01000000000000000000000001000000010000000000000000000000000000000000000001000000010000000000000000000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Group20486
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:LeftUpLeg
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:LeftUpLeg/BK_ModeloTEST:LeftLeg
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:LeftUpLeg/BK_ModeloTEST:LeftLeg/BK_ModeloTEST:LeftFoot
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:LeftUpLeg/BK_ModeloTEST:LeftLeg/BK_ModeloTEST:LeftFoot/BK_ModeloTEST:LeftToeBase
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:LeftUpLeg/BK_ModeloTEST:LeftLeg/BK_ModeloTEST:LeftFoot/BK_ModeloTEST:LeftToeBase/BK_ModeloTEST:LeftToe_End
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:RightUpLeg
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:RightUpLeg/BK_ModeloTEST:RightLeg
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:RightUpLeg/BK_ModeloTEST:RightLeg/BK_ModeloTEST:RightFoot
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:RightUpLeg/BK_ModeloTEST:RightLeg/BK_ModeloTEST:RightFoot/BK_ModeloTEST:RightToeBase
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:RightUpLeg/BK_ModeloTEST:RightLeg/BK_ModeloTEST:RightFoot/BK_ModeloTEST:RightToeBase/BK_ModeloTEST:RightToe_End
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm/BK_ModeloTEST:LeftHand
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm/BK_ModeloTEST:LeftHand/BK_ModeloTEST:LeftHandIndex1
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm/BK_ModeloTEST:LeftHand/BK_ModeloTEST:LeftHandIndex1/BK_ModeloTEST:LeftHandIndex2
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm/BK_ModeloTEST:LeftHand/BK_ModeloTEST:LeftHandIndex1/BK_ModeloTEST:LeftHandIndex2/BK_ModeloTEST:LeftHandIndex3
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm/BK_ModeloTEST:LeftHand/BK_ModeloTEST:LeftHandIndex1/BK_ModeloTEST:LeftHandIndex2/BK_ModeloTEST:LeftHandIndex3/BK_ModeloTEST:LeftHandIndex4
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm/BK_ModeloTEST:LeftHand/BK_ModeloTEST:LeftHandThumb1
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm/BK_ModeloTEST:LeftHand/BK_ModeloTEST:LeftHandThumb1/BK_ModeloTEST:LeftHandThumb2
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm/BK_ModeloTEST:LeftHand/BK_ModeloTEST:LeftHandThumb1/BK_ModeloTEST:LeftHandThumb2/BK_ModeloTEST:LeftHandThumb3
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:LeftShoulder/BK_ModeloTEST:LeftArm/BK_ModeloTEST:LeftForeArm/BK_ModeloTEST:LeftHand/BK_ModeloTEST:LeftHandThumb1/BK_ModeloTEST:LeftHandThumb2/BK_ModeloTEST:LeftHandThumb3/BK_ModeloTEST:LeftHandThumb4
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:Neck
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:Neck/BK_ModeloTEST:Head
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:Neck/BK_ModeloTEST:Head/BK_ModeloTEST:HeadTop_End
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm/BK_ModeloTEST:RightHand
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm/BK_ModeloTEST:RightHand/BK_ModeloTEST:RightHandIndex1
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm/BK_ModeloTEST:RightHand/BK_ModeloTEST:RightHandIndex1/BK_ModeloTEST:RightHandIndex2
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm/BK_ModeloTEST:RightHand/BK_ModeloTEST:RightHandIndex1/BK_ModeloTEST:RightHandIndex2/BK_ModeloTEST:RightHandIndex3
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm/BK_ModeloTEST:RightHand/BK_ModeloTEST:RightHandIndex1/BK_ModeloTEST:RightHandIndex2/BK_ModeloTEST:RightHandIndex3/BK_ModeloTEST:RightHandIndex4
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm/BK_ModeloTEST:RightHand/BK_ModeloTEST:RightHandThumb1
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm/BK_ModeloTEST:RightHand/BK_ModeloTEST:RightHandThumb1/BK_ModeloTEST:RightHandThumb2
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm/BK_ModeloTEST:RightHand/BK_ModeloTEST:RightHandThumb1/BK_ModeloTEST:RightHandThumb2/BK_ModeloTEST:RightHandThumb3
+    m_Weight: 1
+  - m_Path: BK_ModeloTEST:Hips/BK_ModeloTEST:Spine/BK_ModeloTEST:Spine1/BK_ModeloTEST:Spine2/BK_ModeloTEST:RightShoulder/BK_ModeloTEST:RightArm/BK_ModeloTEST:RightForeArm/BK_ModeloTEST:RightHand/BK_ModeloTEST:RightHandThumb1/BK_ModeloTEST:RightHandThumb2/BK_ModeloTEST:RightHandThumb3/BK_ModeloTEST:RightHandThumb4
+    m_Weight: 1

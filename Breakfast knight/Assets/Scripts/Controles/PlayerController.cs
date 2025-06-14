@@ -53,4 +53,9 @@ public class PlayerController : MonoBehaviour
     {
         return playerInput.Player.Pausa.triggered;
     }
+
+    public static bool IsDashPressed()
+    {
+        return playerInput.Player.Dash.triggered;
+    }
 }

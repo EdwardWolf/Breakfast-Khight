@@ -98,6 +98,15 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""7112ce52-f33b-48df-a70d-80ab5931e11e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -254,6 +263,17 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                     ""action"": ""ArmaSiguiente"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1d4ccbc2-242d-47fa-8f7a-60135a4e9926"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -270,6 +290,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         m_Player_Pausa = m_Player.FindAction("Pausa", throwIfNotFound: true);
         m_Player_ArmaAnterior = m_Player.FindAction("ArmaAnterior", throwIfNotFound: true);
         m_Player_ArmaSiguiente = m_Player.FindAction("ArmaSiguiente", throwIfNotFound: true);
+        m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
     }
 
     ~@GameInputs()
@@ -344,6 +365,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Pausa;
     private readonly InputAction m_Player_ArmaAnterior;
     private readonly InputAction m_Player_ArmaSiguiente;
+    private readonly InputAction m_Player_Dash;
     public struct PlayerActions
     {
         private @GameInputs m_Wrapper;
@@ -356,6 +378,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         public InputAction @Pausa => m_Wrapper.m_Player_Pausa;
         public InputAction @ArmaAnterior => m_Wrapper.m_Player_ArmaAnterior;
         public InputAction @ArmaSiguiente => m_Wrapper.m_Player_ArmaSiguiente;
+        public InputAction @Dash => m_Wrapper.m_Player_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -389,6 +412,9 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             @ArmaSiguiente.started += instance.OnArmaSiguiente;
             @ArmaSiguiente.performed += instance.OnArmaSiguiente;
             @ArmaSiguiente.canceled += instance.OnArmaSiguiente;
+            @Dash.started += instance.OnDash;
+            @Dash.performed += instance.OnDash;
+            @Dash.canceled += instance.OnDash;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -417,6 +443,9 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             @ArmaSiguiente.started -= instance.OnArmaSiguiente;
             @ArmaSiguiente.performed -= instance.OnArmaSiguiente;
             @ArmaSiguiente.canceled -= instance.OnArmaSiguiente;
+            @Dash.started -= instance.OnDash;
+            @Dash.performed -= instance.OnDash;
+            @Dash.canceled -= instance.OnDash;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -444,5 +473,6 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         void OnPausa(InputAction.CallbackContext context);
         void OnArmaAnterior(InputAction.CallbackContext context);
         void OnArmaSiguiente(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
 }

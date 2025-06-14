@@ -47,18 +47,60 @@ public class CaballeroLigero : Jugador
 
         GirarHaciaMouse();
 
+        //Camindado de jugador
         Vector3 movimiento = PlayerController.GetMoveInput();
         Mover(movimiento);
 
+
         if (movimiento != Vector3.zero)
         {
-            animator.SetBool("Caminar", true); // Activar la animación de caminar
+            Vector3 movimientoLocal = transform.InverseTransformDirection(movimiento);
+            bool vaAtras = movimientoLocal.z < -0.1f;
+            bool vaFrente = movimientoLocal.z > 0.1f;
+            bool vaIzquierda = movimientoLocal.x < -0.1f;
+            bool vaDerecha = movimientoLocal.x > 0.1f;
+
+            animator.SetBool("Retroceder", vaAtras);
+            animator.SetBool("Caminar", vaFrente);
+            animator.SetBool("LateralIzquierda", vaIzquierda);
+            animator.SetBool("LateralDerecha", vaDerecha);
+
+            // Puedes ajustar los LayerWeight según tu lógica, por ejemplo:
+            if(vaFrente && vaIzquierda)
+            {
+                animator.SetLayerWeight(5, 1f);
+                animator.SetLayerWeight(0, 0f);
+            }
+            else
+
+              if (vaFrente && vaDerecha)
+            {
+                animator.SetLayerWeight(5, 0f);
+                animator.SetLayerWeight(0, 1f);
+            }
+
+            if (vaAtras)
+            {
+                animator.SetLayerWeight(5, 1f);
+                animator.SetLayerWeight(0, 0f);
+            }
+            else
+            {
+                animator.SetLayerWeight(5, 0f);
+                animator.SetLayerWeight(0, 1f);
+            }
         }
         else
         {
-            animator.SetBool("Caminar", false); // Desactivar la animación de caminar
+            animator.SetBool("Caminar", false);
+            animator.SetBool("Retroceder", false);
+            animator.SetBool("LateralIzquierda", false);
+            animator.SetBool("LateralDerecha", false);
+            animator.SetLayerWeight(5, 0f);
+            animator.SetLayerWeight(0, 1f);
         }
 
+        //Ataque Cargado
         if (isCharging)
         {
             if (!carga.isPlaying)

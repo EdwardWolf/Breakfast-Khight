@@ -28,7 +28,8 @@ public class ColliderHijo : MonoBehaviour
         GetComponent<Collider>().enabled = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+   
+   private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemigo"))
         {
@@ -36,13 +37,15 @@ public class ColliderHijo : MonoBehaviour
             if (enemigo != null)
             {
                 Debug.Log("Golpeado enemigo");
-                enemigo.RecibirDanio(15f);
+                // Obtener el arma actual y su daño
+                Arma armaActual = jugador.armas[jugador.armaActual];
+                float daño = armaActual != null ? armaActual.daño : 0f;
+                enemigo.RecibirDanio(daño);
 
                 Vector3 hitPoint = other.ClosestPoint(transform.position);
                 Vector3 hitDirection = (hitPoint - transform.position).normalized;
                 Quaternion rot = Quaternion.LookRotation(hitDirection);
 
-                // Si es otro enemigo, actualiza el padre del sistema de partículas
                 if (hitParticlesInstance != null)
                 {
                     if (enemigoActualTransform != other.transform)
@@ -55,7 +58,6 @@ public class ColliderHijo : MonoBehaviour
                     hitParticlesInstance.transform.rotation = rot;
                     hitParticlesInstance.SetActive(true);
 
-                    // Reiniciar el sistema de partículas
                     if (hitParticleSystem != null)
                     {
                         hitParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
