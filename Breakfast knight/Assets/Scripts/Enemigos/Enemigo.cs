@@ -66,6 +66,11 @@ public class Enemigo : MonoBehaviour
     private EnemySpawner spawner;
 
     public Collider escudoCollider;
+
+    public bool isStunned = false;
+    public float stunDuration = 2f; // Duración del stun en segundos
+    private Coroutine stunCoroutine;
+
     protected virtual void Awake()
     {
         camara = Camera.main; // Obtener la cámara principal
@@ -88,7 +93,7 @@ public class Enemigo : MonoBehaviour
         velocidadMovimientoInicial = statsEnemigo.velocidadMovimiento;
         velocidadMovimientoActual = velocidadMovimientoInicial;
         damage = statsEnemigo.daño;
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         spawner = GetComponentInParent<EnemySpawner>();
 
         // Ocultar barras al inicio
@@ -98,53 +103,56 @@ public class Enemigo : MonoBehaviour
     }
 
     protected virtual void Update()
-{
-    barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
-                     camara.transform.rotation * Vector3.up);
-
-    if (barraDeVidaFondo != null)
     {
-        barraDeVidaFondo.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
-                                          camara.transform.rotation * Vector3.up);
-    }
+        if (isStunned)
+            return;
 
-    DetectPlayer();
-    if (aderezoTransform != null)
-    {
-        if (aderezoTransform.gameObject.activeSelf)
+        barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
+                         camara.transform.rotation * Vector3.up);
+
+        if (barraDeVidaFondo != null)
         {
-            PerseguirAderezo();
+            barraDeVidaFondo.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
+                                              camara.transform.rotation * Vector3.up);
+        }
+
+        DetectPlayer();
+        if (aderezoTransform != null)
+        {
+            if (aderezoTransform.gameObject.activeSelf)
+            {
+                PerseguirAderezo();
+            }
+            else
+            {
+                aderezoTransform = null; // Resetear la referencia si el aderezo ya no está activo
+            }
+        }
+        else if (playerTransform != null)
+        {
+            LookAtPlayer();
+            if (!persiguiendoJugador)
+            {
+                persiguiendoJugador = true;
+            }
+            PerseguirJugador();
         }
         else
         {
-            aderezoTransform = null; // Resetear la referencia si el aderezo ya no está activo
+            persiguiendoJugador = false;
         }
-    }
-    else if (playerTransform != null)
-    {
-        LookAtPlayer();
-        if (!persiguiendoJugador)
-        {
-            persiguiendoJugador = true;
-        }
-        PerseguirJugador();
-    }
-    else
-    {
-        persiguiendoJugador = false;
-    }
 
-    // Verificar si el collider del escudo está desactivado y limpiar la referencia
-    if (escudoCollider != null && !escudoCollider.enabled)
-    {
-        enContactoConEscudo = false;
-        escudoCollider = null;
-        if (reducirResistenciaEscudoCoroutine != null)
+        // Verificar si el collider del escudo está desactivado y limpiar la referencia
+        if (escudoCollider != null && !escudoCollider.enabled)
         {
-            StopCoroutine(reducirResistenciaEscudoCoroutine);
-            reducirResistenciaEscudoCoroutine = null;
+            enContactoConEscudo = false;
+            escudoCollider = null;
+            if (reducirResistenciaEscudoCoroutine != null)
+            {
+                StopCoroutine(reducirResistenciaEscudoCoroutine);
+                reducirResistenciaEscudoCoroutine = null;
+            }
         }
-    }
 
         if (barraDeVida != null)
         {
@@ -220,15 +228,35 @@ public class Enemigo : MonoBehaviour
 
     public virtual void Atacck()
     {
+        if (animator != null)
+        {
+            animator.SetBool("Atacando", true);
+            StartCoroutine(ResetAtaqueAnimacion(0.7f)); // Ajusta la duración
+        }
+        AplicarDanioAlJugador();
+    }
+
+    private IEnumerator ResetAtaqueAnimacion(float duracion)
+    {
+        yield return new WaitForSeconds(duracion);
+        if (animator != null)
+        {
+            animator.SetBool("Atacando", false);
+        }
+    }
+
+    public void AplicarDanioAlJugador()
+    {
         if (jugador != null)
         {
-            jugador.ReducirVida(damage); // Asegurarse de que el jugador reciba daño
+            jugador.ReducirVida(damage);
             if (audioSource != null && golpeClip != null)
             {
-                audioSource.PlayOneShot(golpeClip); // Reproducir el sonido del golpe
+                audioSource.PlayOneShot(golpeClip);
             }
         }
     }
+
     public virtual IEnumerator DJugador()
     {
         isDamaging = true;
@@ -244,8 +272,10 @@ public class Enemigo : MonoBehaviour
 
             if (damageParticleSystem != null)
                 damageParticleSystem.Stop();
+            
         }
         isDamaging = false;
+        
     }
 
     void LookAtPlayer()
@@ -349,6 +379,39 @@ public class Enemigo : MonoBehaviour
         }
     }
 
+    private void CancelarInteraccionAderezo()
+    {
+        isInteractingWithAderezo = false;
+        interactionTimer = 0f;
+        UpdateProgressBar(0f);
+        if (interactionProgressBar != null)
+        {
+            interactionProgressBar.gameObject.SetActive(false);
+        }
+        isOnWayToAderezo = false;
+        aderezoTransform = null;
+    }
+
+    public void AplicarStun(float duracion)
+    {
+        if (stunCoroutine != null)
+            StopCoroutine(stunCoroutine);
+        stunCoroutine = StartCoroutine(StunCoroutine(duracion));
+    }
+
+    private IEnumerator StunCoroutine(float duracion)
+    {
+        isStunned = true;
+        velocidadMovimientoActual = 0f;
+        if (animator != null)
+            animator.SetTrigger("Stun"); // Si tienes una animación de stun
+
+        yield return new WaitForSeconds(duracion);
+
+        isStunned = false;
+        velocidadMovimientoActual = velocidadMovimientoInicial;
+    }
+
     public void RecibirDanio(float cantidad)
     {
         // Reducir la vida del enemigo
@@ -361,6 +424,13 @@ public class Enemigo : MonoBehaviour
         ActualizarBarraDeVida();
         MostrarBarrasVida();
         tiempoUltimoDanio = Time.time;
+
+        // Si está interactuando con un aderezo, cancelar la acción y aplicar stun
+        if (isInteractingWithAderezo)
+        {
+            CancelarInteraccionAderezo();
+            AplicarStun(stunDuration);
+        }
 
         // Verificar si el enemigo ha muerto
         if (vidaE <= 0)
@@ -378,7 +448,6 @@ public class Enemigo : MonoBehaviour
             }
         }
     }
-
 
     private void Alejarse()
     {
@@ -607,6 +676,14 @@ public class Enemigo : MonoBehaviour
             if (barraDeVida != null) barraDeVida.gameObject.SetActive(false);
             if (barraDeVidaFondo != null) barraDeVidaFondo.gameObject.SetActive(false);
             barraVisible = false;
+        }
+    }
+
+    public void TerminarAtaqueAnimacion()
+    {
+        if (animator != null)
+        {
+            animator.SetBool("Atacando", false); // Desactiva la animación de ataque
         }
     }
 }
