@@ -120,6 +120,7 @@ MonoBehaviour:
   barraDeVidaFondo: {fileID: 1843283987251673581}
   tiempoBarraVisible: 2
   tiempoUltimoDanio: -999
+  yaTomoAderezo: 0
   probabilidadUsoAderezo: 1
   interactionProgressBar: {fileID: 0}
   isInteractingWithAderezo: 0
@@ -130,6 +131,8 @@ MonoBehaviour:
   puedeAlejarse: 1
   fuerzaEmpuje: 5
   escudoCollider: {fileID: 0}
+  isStunned: 0
+  stunDuration: 2
   shieldDamage: 10
   enContactoConEscudo: 0
   sectionManager: {fileID: 0}

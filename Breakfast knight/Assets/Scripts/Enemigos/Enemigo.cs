@@ -71,12 +71,21 @@ public class Enemigo : MonoBehaviour
     public float stunDuration = 2f; // Duración del stun en segundos
     private Coroutine stunCoroutine;
 
+    private Renderer enemigoRenderer;
+    private Material materialOriginal;
+
     protected virtual void Awake()
     {
         camara = Camera.main; // Obtener la cámara principal
         if (camara != null)
         {
             audioSource = camara.GetComponent<AudioSource>(); // Obtener el componente AudioSource de la cámara
+        }
+        // Guardar el renderer y el material original
+        enemigoRenderer = GetComponentInChildren<Renderer>();
+        if (enemigoRenderer != null)
+        {
+            materialOriginal = enemigoRenderer.material;
         }
     }
 
@@ -105,7 +114,11 @@ public class Enemigo : MonoBehaviour
     protected virtual void Update()
     {
         if (isStunned)
+        {
+            if (animator != null)
+                animator.SetBool("Caminando", false);
             return;
+        }
 
         barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
                          camara.transform.rotation * Vector3.up);
@@ -140,6 +153,8 @@ public class Enemigo : MonoBehaviour
         else
         {
             persiguiendoJugador = false;
+            if (animator != null)
+                animator.SetBool("Caminando", false);
         }
 
         // Verificar si el collider del escudo está desactivado y limpiar la referencia
@@ -295,37 +310,47 @@ public class Enemigo : MonoBehaviour
         if (playerTransform != null)
         {
             Vector3 direction = (playerTransform.position - transform.position).normalized;
+            float distancia = Vector3.Distance(transform.position, playerTransform.position);
+
+            bool estaCaminando = velocidadMovimientoActual > 0.01f && distancia > 0.05f;
+            if (animator != null)
+                animator.SetBool("Caminando", estaCaminando);
+
             transform.position += direction * velocidadMovimientoActual * Time.deltaTime;
         }
-
+        else
+        {
+            if (animator != null)
+                animator.SetBool("Caminando", false);
+        }
     }
 
     public void PerseguirAderezo()
     {
         if (yaTomoAderezo)
         {
-            // Si el enemigo ya tomó un aderezo, no perseguir más aderezos
             isInteractingWithAderezo = false;
             interactionTimer = 0f;
             UpdateProgressBar(0f);
             isOnWayToAderezo = false;
-            aderezoTransform = null; // <-- Esto es lo importante
+            aderezoTransform = null;
             if (interactionProgressBar != null)
             {
-                interactionProgressBar.gameObject.SetActive(false); // Ocultar la barra de progreso
+                interactionProgressBar.gameObject.SetActive(false);
             }
+            if (animator != null)
+                animator.SetBool("Caminando", false);
             return;
         }
-            if (aderezoTransform == null)
+        if (aderezoTransform == null)
         {
-            
-            // Si el aderezo ha sido destruido, dejar de perseguirlo
             isInteractingWithAderezo = false;
             interactionTimer = 0f;
             UpdateProgressBar(0f);
             isOnWayToAderezo = false;
+            if (animator != null)
+                animator.SetBool("Caminando", false);
             return;
-            
         }
 
         LookAtAderezo();
@@ -334,21 +359,28 @@ public class Enemigo : MonoBehaviour
         {
             isOnWayToAderezo = true;
             Vector3 direction = (aderezoTransform.position - transform.position).normalized;
+            float distancia = Vector3.Distance(transform.position, aderezoTransform.position);
+
+            bool estaCaminando = velocidadMovimientoActual > 0.01f && distancia > 0.05f;
+            if (animator != null)
+                animator.SetBool("Caminando", estaCaminando);
+
             transform.position += direction * velocidadMovimientoActual * Time.deltaTime;
 
-            if (Vector3.Distance(transform.position, aderezoTransform.position) < 0.6f) // Ajusta la distancia según sea necesario
+            if (distancia < 0.6f)
             {
                 isInteractingWithAderezo = true;
                 isOnWayToAderezo = false;
                 interactionTimer = 0f;
 
-                // Obtener la referencia a la barra de interacción del aderezo
                 Aderezo aderezo = aderezoTransform.GetComponent<Aderezo>();
                 if (aderezo != null)
                 {
                     interactionProgressBar = aderezo.interactionProgressBar;
-                    interactionProgressBar.gameObject.SetActive(true); // Asegurarse de que la barra de progreso esté visible
+                    interactionProgressBar.gameObject.SetActive(true);
                 }
+                if (animator != null)
+                    animator.SetBool("Caminando", false);
             }
         }
         else
@@ -365,8 +397,10 @@ public class Enemigo : MonoBehaviour
                 UpdateProgressBar(0f);
                 if (interactionProgressBar != null)
                 {
-                    interactionProgressBar.gameObject.SetActive(false); // Ocultar la barra de progreso
+                    interactionProgressBar.gameObject.SetActive(false);
                 }
+                if (animator != null)
+                    animator.SetBool("Caminando", false);
             }
         }
     }
@@ -684,6 +718,48 @@ public class Enemigo : MonoBehaviour
         if (animator != null)
         {
             animator.SetBool("Atacando", false); // Desactiva la animación de ataque
+        }
+    }
+
+    public void Resetear()
+    {
+        vidaE = statsEnemigo.vida;
+        velocidadMovimientoInicial = statsEnemigo.velocidadMovimiento;
+        velocidadMovimientoActual = velocidadMovimientoInicial;
+        damage = statsEnemigo.daño;
+        playerTransform = null;
+        jugador = null;
+        aderezoTransform = null;
+        isDamaging = false;
+        isStunned = false;
+        stunCoroutine = null;
+        yaTomoAderezo = false;
+        puedeSoltarObjeto = true;
+        persiguiendoJugador = false;
+        isInteractingWithAderezo = false;
+        isOnWayToAderezo = false;
+        interactionTimer = 0f;
+        escudoCollider = null;
+        enContactoConEscudo = false;
+        reducirResistenciaEscudoCoroutine = null;
+        ralentizacionCoroutine = null;
+        barraVisible = false;
+        tiempoUltimoDanio = -999f;
+
+        if (animator != null)
+        {
+            animator.SetBool("Caminando", false);
+            animator.SetBool("Atacando", false);
+            animator.SetTrigger("Reset");
+        }
+
+        if (barraDeVida != null) barraDeVida.gameObject.SetActive(false);
+        if (barraDeVidaFondo != null) barraDeVidaFondo.gameObject.SetActive(false);
+
+        // Restaurar el material original del renderizador
+        if (enemigoRenderer != null && materialOriginal != null)
+        {
+            enemigoRenderer.material = materialOriginal;
         }
     }
 }

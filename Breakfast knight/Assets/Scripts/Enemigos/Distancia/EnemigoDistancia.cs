@@ -8,7 +8,6 @@ public class EnemigoDistancia : Enemigo
 
     protected override void Start()
     {
-
         base.Start();
         attackHandler = GetComponent<AttackHandler>(); // Obtener el componente AttackHandler
     }
@@ -16,15 +15,31 @@ public class EnemigoDistancia : Enemigo
     protected override void Update()
     {
         base.Update();
-        if (IsPlayerInAttackRange() && !isInteractingWithAderezo)
+
+        float distanciaAlJugador = Vector3.Distance(transform.position, jugador.transform.position);
+
+        if (distanciaAlJugador <= attackRadius)
         {
-            atacando = true;
-            attackHandler.ActivarAtaque();
+            // Detener movimiento y atacar
+            persiguiendoJugador = false;
+            velocidadMovimientoActual = 0f;
+            if (!isInteractingWithAderezo)
+            {
+                attackHandler.ActivarAtaque();
+            }
         }
-        if (IsPlayerInAttackRange() && !isOnWayToAderezo)
+        else if (distanciaAlJugador <= detectionRadius)
         {
-            atacando = true;
-            attackHandler.ActivarAtaque();
+            // Perseguir al jugador
+            persiguiendoJugador = true;
+            velocidadMovimientoActual = statsEnemigo.velocidadMovimiento;
+            PerseguirJugador();
+        }
+        else
+        {
+            // Fuera de ambos rangos, detenerse
+            persiguiendoJugador = false;
+            velocidadMovimientoActual = 0f;
         }
     }
 

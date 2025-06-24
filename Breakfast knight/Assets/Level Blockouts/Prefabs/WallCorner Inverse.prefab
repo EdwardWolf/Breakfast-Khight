@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5093196372627110944}
   - component: {fileID: 5919402496320577468}
   - component: {fileID: 8104828503698722438}
+  - component: {fileID: 3065255659720096836}
   m_Layer: 0
   m_Name: WallCorner Inverse
   m_TagString: Untagged
@@ -473,3 +474,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &3065255659720096836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4244655878336409225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de8c197b15f47441b23d176f218a476, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeSpeed: 10
+  fadeAmount: 0.4
+  DoFade: 0

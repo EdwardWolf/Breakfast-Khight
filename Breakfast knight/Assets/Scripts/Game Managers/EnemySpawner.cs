@@ -14,6 +14,8 @@ public class EnemySpawner : MonoBehaviour
     public Transform pointB; // Segundo punto del área de spawn
     public Transform pointC; // Tercer punto del área de spawn
     public Transform pointD; // Cuarto punto del área de spawn
+    public int maxEnemiesToKill = 20; // Cantidad máxima de enemigos a matar antes de desactivar el spawner
+    private int killedEnemies = 0;    // Contador de enemigos eliminados
     private float lastSpawnTime;
     private int spawnCount = 0;
     private Queue<GameObject> enemyPool; // Pool de enemigos
@@ -92,11 +94,24 @@ public class EnemySpawner : MonoBehaviour
 
     public void RegresarEnemigo(GameObject enemy)
     {
+        // Llama al método Resetear si existe
+        var enemigoScript = enemy.GetComponent<Enemigo>();
+        if (enemigoScript != null)
+        {
+            enemigoScript.Resetear();
+        }
+
         enemy.SetActive(false);
         enemyPool.Enqueue(enemy);
         activeEnemies.Remove(enemy);
+        killedEnemies++; // Incrementa el contador de enemigos eliminados
         Debug.Log("Enemigo regresado al pool y eliminado de activeEnemies. Total de enemigos activos: " + activeEnemies.Count);
-        CheckAndDeactivateSpawner();
+
+        if (killedEnemies >= maxEnemiesToKill)
+        {
+            Debug.Log("Se alcanzó el límite de enemigos eliminados. Spawner desactivado.");
+            gameObject.SetActive(false);
+        }
     }
 
     private void CheckAndDeactivateSpawner()
