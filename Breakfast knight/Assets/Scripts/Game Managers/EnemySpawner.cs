@@ -22,6 +22,11 @@ public class EnemySpawner : MonoBehaviour
     private List<GameObject> activeEnemies; // Lista de enemigos activos
     private bool isPlayerInRange = false; // Indica si el jugador está en el rango de detección
     private BoxCollider detectionBox; // BoxCollider para la detección
+    public int[] enemiesPerWave = { 3, 5 }; // Cantidad de enemigos por ciclo de spawn
+    private int currentWaveIndex = 0;
+    public bool usarOleadas = false; // Habilita el sistema de oleadas
+    public float delayEntreOleadas = 2f; // Delay entre oleadas en segundos
+    private bool esperandoOleada = false;
 
     private void Start()
     {
@@ -35,15 +40,32 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
-        if (isPlayerInRange && Time.time >= lastSpawnTime + spawnCooldown && activeEnemies.Count < maxActiveEnemies)
-        {
-            SpawnEnemigo();
-            lastSpawnTime = Time.time;
-            spawnCount++;
+        if (!isPlayerInRange) return;
 
-            if (spawnCount >= 3)
+        if (usarOleadas)
+        {
+            // Solo spawnea la siguiente oleada si no hay enemigos activos y ha pasado el cooldown
+            if (!esperandoOleada && activeEnemies.Count == 0 && Time.time >= lastSpawnTime + spawnCooldown)
             {
-                spawnCount = 0;
+                StartCoroutine(SpawnOleadaConDelay());
+            }
+        }
+        else
+        {
+            // Comportamiento original: spawnea si hay espacio y ha pasado el cooldown
+            if (Time.time >= lastSpawnTime + spawnCooldown && activeEnemies.Count < maxActiveEnemies)
+            {
+                int cantidadASpawnear = enemiesPerWave[currentWaveIndex];
+                int disponibles = maxActiveEnemies - activeEnemies.Count;
+                int cantidadFinal = Mathf.Min(cantidadASpawnear, disponibles);
+
+                for (int i = 0; i < cantidadFinal; i++)
+                {
+                    SpawnEnemigo();
+                }
+
+                lastSpawnTime = Time.time;
+                currentWaveIndex = (currentWaveIndex + 1) % enemiesPerWave.Length;
             }
         }
     }
@@ -156,5 +178,22 @@ public class EnemySpawner : MonoBehaviour
             Gizmos.DrawLine(pointC.position, pointD.position);
             Gizmos.DrawLine(pointD.position, pointA.position);
         }
+    }
+    private IEnumerator SpawnOleadaConDelay()
+    {
+        esperandoOleada = true;
+        yield return new WaitForSeconds(delayEntreOleadas);
+
+        int cantidadASpawnear = enemiesPerWave[currentWaveIndex];
+        int disponibles = Mathf.Min(cantidadASpawnear, maxActiveEnemies);
+
+        for (int i = 0; i < disponibles; i++)
+        {
+            SpawnEnemigo();
+        }
+
+        lastSpawnTime = Time.time;
+        currentWaveIndex = (currentWaveIndex + 1) % enemiesPerWave.Length;
+        esperandoOleada = false;
     }
 }

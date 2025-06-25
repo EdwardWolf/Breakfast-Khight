@@ -139,6 +139,7 @@ MonoBehaviour:
   sectionManager: {fileID: 0}
   Charco: {fileID: 8530985405293348726, guid: 3b37336d6f5c4354b92e215040e2a22e, type: 3}
   haAlcanzadoAlJugador: 0
+  triggerAtaque: {fileID: 4282443079364112390}
 --- !u!114 &2765718099733149342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5355,6 +5356,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5516416599882276330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6705897383819769140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4332800695941168040}
+  - component: {fileID: 4282443079364112390}
+  m_Layer: 7
+  m_Name: RangoAtaque
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4332800695941168040
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6705897383819769140}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1.76}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1280306220594101021}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4282443079364112390
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6705897383819769140}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 2.01, y: 1, z: 2.067314}
+  m_Center: {x: 0, y: 0, z: 0.5336568}
 --- !u!1 &6812194968231204056
 GameObject:
   m_ObjectHideFlags: 0
@@ -5386,6 +5440,7 @@ Transform:
   m_Children:
   - {fileID: 1690557677272363936}
   - {fileID: 8314989131710242568}
+  - {fileID: 4332800695941168040}
   m_Father: {fileID: 5516416599882276330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6975997775439566339
@@ -5574,6 +5629,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
+  projectileSpeed: 10
 --- !u!1001 &6009440127545723405
 PrefabInstance:
   m_ObjectHideFlags: 0

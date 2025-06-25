@@ -1,8 +1,6 @@
-using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
-
 
 public class Aderezo : MonoBehaviour
 {
@@ -12,17 +10,16 @@ public class Aderezo : MonoBehaviour
     public float interactionTimer = 0f; // Tiempo transcurrido de la interacción
     public Jugador jugador;
     public Enemigo enemigo;
-    private GameInputs playerInputActions;
     public Image interactionProgressBar; // Referencia a la barra de progreso
     private Camera camara; // Añadir referencia a la cámara
     [SerializeField] private Sprite AderezoUI; // Prefab del objeto a instanciar
     public Image indicadorInteraccion; // Asigna esta imagen desde el inspector
     private static Enemigo enemigoInteractuando; // Variable estática para almacenar el enemigo que está interactuando
 
-
     [Header("Configuración de duración")]
     [SerializeField] protected bool tieneDuracion = false;
     [SerializeField] protected float duracionEfecto = 5f;
+
     private void Start()
     {
         gameObject.SetActive(true);
@@ -46,21 +43,6 @@ public class Aderezo : MonoBehaviour
     protected virtual void Awake()
     {
         camara = Camera.main; // Obtener la cámara principal    
-        playerInputActions = new GameInputs();
-    }
-
-    private void OnEnable()
-    {
-        playerInputActions.Player.Interact.performed += OnInteractPerformed;
-        playerInputActions.Player.Interact.canceled += OnInteractCanceled;
-        playerInputActions.Enable();
-    }
-
-    private void OnDisable()
-    {
-        playerInputActions.Player.Interact.performed -= OnInteractPerformed;
-        playerInputActions.Player.Interact.canceled -= OnInteractCanceled;
-        playerInputActions.Disable();
     }
 
     protected virtual void Update()
@@ -71,50 +53,41 @@ public class Aderezo : MonoBehaviour
         interactionProgressBar.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
         camara.transform.rotation * Vector3.up);
 
+        // Interacción automática con el jugador
         if (jugador != null && Vector3.Distance(transform.position, jugador.transform.position) <= interactionDistance)
         {
-            if (isInteracting)
-            {
-                interactionTimer += Time.deltaTime;
-                UpdateProgressBar(interactionTimer / interactionTime);
+            isInteracting = true;
+            interactionTimer += Time.deltaTime;
+            UpdateProgressBar(interactionTimer / interactionTime);
 
-                if (interactionTimer >= interactionTime)
-                {
-                    //Recoger(jugador);
-                    RealizarInteraccionJugador();
-                    isInteracting = false;
-                    UpdateProgressBar(0f);
-                }
-            }
-            else
+            if (interactionTimer >= interactionTime)
             {
+                RealizarInteraccionJugador();
+                isInteracting = false;
                 interactionTimer = 0f;
                 UpdateProgressBar(0f);
             }
         }
+        // Interacción automática con el enemigo
         else if (enemigo != null && Vector3.Distance(transform.position, enemigo.transform.position) <= interactionDistance)
         {
-            if (isInteracting)
-            {
-                interactionTimer += Time.deltaTime;
-                UpdateProgressBar(interactionTimer / interactionTime);
+            isInteracting = true;
+            interactionTimer += Time.deltaTime;
+            UpdateProgressBar(interactionTimer / interactionTime);
 
-                if (interactionTimer >= interactionTime)
-                {
-                    RealizarInteraccionEnemigo();
-                    isInteracting = false;
-                    enemigoInteractuando = null; // Liberar la referencia del enemigo interactuando
-                    UpdateProgressBar(0f);
-                }
-            }
-            else
+            if (interactionTimer >= interactionTime)
             {
+                RealizarInteraccionEnemigo();
+                isInteracting = false;
+                enemigoInteractuando = null; // Liberar la referencia del enemigo interactuando
                 interactionTimer = 0f;
                 UpdateProgressBar(0f);
             }
         }
         else
         {
+            isInteracting = false;
+            interactionTimer = 0f;
             UpdateProgressBar(0f);
         }
     }
@@ -161,23 +134,6 @@ public class Aderezo : MonoBehaviour
         ReuperarSaludEnemigo();
     }
 
-    private void OnInteractPerformed(InputAction.CallbackContext context)
-    {
-        if (jugador != null && Vector3.Distance(transform.position, jugador.transform.position) <= interactionDistance)
-        {
-            
-            isInteracting = true;
-            interactionTimer = 0f;
-        }
-    }
-
-    private void OnInteractCanceled(InputAction.CallbackContext context)
-    {
-        isInteracting = false;
-        interactionTimer = 0f;
-        UpdateProgressBar(0f);
-    }
-
     private void UpdateProgressBar(float progress)
     {
         if (interactionProgressBar != null)
@@ -185,50 +141,6 @@ public class Aderezo : MonoBehaviour
             interactionProgressBar.fillAmount = progress;
         }
     }
-
-    //por si quiero regresar a que sea un trigger en lugar de collision
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.CompareTag("Player"))
-    //    {
-    //        jugador = other.GetComponent<Jugador>();
-    //        if (indicadorInteraccion != null)
-    //            indicadorInteraccion.gameObject.SetActive(true); // Muestra la imagen
-
-    //    }
-    //    if (other.CompareTag("Enemigo"))
-    //    {
-    //        if (enemigoInteractuando == null)
-    //        {
-    //            enemigo = other.GetComponent<Enemigo>();
-    //            enemigoInteractuando = enemigo; // Asignar la referencia del enemigo interactuando
-    //            isInteracting = true; // Iniciar la interacción automáticamente para el enemigo
-    //            interactionTimer = 0f;
-    //        }
-    //    }
-    //}
-
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    if (other.CompareTag("Player"))
-    //    {
-    //        jugador = null;
-    //        UpdateProgressBar(0f);
-    //        if (indicadorInteraccion != null)
-    //            indicadorInteraccion.gameObject.SetActive(false); // Oculta la imagen
-    //    }
-    //    if (other.CompareTag("Enemigo"))
-    //    {
-    //        if (enemigo == other.GetComponent<Enemigo>())
-    //        {
-    //            enemigo = null;
-    //            enemigoInteractuando = null; // Liberar la referencia del enemigo interactuando
-    //            isInteracting = false; // Detener la interacción cuando el enemigo sale del rango
-    //            interactionTimer = 0f;
-    //            UpdateProgressBar(0f);
-    //        }
-    //    }
-    //}
 
     private void OnCollisionEnter(Collision collision)
     {

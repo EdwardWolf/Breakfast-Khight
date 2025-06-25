@@ -342,14 +342,23 @@ public class Enemigo : MonoBehaviour
                 animator.SetBool("Caminando", false);
             return;
         }
-        if (aderezoTransform == null)
+        if (aderezoTransform == null || !aderezoTransform.gameObject.activeSelf)
         {
             isInteractingWithAderezo = false;
             interactionTimer = 0f;
             UpdateProgressBar(0f);
             isOnWayToAderezo = false;
+            aderezoTransform = null;
+            if (interactionProgressBar != null)
+            {
+                interactionProgressBar.gameObject.SetActive(false);
+            }
             if (animator != null)
                 animator.SetBool("Caminando", false);
+
+            // Reiniciar estado para perseguir jugador
+            persiguiendoJugador = true;
+            Debug.Log("Aderezo desaparecido, enemigo vuelve a perseguir al jugador");
             return;
         }
 

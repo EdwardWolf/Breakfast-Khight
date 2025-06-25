@@ -7,6 +7,12 @@ public class EnemigoCuerpo : Enemigo
     public GameObject Charco;
     private Coroutine soltarObjetoCoroutine; // Variable para almacenar la corrutina
     public bool haAlcanzadoAlJugador = false; // Variable para controlar si ha alcanzado al jugador
+    public Collider triggerAtaque; // Asigna este collider desde el inspector
+    public bool estaAtacando = false;
+
+    [Header("Configuración de ataque cuerpo a cuerpo")]
+    [Tooltip("Tiempo de retardo antes de ejecutar el ataque (segundos)")]
+    public float delayAntesDeAtaque = 0.4f;
 
     protected override void Start()
     {
@@ -52,30 +58,23 @@ public class EnemigoCuerpo : Enemigo
         {
             velocidadMovimientoActual = 0f;
         }
-        else
+        else if (!estaAtacando)
         {
             base.PerseguirJugador();
-            if (haAlcanzadoAlJugador)
-            {
-                velocidadMovimientoActual = 0f;
-                if (soltarObjetoCoroutine != null)
-                {
-                    StopCoroutine(soltarObjetoCoroutine);
-                }
-                soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
-                haAlcanzadoAlJugador = false;
-            }
-            else
-            {
-                velocidadMovimientoActual = velocidadMovimientoInicial;
-            }
+        }
+        else
+        {
+            // No moverse ni animar caminar si está atacando
+            if (animator != null)
+                animator.SetBool("Caminando", false);
         }
     }
-
 
     public void AlcanzarJugador()
     {
         haAlcanzadoAlJugador = true;
+        velocidadMovimientoActual = 0f;
+        StartCoroutine(EjecutarAtaque());
     }
 
     protected override void OnCollisionEnter(Collision collision)
@@ -111,6 +110,45 @@ public class EnemigoCuerpo : Enemigo
            {
                soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
            }
+        }
+    }
+
+    private IEnumerator EjecutarAtaque()
+    {
+        estaAtacando = true;
+        // Espera antes de atacar (delay configurable)
+        yield return new WaitForSeconds(delayAntesDeAtaque);
+
+        // Inicia la animación de ataque
+        if (animator != null)
+            animator.SetBool("Atacando", true);
+
+        // Activa el trigger de ataque durante el tiempo del golpe
+        triggerAtaque.enabled = true;
+        yield return new WaitForSeconds(0.3f); // Duración del golpe, ajústalo según la animación
+
+        // Termina el ataque
+        triggerAtaque.enabled = false;
+        if (animator != null)
+            animator.SetBool("Atacando", false);
+
+        // Cooldown antes de poder moverse/atacar de nuevo
+        yield return new WaitForSeconds(1f);
+
+        haAlcanzadoAlJugador = false;
+        estaAtacando = false;
+        velocidadMovimientoActual = velocidadMovimientoInicial;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (triggerAtaque.enabled && other.CompareTag("Player"))
+        {
+            Jugador jugador = other.GetComponent<Jugador>();
+            if (jugador != null)
+            {
+                jugador.ReducirVida(damage); // Usa el campo damage para coherencia
+            }
         }
     }
 }
