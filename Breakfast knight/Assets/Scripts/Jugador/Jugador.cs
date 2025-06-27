@@ -82,7 +82,10 @@ public abstract class Jugador : MonoBehaviour
     [SerializeField] public Image velocidadEffectBar; 
     [SerializeField] private float duracionEfecto = 5f; 
     [SerializeField] private AderezoVelocidad aderezoVelocidadActivo;
-    private float duracionAderezoVelocidadActivo = 0f;
+    [SerializeField] private float duracionAderezoVelocidadActivo = 0f;
+
+    // Añade esta variable para controlar la corrutina de la barra de velocidad
+    private Coroutine barraVelocidadCoroutine;
 
     // DASH
     [SerializeField] private float dashDistancia = 5f;
@@ -91,6 +94,9 @@ public abstract class Jugador : MonoBehaviour
     private bool puedeHacerDash = true;
     public Image dashDisponibleImage; 
     [SerializeField] private Collider dashCollider; 
+
+    [SerializeField] [Range(0, 7)] // Ajusta el máximo según tu duración máxima esperada
+    private float tiempoRestanteBuffVelocidad = 0f;
 
     protected virtual void Start()
     {
@@ -642,10 +648,30 @@ public abstract class Jugador : MonoBehaviour
         }
         buffVelocidadIncrementoActual = incremento;
         aderezoVelocidadActivo = aderezo;
-        duracionAderezoVelocidadActivo = duracion; // <--- Guarda la duración real
+        duracionAderezoVelocidadActivo = duracion;
+
+        // Detén la corrutina de la barra si está activa
+        if (barraVelocidadCoroutine != null)
+        {
+            StopCoroutine(barraVelocidadCoroutine);
+        }
+
+        // Reinicia la barra de la UI al 100% y la activa
+        if (velocidadEffectBar != null)
+        {
+            velocidadEffectBar.gameObject.SetActive(true);
+            velocidadEffectBar.fillAmount = 1f;
+        }
+
+        // Llama a la UI para mostrar el nuevo buff
+        if (uiManager != null)
+            uiManager.MostrarIncrementoVelocidad(buffVelocidadIncrementoActual, duracionAderezoVelocidadActivo);
+
+        // Inicia la barra de velocidad con la nueva duración
+        barraVelocidadCoroutine = StartCoroutine(BarraVelocidad());
+
         buffVelocidadCoroutine = StartCoroutine(BuffVelocidadCoroutine(incremento, duracion));
     }
-
 
     private IEnumerator BuffVelocidadCoroutine(float incremento, float duracion)
     {
@@ -667,30 +693,35 @@ public abstract class Jugador : MonoBehaviour
             uiManager.OcultarIncrementoVelocidad();
     }
 
+    private IEnumerator BarraVelocidad()
+    {
+        float tiempoTranscurrido = 0f;
+        while (tiempoTranscurrido < duracionAderezoVelocidadActivo)
+        {
+            tiempoTranscurrido += Time.deltaTime;
+            tiempoRestanteBuffVelocidad = Mathf.Max(0f, duracionAderezoVelocidadActivo - tiempoTranscurrido); // <-- Actualiza aquí
+
+            if (velocidadEffectBar != null)
+                velocidadEffectBar.fillAmount = 1f - (tiempoTranscurrido / duracionAderezoVelocidadActivo);
+            yield return null;
+        }
+        tiempoRestanteBuffVelocidad = 0f; // Resetea al terminar
+
+        if (velocidadEffectBar != null)
+        {
+            velocidadEffectBar.fillAmount = 0f;
+            velocidadEffectBar.gameObject.SetActive(false);
+        }
+
+        if (uiManager != null)
+            uiManager.OcultarIncrementoVelocidad();
+    }
+
     public void BarrVelocidad()
     {
         StartCoroutine(BarraVelocidad());
     }
 
-    private IEnumerator BarraVelocidad()
-    {
-        if (uiManager != null)
-            uiManager.MostrarIncrementoVelocidad(buffVelocidadIncrementoActual, duracionAderezoVelocidadActivo);
-
-        velocidadEffectBar.gameObject.SetActive(true);
-        float tiempoTranscurrido = 0f;
-        while (tiempoTranscurrido < duracionAderezoVelocidadActivo)
-        {
-            tiempoTranscurrido += Time.deltaTime;
-            velocidadEffectBar.fillAmount = 1f - (tiempoTranscurrido / duracionAderezoVelocidadActivo);
-            yield return null;
-        }
-        velocidadEffectBar.fillAmount = 0f;
-        velocidadEffectBar.gameObject.SetActive(false);
-
-        if (uiManager != null)
-            uiManager.OcultarIncrementoVelocidad();
-    }
     public void BarrAtaqueCargado(float duracion)
     {
         StartCoroutine(BarraAtaqueCargado(duracion));
@@ -730,30 +761,52 @@ public abstract class Jugador : MonoBehaviour
         if (dashDisponibleImage != null)
             dashDisponibleImage.enabled = false;
 
-        // Activar el collider del dash
         if (dashCollider != null)
             dashCollider.enabled = true;
 
-        // Hacer al jugador invulnerable durante el dash
         invulnerable = true;
 
         float tiempo = 0f;
         Vector3 inicio = transform.position;
         Vector3 destino = inicio + direccion.normalized * dashDistancia;
+        Vector3 ultimaPosicion = inicio;
+
+        Rigidbody rb = GetComponent<Rigidbody>();
 
         while (tiempo < dashDuracion)
         {
-            transform.position = Vector3.Lerp(inicio, destino, tiempo / dashDuracion);
+            float t = tiempo / dashDuracion;
+            Vector3 siguientePosicion = Vector3.Lerp(inicio, destino, t);
+
+            Vector3 direccionFrame = (siguientePosicion - ultimaPosicion).normalized;
+            float distanciaFrame = Vector3.Distance(ultimaPosicion, siguientePosicion);
+
+            if (Physics.Raycast(ultimaPosicion, direccionFrame, out RaycastHit hit, distanciaFrame, LayerMask.GetMask("Default", "Muro")))
+            {
+                // Detener el dash en el punto de colisión
+                transform.position = hit.point;
+
+                // Rebote: aplicar fuerza contraria si hay Rigidbody
+                if (rb != null)
+                {
+                    Vector3 rebote = -direccion.normalized * 5f; // Puedes ajustar la fuerza del rebote
+                    rb.AddForce(rebote, ForceMode.Impulse);
+                }
+                break;
+            }
+            else
+            {
+                transform.position = siguientePosicion;
+            }
+
+            ultimaPosicion = transform.position;
             tiempo += Time.deltaTime;
             yield return null;
         }
-        transform.position = destino;
 
-        // Desactivar el collider del dash
         if (dashCollider != null)
             dashCollider.enabled = false;
 
-        // Quitar invulnerabilidad al terminar el dash
         invulnerable = false;
 
         yield return new WaitForSeconds(dashCooldown);
