@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 694050264674700493}
   - component: {fileID: 7792551372398520725}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Range Dash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -252,7 +252,7 @@ MonoBehaviour:
   dashDuracion: 0.2
   dashCooldown: 2
   dashDisponibleImage: {fileID: 0}
-  dashCollider: {fileID: 0}
+  dashCollider: {fileID: 7792551372398520725}
   barraAtaque: {fileID: 0}
   puedeAtaqueCargado: 0
   tiempoTranscurridoDebug: 0

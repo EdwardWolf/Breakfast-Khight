@@ -16,6 +16,10 @@ public class UIManager : MonoBehaviour
     private const float valorCorazon = 10f; // Valor de cada corazón
     public Sprite spriteAderezoVelocidad;
     public Sprite spriteAderezoAtaque;
+
+    private Coroutine barraAtaqueCoroutine;
+    private Coroutine barraVelocidadCoroutine;
+
     private void OnEnable()
     {
         Jugador.OnVidaCambiada += ActualizarCorazones;
@@ -44,7 +48,12 @@ public class UIManager : MonoBehaviour
     public void MostrarIncrementoAtaque(float incremento, float duracion)
     {
         if (barraAtaque != null)
+        {
             barraAtaque.gameObject.SetActive(true);
+            if (barraAtaqueCoroutine != null)
+                StopCoroutine(barraAtaqueCoroutine);
+            barraAtaqueCoroutine = StartCoroutine(ActualizarBarra(barraAtaque, duracion));
+        }
 
         if (iconoAderezo != null && spriteAderezoAtaque != null)
         {
@@ -76,10 +85,18 @@ public class UIManager : MonoBehaviour
 
     public void MostrarIncrementoVelocidad(float incremento, float duracion)
     {
-        barraVelocidad.gameObject.SetActive(true);
-        if (barraVelocidad != null && spriteAderezoVelocidad != null)
+        if (barraVelocidad != null)
+        {
+            barraVelocidad.gameObject.SetActive(true);
+            if (barraVelocidadCoroutine != null)
+                StopCoroutine(barraVelocidadCoroutine);
+            barraVelocidadCoroutine = StartCoroutine(ActualizarBarra(barraVelocidad, duracion));
+        }
+
+        if (iconoAderezo != null && spriteAderezoVelocidad != null)
         {
             iconoAderezo.sprite = spriteAderezoVelocidad;
+            iconoAderezo.enabled = true;
         }
     }
 
@@ -87,5 +104,19 @@ public class UIManager : MonoBehaviour
     {
         barraVelocidad.gameObject.SetActive(false);
         iconoAderezo.sprite = ItemVacio; // Cambiar a la imagen de vacío
+    }
+
+    private IEnumerator ActualizarBarra(Image barra, float duracion)
+    {
+        float tiempoRestante = duracion;
+        barra.fillAmount = 1f;
+        while (tiempoRestante > 0)
+        {
+            barra.fillAmount = tiempoRestante / duracion;
+            tiempoRestante -= Time.deltaTime;
+            yield return null;
+        }
+        barra.fillAmount = 0f;
+        barra.gameObject.SetActive(false);
     }
 }
