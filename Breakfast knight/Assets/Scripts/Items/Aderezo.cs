@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 
 public class Aderezo : MonoBehaviour
 {
-    public float interactionDistance = 3f; // Distancia de interacción
+    public float interactionDistance = 2f; // Distancia de interacción
     public float interactionTime = 2f; // Tiempo necesario para completar la interacción
     private bool isInteracting = false;
     public float interactionTimer = 0f; // Tiempo transcurrido de la interacción
@@ -23,7 +23,7 @@ public class Aderezo : MonoBehaviour
     private void Start()
     {
         gameObject.SetActive(true);
-        interactionProgressBar = transform.Find("Canvas/Image").GetComponent<Image>();
+        interactionProgressBar = transform.Find("Canvas/Barra").GetComponent<Image>();
 
         if (interactionProgressBar != null)
         {
@@ -166,6 +166,8 @@ public class Aderezo : MonoBehaviour
             if (rb != null)
             {
                 rb.isKinematic = true;
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
         }
     }

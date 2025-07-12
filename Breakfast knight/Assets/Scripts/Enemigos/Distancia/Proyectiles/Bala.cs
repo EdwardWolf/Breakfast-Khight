@@ -10,7 +10,8 @@ public class Bala : MonoBehaviour
     [SerializeField] private float tiempoDeVida = 5f; // Tiempo de vida de la bala en segundos
     public AudioSource audioSource; // Referencia al componente AudioSource
     public AudioClip impactoClip; // Clip de audio para el sonido del impacto
-    
+    [SerializeField, Range(0f, 1f)]
+    public float volumenImpacto = 1f;
     public void SetAttackHandler(AttackHandler handler)
     {
         attackHandler = handler;
@@ -74,6 +75,7 @@ public class Bala : MonoBehaviour
             // Reproducir el sonido del impacto
             if (audioSource != null && impactoClip != null)
             {
+                audioSource.volume = volumenImpacto;
                 audioSource.PlayOneShot(impactoClip);
             }
 

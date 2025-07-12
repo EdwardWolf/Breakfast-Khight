@@ -5,6 +5,8 @@ public class EnemigoDistancia : Enemigo
 {
     public AttackHandler attackHandler; // Añadir referencia a AttackHandler
     public bool atacando = false; // Variable para evitar múltiples corrutinas
+    public GameObject objetoAActivar; // Asigna este objeto desde el inspector
+    public Camera camara; // Referencia a la cámara
 
     protected override void Start()
     {
@@ -20,26 +22,32 @@ public class EnemigoDistancia : Enemigo
 
         if (distanciaAlJugador <= attackRadius)
         {
-            // Detener movimiento y atacar
             persiguiendoJugador = false;
             velocidadMovimientoActual = 0f;
             if (!isInteractingWithAderezo)
             {
-                attackHandler.ActivarAtaque();
+                LanzarProyectilConEfecto();
             }
         }
         else if (distanciaAlJugador <= detectionRadius)
         {
-            // Perseguir al jugador
             persiguiendoJugador = true;
             velocidadMovimientoActual = statsEnemigo.velocidadMovimiento;
             PerseguirJugador();
         }
         else
         {
-            // Fuera de ambos rangos, detenerse
             persiguiendoJugador = false;
             velocidadMovimientoActual = 0f;
+        }
+
+        // Hacer que el objeto siempre mire a la cámara
+        if (objetoAActivar != null && objetoAActivar.activeSelf && camara != null)
+        {
+            objetoAActivar.transform.LookAt(
+                objetoAActivar.transform.position + camara.transform.rotation * Vector3.forward,
+                camara.transform.rotation * Vector3.up
+            );
         }
     }
 
@@ -84,6 +92,27 @@ public class EnemigoDistancia : Enemigo
         }
         isDamaging = false;
         atacando = false; // Restablecer la variable cuando la corrutina termine
+    }
+
+    public void LanzarProyectilConEfecto()
+    {
+        StartCoroutine(ActivarObjetoYLanzarProyectil());
+    }
+
+    private IEnumerator ActivarObjetoYLanzarProyectil()
+    {
+        if (objetoAActivar != null)
+            objetoAActivar.SetActive(true);
+
+        // Lanza el proyectil justo después de activar el objeto
+        if (attackHandler != null)
+            attackHandler.ActivarAtaque();
+
+        // Espera 1 segundo antes de desactivar el objeto
+        yield return new WaitForSeconds(2f);
+
+        if (objetoAActivar != null)
+            objetoAActivar.SetActive(false);
     }
 }
 

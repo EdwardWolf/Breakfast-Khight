@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI; // Agrega esto al inicio del archivo
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -27,14 +28,23 @@ public class EnemySpawner : MonoBehaviour
     public bool usarOleadas = false; // Habilita el sistema de oleadas
     public float delayEntreOleadas = 2f; // Delay entre oleadas en segundos
     private bool esperandoOleada = false;
+    public float radioExclusionJugador = 3f; // Radio alrededor del jugador donde no se puede spawnear
+    public Transform jugador; // Asigna el transform del jugador desde el inspector
 
     private void Start()
     {
         lastSpawnTime = -spawnCooldown; // Permitir spawnear inmediatamente al inicio
         CrearPool();
         activeEnemies = new List<GameObject>();
-        detectionBox = gameObject.AddComponent<BoxCollider>();
+
+        // Obtener o agregar el BoxCollider
+        detectionBox = GetComponent<BoxCollider>();
+        if (detectionBox == null)
+        {
+            detectionBox = gameObject.AddComponent<BoxCollider>();
+        }
         detectionBox.isTrigger = true;
+
         Debug.Log("Lista activeEnemies inicializada.");
     }
 
@@ -87,8 +97,25 @@ public class EnemySpawner : MonoBehaviour
     {
         if (enemyPool.Count > 0)
         {
+            Vector3 spawnPosition;
+            int intentos = 0;
+            const int maxIntentos = 20;
+
+            // Intenta encontrar una posición válida fuera del radio de exclusión
+            do
+            {
+                spawnPosition = GetRandomPositionInArea();
+                intentos++;
+            }
+            while (jugador != null && Vector3.Distance(spawnPosition, jugador.position) < radioExclusionJugador && intentos < maxIntentos);
+
+            if (intentos >= maxIntentos)
+            {
+                Debug.LogWarning("No se encontró una posición válida para spawnear enemigo fuera del radio de exclusión.");
+                return;
+            }
+
             GameObject enemy = enemyPool.Dequeue();
-            Vector3 spawnPosition = GetRandomPositionInArea();
             enemy.transform.position = spawnPosition;
             enemy.transform.rotation = Quaternion.identity;
             enemy.SetActive(true);
@@ -108,10 +135,24 @@ public class EnemySpawner : MonoBehaviour
         float minZ = Mathf.Min(pointA.position.z, pointB.position.z, pointC.position.z, pointD.position.z);
         float maxZ = Mathf.Max(pointA.position.z, pointB.position.z, pointC.position.z, pointD.position.z);
 
-        float randomX = UnityEngine.Random.Range(minX, maxX);
-        float randomZ = UnityEngine.Random.Range(minZ, maxZ);
+        for (int i = 0; i < 20; i++) // Intenta hasta 20 veces encontrar una posición válida
+        {
+            float randomX = UnityEngine.Random.Range(minX, maxX);
+            float randomZ = UnityEngine.Random.Range(minZ, maxZ);
+            Vector3 randomPosition = new Vector3(randomX, transform.position.y, randomZ);
 
-        return new Vector3(randomX, transform.position.y, randomZ);
+            NavMeshHit hit;
+            // Busca una posición válida en el NavMesh cerca de randomPosition, con un radio de 2 unidades
+            if (NavMesh.SamplePosition(randomPosition, out hit, 2f, NavMesh.AllAreas))
+            {
+                return hit.position;
+            }
+        }
+
+        // Si no se encuentra una posición válida, retorna el centro del área como fallback
+        float centerX = (minX + maxX) / 2f;
+        float centerZ = (minZ + maxZ) / 2f;
+        return new Vector3(centerX, transform.position.y, centerZ);
     }
 
     public void RegresarEnemigo(GameObject enemy)
@@ -149,6 +190,10 @@ public class EnemySpawner : MonoBehaviour
         if (((1 << other.gameObject.layer) & playerLayer) != 0)
         {
             isPlayerInRange = true;
+            if (jugador == null)
+            {
+                jugador = other.transform;
+            }
         }
     }
 

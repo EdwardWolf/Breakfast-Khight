@@ -102,13 +102,13 @@ CapsuleCollider:
     m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.8197932
+  m_Radius: 1.06
   m_Height: 16.770689
   m_Direction: 1
   m_Center: {x: -0.035026073, y: 6.73, z: -0.00000011920929}
@@ -5255,7 +5255,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7bcffd09a99b8ae4fbe94d4a31e15f0a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ec4afa86e16df92478d5451b3418e18d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

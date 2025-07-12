@@ -98,6 +98,10 @@ public abstract class Jugador : MonoBehaviour
     [SerializeField] [Range(0, 7)] // Ajusta el máximo según tu duración máxima esperada
     private float tiempoRestanteBuffVelocidad = 0f;
 
+    private bool estaRecibiendoDaño = false; // Variable para rastrear si el jugador está recibiendo daño
+
+    [SerializeField] private float duracionInvulnerabilidad = 1f; // Duración en segundos
+
     protected virtual void Start()
     {
         Equis.SetActive(false); 
@@ -368,6 +372,8 @@ public abstract class Jugador : MonoBehaviour
     {
         if (invulnerable) return; // Si el jugador es invulnerable, no recibir daño
 
+        estaRecibiendoDaño = true; // Activar flag al recibir daño
+
         vidaActual -= cantidad;
         int nuevosCorazones = Mathf.CeilToInt(vidaActual / valorCorazon);
 
@@ -379,14 +385,12 @@ public abstract class Jugador : MonoBehaviour
 
         if (vidaActual <= 0)
         {
-            // Manejar la muerte del jugador
             derrota.SetActive(true);
-            // No llamar a PausarJuego aquí
-            Time.timeScale = 0f; // Pausar el juego sin mostrar el panel de pausa
+            Time.timeScale = 0f;
         }
         else
         {
-            StartCoroutine(InvulnerabilidadTemporal()); // Iniciar la corrutina de invulnerabilidad temporal
+            StartCoroutine(InvulnerabilidadTemporal());
         }
     }
 
@@ -401,24 +405,27 @@ public abstract class Jugador : MonoBehaviour
     private IEnumerator InvulnerabilidadTemporal()
     {
         invulnerable = true;
+        estaRecibiendoDaño = true;
+
         foreach (Renderer rend in renderers)
         {
             if (!renderersNoAfectados.Contains(rend))
             {
-                rend.material = materialDaño; // Cambiar el material al recibir daño
+                rend.material = materialDaño;
             }
         }
 
-        yield return new WaitForSeconds(0.5f); // Esperar medio segundo
+        yield return new WaitForSeconds(duracionInvulnerabilidad);
 
         foreach (Renderer rend in renderers)
         {
             if (!renderersNoAfectados.Contains(rend))
             {
-                rend.material = materialNormal; // Restaurar el material normal
+                rend.material = materialNormal;
             }
         }
         invulnerable = false;
+        estaRecibiendoDaño = false;
     }
 
     public void ReducirResistenciaEscudo(float cantidad)

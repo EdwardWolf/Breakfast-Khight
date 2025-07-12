@@ -9,6 +9,7 @@ public class EnemigoCuerpo : Enemigo
     public bool haAlcanzadoAlJugador = false; // Variable para controlar si ha alcanzado al jugador
     public Collider triggerAtaque; // Asigna este collider desde el inspector
     public bool estaAtacando = false;
+    public SpriteRenderer spriteRangoAtaque; // Asigna este SpriteRenderer desde el inspector
 
     [Header("Configuración de ataque cuerpo a cuerpo")]
     [Tooltip("Tiempo de retardo antes de ejecutar el ataque (segundos)")]
@@ -49,7 +50,9 @@ public class EnemigoCuerpo : Enemigo
     protected override void Update()
     {
         base.Update();
-        // No es necesario detener y reiniciar la corrutina aquí
+        // Mantener la animación de ataque mientras estaAtacando sea true
+        if (animator != null)
+            animator.SetBool("Atacando", estaAtacando);
     }
 
     public override void PerseguirJugador()
@@ -123,12 +126,18 @@ public class EnemigoCuerpo : Enemigo
         if (animator != null)
             animator.SetBool("Atacando", true);
 
-        // Activa el trigger de ataque durante el tiempo del golpe
+        // Activa el trigger de ataque y el sprite del rango
         triggerAtaque.enabled = true;
+        if (spriteRangoAtaque != null)
+            spriteRangoAtaque.enabled = true;
+
         yield return new WaitForSeconds(0.3f); // Duración del golpe, ajústalo según la animación
 
-        // Termina el ataque
+        // Desactiva el trigger de ataque y el sprite del rango
         triggerAtaque.enabled = false;
+        if (spriteRangoAtaque != null)
+            spriteRangoAtaque.enabled = false;
+
         if (animator != null)
             animator.SetBool("Atacando", false);
 

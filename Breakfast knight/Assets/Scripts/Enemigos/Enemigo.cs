@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.AI; // Agrega esta línea al inicio
 
 public class Enemigo : MonoBehaviour
 {
@@ -39,7 +40,6 @@ public class Enemigo : MonoBehaviour
     private bool barraVisible = false;
     public bool yaTomoAderezo = false; // Flag para controlar si ya tomó un aderezo
 
-
     // Nueva variable para la probabilidad de uso del aderezo
     [Range(1, 10)]
     public float probabilidadUsoAderezo = 3f; // Probabilidad de uso del aderezo (1-10)
@@ -74,6 +74,12 @@ public class Enemigo : MonoBehaviour
     private Renderer enemigoRenderer;
     private Material materialOriginal;
 
+    public float tiempoDeActivacion = 2f; // Tiempo en segundos antes de que el enemigo pueda actuar
+    private bool puedeActuar = false;
+
+    public GameObject particulasDerrotaPrefab; // Prefab de partículas de derrota
+    public Transform puntoParticulasDerrota; // Punto donde aparecerán las partículas de derrota
+
     protected virtual void Awake()
     {
         camara = Camera.main; // Obtener la cámara principal
@@ -91,8 +97,9 @@ public class Enemigo : MonoBehaviour
 
     public void OnEnable()
     {
-        // Asegurarse de que el objeto esté activo al habilitarlo
         vidaE = statsEnemigo.vida;
+        puedeActuar = false;
+        StartCoroutine(ActivarTrasDelay());
     }
 
     protected virtual void Start()
@@ -113,6 +120,9 @@ public class Enemigo : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (!puedeActuar)
+            return;
+
         if (isStunned)
         {
             if (animator != null)
@@ -356,8 +366,13 @@ public class Enemigo : MonoBehaviour
             if (animator != null)
                 animator.SetBool("Caminando", false);
 
-            // Reiniciar estado para perseguir jugador
-            persiguiendoJugador = true;
+            // --- NUEVO: Forzar detección del jugador ---
+            DetectPlayer();
+            if (playerTransform != null)
+            {
+                persiguiendoJugador = true;
+            }
+
             Debug.Log("Aderezo desaparecido, enemigo vuelve a perseguir al jugador");
             return;
         }
@@ -479,6 +494,17 @@ public class Enemigo : MonoBehaviour
         if (vidaE <= 0)
         {
             Debug.Log($"El enemigo {gameObject.name} ha sido derrotado.");
+
+            // Instanciar partículas de derrota
+            if (particulasDerrotaPrefab != null && puntoParticulasDerrota != null)
+            {
+                Instantiate(particulasDerrotaPrefab, puntoParticulasDerrota.position, puntoParticulasDerrota.rotation);
+            }
+            else if (particulasDerrotaPrefab != null)
+            {
+                Instantiate(particulasDerrotaPrefab, transform.position, Quaternion.identity);
+            }
+
             DropAderezo();
             DesactivarEnemigo();
         }
@@ -494,13 +520,17 @@ public class Enemigo : MonoBehaviour
 
     private void Alejarse()
     {
-        // Calcular una dirección aleatoria para alejarse
+        if (jugador == null) return;
+
         Vector3 alejarseDireccion = (transform.position - jugador.transform.position).normalized;
         Vector3 nuevaPosicion = transform.position + alejarseDireccion * distanciaAlejarse;
 
-        // Mover al enemigo a la nueva posición
-        transform.position = Vector3.Lerp(transform.position, nuevaPosicion, Time.deltaTime * velocidadMovimientoActual);
+        // Buscar una posición válida en el NavMesh
+        Vector3 posicionValida = GetNavMeshPosition(nuevaPosicion, 2f);
+
+        transform.position = Vector3.Lerp(transform.position, posicionValida, Time.deltaTime * velocidadMovimientoActual);
     }
+
     private Coroutine barraFondoCoroutine;
 
     public void ActualizarBarraDeVida()
@@ -534,7 +564,10 @@ public class Enemigo : MonoBehaviour
         // Desactivar el objeto del enemigo
         gameObject.SetActive(false);
 
-        spawner.RegresarEnemigo(gameObject);
+        if (spawner != null)
+        {
+            spawner.RegresarEnemigo(gameObject);
+        }
     }
 
     private void OnDrawGizmosSelected()
@@ -606,6 +639,12 @@ public class Enemigo : MonoBehaviour
             velocidadMovimientoActual = 0f;
             // Dejar de soltar el objeto adicional
             puedeSoltarObjeto = false;
+
+            // --- NUEVO: Marcar EnemigoCuerpo como atacando ---
+            if (this is EnemigoCuerpo enemigoCuerpo)
+            {
+                enemigoCuerpo.estaAtacando = true;
+            }
         }
         else if (collision.gameObject.CompareTag("Escudo"))
         {
@@ -637,6 +676,7 @@ public class Enemigo : MonoBehaviour
             puedeSoltarObjeto = true;
             if (this is EnemigoCuerpo enemigoCuerpo)
             {
+                enemigoCuerpo.estaAtacando = false; // <-- NUEVO: Marcar como no atacando
                 enemigoCuerpo.AlcanzarJugador();
             }
         }
@@ -770,5 +810,27 @@ public class Enemigo : MonoBehaviour
         {
             enemigoRenderer.material = materialOriginal;
         }
+    }
+
+    private IEnumerator ActivarTrasDelay()
+    {
+        yield return new WaitForSeconds(tiempoDeActivacion);
+        puedeActuar = true;
+    }
+
+    /// <summary>
+    /// Devuelve una posición válida en el NavMesh cercana a la posición de origen.
+    /// </summary>
+    /// <param name="origen">Posición de origen a validar.</param>
+    /// <param name="maxDistance">Distancia máxima para buscar en el NavMesh.</param>
+    /// <returns>Posición válida en el NavMesh o la original si no se encuentra.</returns>
+    public Vector3 GetNavMeshPosition(Vector3 origen, float maxDistance = 2f)
+    {
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(origen, out hit, maxDistance, NavMesh.AllAreas))
+        {
+            return hit.position;
+        }
+        return origen;
     }
 }

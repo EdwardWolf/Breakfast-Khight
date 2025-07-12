@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6367686961742176900}
   - component: {fileID: 1660312120176429561}
   - component: {fileID: 3970611236677199556}
+  - component: {fileID: 2592457583333697127}
   m_Layer: 0
   m_Name: SpawnerEnemigo
   m_TagString: Untagged
@@ -72,7 +73,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemigos:
   - {fileID: 1796982255342016933, guid: 34cb67fcd97e8fe4fa5a7b521e579fc5, type: 3}
-  - {fileID: 2958457280413121915, guid: c34cbfeea6cb7dd48ae5cd7d4fc7b36a, type: 3}
   - {fileID: 1796982255342016933, guid: ce3a147d361b175478ccee127463ed1d, type: 3}
   poolSize: 10
   maxActiveEnemies: 10
@@ -84,6 +84,29 @@ MonoBehaviour:
   pointB: {fileID: 6215710658766571913}
   pointC: {fileID: 4527404953914881384}
   pointD: {fileID: 7649413814574152695}
+  maxEnemiesToKill: 20
+  enemiesPerWave: 0300000005000000
+  usarOleadas: 0
+  delayEntreOleadas: 2
+--- !u!114 &2592457583333697127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 247402198840368303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &2519134808414034092
 GameObject:
   m_ObjectHideFlags: 0

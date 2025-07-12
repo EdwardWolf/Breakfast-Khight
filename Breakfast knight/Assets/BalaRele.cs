@@ -16,12 +16,21 @@ public class BalaRele : Bala
             // Aplicar el efecto de aturdimiento
             jugador.AplicarRalentizacion(factorRalentizacion, duracionRalentizacion);
 
+            // Reproducir sonido de impacto
+            audioSource.volume = volumenImpacto;
+            audioSource.PlayOneShot(impactoClip);
+
             // Regresar la bala después del impacto
             attackHandler.ataqueActual.RegresarBala(this.gameObject);
         }
         else if (other.CompareTag("Muro"))
         {
             Debug.Log("Pego Muro");
+
+            // Reproducir sonido de impacto
+            audioSource.volume = volumenImpacto;
+            audioSource.PlayOneShot(impactoClip);
+
             // Regresar la bala después del impacto
             attackHandler.ataqueActual.RegresarBala(this.gameObject);
         }
@@ -35,6 +44,10 @@ public class BalaRele : Bala
             {
                 jugador.ReducirResistenciaEscudo(shieldDamage);
             }
+
+            // Reproducir sonido de impacto
+            audioSource.volume = volumenImpacto;
+            audioSource.PlayOneShot(impactoClip);
 
             // Regresar la bala después del impacto
             attackHandler.ataqueActual.RegresarBala(this.gameObject);
