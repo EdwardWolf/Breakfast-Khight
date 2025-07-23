@@ -7,10 +7,9 @@ public class EnemigoCuerpo : Enemigo
     public GameObject Charco;
     private Coroutine soltarCharcoCoroutine;
     private GameObject charcoInstanciado;
-    public float tiempoCharcoActivo = 5f; // Tiempo que el charco permanece activo
+    public float tiempoCharcoActivo = 5f;
 
     public bool haAlcanzadoAlJugador = false;
-    public Collider triggerAtaque;
     public bool estaAtacando = false;
     public SpriteRenderer spriteRangoAtaque;
 
@@ -18,26 +17,22 @@ public class EnemigoCuerpo : Enemigo
     [Tooltip("Tiempo de retardo antes de ejecutar el ataque (segundos)")]
     public float delayAntesDeAtaque = 0.4f;
 
-    [Header("Cooldown de ataque tras contacto")]
-    [Tooltip("Tiempo de espera antes de poder volver a atacar tras un contacto (segundos)")]
-    public float cooldownContactoConJugador = 1.5f;
+    public float tiempoCargaAtaque = 1.5f;
+    public float multiplicadorDañoCargado = 2f;
 
-    public float tiempoCargaAtaque = 1.5f; // Tiempo de carga del ataque cargado
-    public float multiplicadorDañoCargado = 2f; // Daño multiplicado para el ataque cargado
-
-    private float tiempoUltimoAtaque = -999f;
-
-    private bool puedeAtacar = true;
     public bool enContactoConJugador = false;
     private Coroutine ataqueCoroutine;
-    private int contactoPendiente = 0;
+    private bool estaCargando = false;
 
-    private bool estaCargando = false; // NUEVO: para saber si está haciendo ataque cargado
+    public Collider triggerAtaque;
+
+    // NUEVO: Control de cooldown entre ataques
+    public float cooldownContactoConJugador = 1.5f;
+    private float tiempoUltimoAtaque = -999f;
 
     protected override void Start()
     {
         base.Start();
-        // Instanciar el charco una sola vez y desactivarlo
         if (Charco != null)
         {
             charcoInstanciado = Instantiate(Charco, transform.position, Quaternion.identity);
@@ -45,9 +40,7 @@ public class EnemigoCuerpo : Enemigo
         }
         soltarCharcoCoroutine = StartCoroutine(SoltarCharcoCadaIntervalo(tiempoParaSoltarObjeto));
         if (triggerAtaque != null)
-        {
             triggerAtaque.enabled = false;
-        }
     }
 
     private IEnumerator SoltarCharcoCadaIntervalo(float intervalo)
@@ -78,14 +71,11 @@ public class EnemigoCuerpo : Enemigo
             charcoInstanciado.transform.position = dropPosition;
             charcoInstanciado.SetActive(true);
 
-            // Si el charco tiene un método para iniciar su ciclo, llámalo
             Charco charco = charcoInstanciado.GetComponent<Charco>();
             if (charco != null)
             {
                 charco.IniciarDisminucion();
             }
-
-            // Desactivar el charco después de un tiempo
             StartCoroutine(DesactivarCharcoTrasTiempo());
         }
     }
@@ -100,7 +90,6 @@ public class EnemigoCuerpo : Enemigo
     protected override void Update()
     {
         base.Update();
-
         if (animator != null)
             animator.SetBool("Atacando", estaAtacando);
     }
@@ -121,31 +110,37 @@ public class EnemigoCuerpo : Enemigo
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player") && !estaCargando && !isOnWayToAderezo)
+        if (collision.gameObject.CompareTag("Player") && !estaCargando)
         {
             enContactoConJugador = true;
 
-            if (soltarCharcoCoroutine != null)
-            {
-                StopCoroutine(soltarCharcoCoroutine);
-                soltarCharcoCoroutine = null;
-            }
-
-            // Detener movimiento y comenzar ataque cargado
             if (ataqueCoroutine != null)
             {
                 StopCoroutine(ataqueCoroutine);
                 ataqueCoroutine = null;
             }
-            ataqueCoroutine = StartCoroutine(AtaqueCargadoConBloqueo());
+            ataqueCoroutine = StartCoroutine(AtaqueCargado());
+            tiempoUltimoAtaque = Time.time;
         }
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player") && !isOnWayToAderezo)
+        if (collision.gameObject.CompareTag("Player"))
         {
-            OnCollisionEnter(collision);
+            enContactoConJugador = true;
+
+            // Si no está atacando/cargando y ha pasado el cooldown, ejecuta otro ataque
+            if (!estaCargando && !estaAtacando && Time.time - tiempoUltimoAtaque >= cooldownContactoConJugador)
+            {
+                if (ataqueCoroutine != null)
+                {
+                    StopCoroutine(ataqueCoroutine);
+                    ataqueCoroutine = null;
+                }
+                ataqueCoroutine = StartCoroutine(AtaqueCargado());
+                tiempoUltimoAtaque = Time.time;
+            }
         }
     }
 
@@ -154,107 +149,42 @@ public class EnemigoCuerpo : Enemigo
         if (collision.gameObject.CompareTag("Player"))
         {
             enContactoConJugador = false;
-            estaAtacando = false;
-            estaCargando = false;
-            puedeAtacar = true;
-
-            if (ataqueCoroutine != null)
-            {
-                StopCoroutine(ataqueCoroutine);
-                ataqueCoroutine = null;
-            }
-
-            if (soltarCharcoCoroutine == null)
-            {
-                soltarCharcoCoroutine = StartCoroutine(SoltarCharcoCadaIntervalo(tiempoParaSoltarObjeto));
-            }
-
-            // Recuperar velocidad
-            velocidadMovimientoActual = velocidadMovimientoInicial;
+            if (!estaAtacando)
+                velocidadMovimientoActual = velocidadMovimientoInicial;
         }
     }
 
-    // Corrutina para ataque cargado al entrar en contacto
-    private IEnumerator AtaqueCargadoConBloqueo()
+    private IEnumerator AtaqueCargado()
     {
         estaCargando = true;
         estaAtacando = true;
-        puedeAtacar = false;
         velocidadMovimientoActual = 0f;
 
         if (animator != null)
             animator.SetTrigger("Atacando");
 
-        yield return new WaitForSeconds(tiempoCargaAtaque);
-
         if (spriteRangoAtaque != null)
             spriteRangoAtaque.enabled = true;
-        triggerAtaque.enabled = true;
+
+        yield return new WaitForSeconds(tiempoCargaAtaque);
+        yield return new WaitForSeconds(delayAntesDeAtaque);
+
+        if (triggerAtaque != null)
+            triggerAtaque.enabled = true;
 
         yield return new WaitForSeconds(0.4f);
 
-        triggerAtaque.enabled = false;
+        if (triggerAtaque != null)
+            triggerAtaque.enabled = false;
+
         if (spriteRangoAtaque != null)
             spriteRangoAtaque.enabled = false;
 
         estaCargando = false;
         estaAtacando = false;
-        puedeAtacar = true;
         ataqueCoroutine = null;
-    }
 
-    // Corrutina para ataque normal mientras está en contacto
-    private IEnumerator AtaqueNormalEnContacto()
-    {
-        while (enContactoConJugador && !estaCargando)
-        {
-            estaAtacando = true;
-            puedeAtacar = false;
-
-            if (animator != null)
-                animator.SetTrigger("Atacando");
-
-            if (spriteRangoAtaque != null)
-                spriteRangoAtaque.enabled = true;
-            triggerAtaque.enabled = true;
-
-            yield return new WaitForSeconds(0.4f);
-
-            triggerAtaque.enabled = false;
-            if (spriteRangoAtaque != null)
-                spriteRangoAtaque.enabled = false;
-
-            estaAtacando = false;
-            puedeAtacar = true;
-
-            yield return new WaitForSeconds(cooldownContactoConJugador);
-        }
-        ataqueCoroutine = null;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (triggerAtaque.enabled && other.CompareTag("Player"))
-        {
-            Jugador jugador = other.GetComponent<Jugador>();
-            if (jugador != null)
-            {
-                float dañoFinal = damage;
-                // Si el ataque es cargado, multiplica el daño
-                if (estaAtacando && animator != null && animator.GetCurrentAnimatorStateInfo(0).IsName("CargarAtaque"))
-                {
-                    dañoFinal *= multiplicadorDañoCargado;
-                }
-
-                if (jugador.escudoActivo)
-                {
-                    jugador.ReducirResistenciaEscudo(dañoFinal);
-                }
-                else
-                {
-                    jugador.ReducirVida(dañoFinal);
-                }
-            }
-        }
+        if (!enContactoConJugador)
+            velocidadMovimientoActual = velocidadMovimientoInicial;
     }
 }
