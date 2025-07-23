@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using System.Collections;
 
 public class Aderezo : MonoBehaviour
 {
@@ -15,10 +16,14 @@ public class Aderezo : MonoBehaviour
     [SerializeField] private Sprite AderezoUI; // Prefab del objeto a instanciar
     public Image indicadorInteraccion; // Asigna esta imagen desde el inspector
     private static Enemigo enemigoInteractuando; // Variable estática para almacenar el enemigo que está interactuando
+    public float cooldownDisponible = 2f; // Tiempo de cooldown en segundos
+    private bool enCooldown = false;
 
     [Header("Configuración de duración")]
     [SerializeField] protected bool tieneDuracion = false;
     [SerializeField] protected float duracionEfecto = 5f;
+
+    public Enemigo enemigoQuePersigue = null;
 
     private void Start()
     {
@@ -192,5 +197,24 @@ public class Aderezo : MonoBehaviour
                 UpdateProgressBar(0f);
             }
         }
+    }
+    public void LiberarParaEnemigos()
+    {
+        if (!enCooldown)
+            StartCoroutine(CooldownCoroutine());
+    }
+
+    private IEnumerator CooldownCoroutine()
+    {
+        enCooldown = true;
+        enemigoQuePersigue = null;
+        yield return new WaitForSeconds(cooldownDisponible);
+        enCooldown = false;
+    }
+
+    // Método auxiliar para saber si está disponible
+    public bool EstaDisponible()
+    {
+        return !enCooldown && enemigoQuePersigue == null;
     }
 }

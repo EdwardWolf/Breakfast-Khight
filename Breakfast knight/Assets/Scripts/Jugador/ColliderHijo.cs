@@ -36,7 +36,6 @@ public class ColliderHijo : MonoBehaviour
             Enemigo enemigo = other.GetComponent<Enemigo>();
             if (enemigo != null)
             {
-                Debug.Log("Golpeado enemigo");
                 // Obtener el arma actual y su daño
                 Arma armaActual = jugador.armas[jugador.armaActual];
                 float daño = armaActual != null ? armaActual.daño : 0f;

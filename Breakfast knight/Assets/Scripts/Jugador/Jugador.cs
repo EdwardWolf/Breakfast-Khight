@@ -8,7 +8,7 @@ public abstract class Jugador : MonoBehaviour
 {
     [SerializeField] public Stats stats;
     [SerializeField] public float vidaActual;
-    [SerializeField] protected float resistenciaEscudoActual;
+    [SerializeField] public float resistenciaEscudoActual;
     [SerializeField] public float _velocidadMovimiento;
     [SerializeField] protected float velocidadAtaque;
     [SerializeField] public float ataque; // Añadir una variable para el ataque
@@ -483,11 +483,6 @@ public abstract class Jugador : MonoBehaviour
                 barraResistenciaEscudo.fillAmount = resistenciaEscudoActual / stats.resistenciaEscudo;
             }
 
-            //if (resistenciaEscudoActual >= valorMinimoEscudo)
-            //{
-            //    escudoActivo = true;
-            //}
-
             yield return null;
         }
     }
@@ -606,7 +601,7 @@ public abstract class Jugador : MonoBehaviour
 
     public bool PuedeUsarEscudo()
     {
-        return escudoActivo && resistenciaEscudoActual >= valorMinimoEscudo;
+        return escudoActivo = false && resistenciaEscudoActual >= valorMinimoEscudo;
     }
 
     private void EmpujarEnemigo(Enemigo enemigo)
@@ -614,6 +609,7 @@ public abstract class Jugador : MonoBehaviour
         Rigidbody rb = enemigo.GetComponent<Rigidbody>();
         if (rb != null)
         {
+            StartCoroutine(DesactivarKinematicTemporalmente(rb));
             Vector3 direction = (enemigo.transform.position - transform.position).normalized;
             rb.AddForce(direction * pushForce, ForceMode.Impulse);
         }
@@ -780,6 +776,9 @@ public abstract class Jugador : MonoBehaviour
 
         Rigidbody rb = GetComponent<Rigidbody>();
 
+        // Lista para evitar empujar al mismo enemigo varias veces en un solo dash
+        HashSet<Enemigo> enemigosEmpujados = new HashSet<Enemigo>();
+
         while (tiempo < dashDuracion)
         {
             float t = tiempo / dashDuracion;
@@ -788,15 +787,14 @@ public abstract class Jugador : MonoBehaviour
             Vector3 direccionFrame = (siguientePosicion - ultimaPosicion).normalized;
             float distanciaFrame = Vector3.Distance(ultimaPosicion, siguientePosicion);
 
+            // Detectar colisión con muros
             if (Physics.Raycast(ultimaPosicion, direccionFrame, out RaycastHit hit, distanciaFrame, LayerMask.GetMask("Default", "Muro")))
             {
-                // Detener el dash en el punto de colisión
                 transform.position = hit.point;
 
-                // Rebote: aplicar fuerza contraria si hay Rigidbody
                 if (rb != null)
                 {
-                    Vector3 rebote = -direccion.normalized * 5f; // Puedes ajustar la fuerza del rebote
+                    Vector3 rebote = -direccion.normalized * 5f;
                     rb.AddForce(rebote, ForceMode.Impulse);
                 }
                 break;
@@ -804,6 +802,21 @@ public abstract class Jugador : MonoBehaviour
             else
             {
                 transform.position = siguientePosicion;
+            }
+
+            // Detectar y empujar enemigos durante el dash
+            Collider[] colisiones = Physics.OverlapSphere(transform.position, 0.8f); // Ajusta el radio si es necesario
+            foreach (Collider col in colisiones)
+            {
+                if (col.CompareTag("Enemigo"))
+                {
+                    Enemigo enemigo = col.GetComponent<Enemigo>();
+                    if (enemigo != null && !enemigosEmpujados.Contains(enemigo))
+                    {
+                        EmpujarEnemigo(enemigo);
+                        enemigosEmpujados.Add(enemigo);
+                    }
+                }
             }
 
             ultimaPosicion = transform.position;
@@ -826,4 +839,14 @@ public abstract class Jugador : MonoBehaviour
     public Image barraAtaque; // Referencia a la barra de ataque
     public bool puedeAtaqueCargado = false;
     public float tiempoTranscurridoDebug;
+
+    private IEnumerator DesactivarKinematicTemporalmente(Rigidbody rb)
+    {
+        rb.isKinematic = false;
+        yield return new WaitForSeconds(0.3f); // Ajusta el tiempo según lo que necesites
+        rb.velocity = Vector3.zero; // Detén el movimiento después del empuje
+        rb.isKinematic = true;
+    }
 }
+
+

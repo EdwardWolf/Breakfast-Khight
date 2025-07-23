@@ -42,9 +42,9 @@ GameObject:
   - component: {fileID: 5516416599882276330}
   - component: {fileID: 98541096788036500}
   - component: {fileID: 2765718099733149342}
-  - component: {fileID: 432653104884301826}
   - component: {fileID: 3386747884753385238}
   - component: {fileID: 4495210902325272628}
+  - component: {fileID: 1129428371905912075}
   m_Layer: 7
   m_Name: Tako
   m_TagString: Enemigo
@@ -71,7 +71,6 @@ Transform:
   - {fileID: 4215689930108820863}
   - {fileID: 6097031936530603922}
   - {fileID: 6050255891465207686}
-  - {fileID: 2484288717342055717}
   - {fileID: 2036817925443370465}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -143,11 +142,16 @@ MonoBehaviour:
   enContactoConEscudo: 0
   sectionManager: {fileID: 0}
   Charco: {fileID: 8530985405293348726, guid: 3b37336d6f5c4354b92e215040e2a22e, type: 3}
+  tiempoCharcoActivo: 5
   haAlcanzadoAlJugador: 0
   triggerAtaque: {fileID: 4282443079364112390}
   estaAtacando: 0
   spriteRangoAtaque: {fileID: 2153872216090225681}
   delayAntesDeAtaque: 0.4
+  cooldownContactoConJugador: 1.5
+  tiempoCargaAtaque: 1.5
+  "multiplicadorDa\xF1oCargado": 2
+  enContactoConJugador: 0
 --- !u!114 &2765718099733149342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,27 +168,6 @@ MonoBehaviour:
   - {fileID: 202818337070172411}
   ataqueActual: {fileID: 0}
   cooldownTime: 1
---- !u!65 &432653104884301826
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1796982255342016933}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 2048
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2.1292489, y: 1.6428337, z: 2.1272511}
-  m_Center: {x: -0.0077747107, y: 0.81250405, z: -0.064412355}
 --- !u!195 &3386747884753385238
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -215,8 +198,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1796982255342016933}
   serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
+  m_Mass: 10
+  m_Drag: 5
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -230,10 +213,33 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!136 &1129428371905912075
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796982255342016933}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.68
+  m_Height: 2.29
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.72, z: 0.26}
 --- !u!1 &3249295848647051217
 GameObject:
   m_ObjectHideFlags: 0
@@ -5137,7 +5143,7 @@ GameObject:
   - component: {fileID: 2484288717342055717}
   - component: {fileID: 2153872216090225681}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: "AreaDa\xF1o"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5151,12 +5157,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4023083406711908625}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.023, y: 0.03, z: 2.291}
-  m_LocalScale: {x: 0.48562375, y: 0.4955533, z: 2.7777777}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0.023, y: -0.49, z: 0.5309999}
+  m_LocalScale: {x: 0.48562375, y: 0.49555328, z: 2.7777777}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5516416599882276330}
+  m_Father: {fileID: 4332800695941168040}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!212 &2153872216090225681
 SpriteRenderer:
@@ -5477,7 +5483,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 1.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2484288717342055717}
   m_Father: {fileID: 1280306220594101021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}

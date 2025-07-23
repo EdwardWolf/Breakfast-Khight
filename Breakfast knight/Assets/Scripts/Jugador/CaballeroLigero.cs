@@ -9,7 +9,6 @@ public class CaballeroLigero : Jugador
 {
     //private bool escudoActivo = false;
     public Collider Escudo; // Referencia al collider del escudo
-
     private GameInputs playerInputActions;
     public Animator animator; // Referencia al componente Animator
     //public Animator armas; // Referencia al componente Animator
@@ -155,16 +154,11 @@ public class CaballeroLigero : Jugador
             }
         }
         // Verificar si la resistencia del escudo es cero y desactivar el escudo
-        if (resistenciaEscudoActual <= 0 && escudoActivo)
+        if (resistenciaEscudoActual <= 0)
         {
             DesactivarEscudo();
         }
-
-        if (PlayerController.Interaccion())
-        {
-            ActivarInteraction();
-        }
-        if (PlayerController.Shield() && resistenciaEscudoActual > 0)
+        else if (PlayerController.Shield())
         {
             ActivarEscudo();
         }
@@ -269,7 +263,7 @@ public class CaballeroLigero : Jugador
 
     private void ActivarEscudo()
     {
-        if (!escudoActivo && !aturdidoBala)
+        if (!escudoActivo && !aturdidoBala && resistenciaEscudoActual > 0)
         {
             Debug.Log("escudo Activo");
             Escudo.enabled = true;

@@ -30,6 +30,13 @@ public class Charco : MonoBehaviour
 
     public void IniciarDisminucion()
     {
+        // Restaurar el color y estado antes de iniciar la disminución
+        if (material != null)
+            material.color = colorInicial;
+        debufoAplicado = false;
+        jugador = null;
+        gameObject.SetActive(true);
+
         StartCoroutine(DisminuirAlbedo());
     }
 

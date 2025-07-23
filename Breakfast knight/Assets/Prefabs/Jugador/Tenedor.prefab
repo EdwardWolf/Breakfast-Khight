@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4032668375117279840}
   - component: {fileID: 2453450279440923404}
-  m_Layer: 6
+  m_Layer: 13
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,6 +213,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cobertura001_WeaponTenedor
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e9b2042052cbc5243bfaddcb67b7da51, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -289,7 +293,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1888324316975909045, guid: f2c7f98e7dcf12a45ab1860061f4bc4d, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: -1115982005792862090, guid: f2c7f98e7dcf12a45ab1860061f4bc4d, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -301,7 +305,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f2c7f98e7dcf12a45ab1860061f4bc4d, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f2c7f98e7dcf12a45ab1860061f4bc4d, type: 3}
+      propertyPath: m_TagString
+      value: EditorOnly
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

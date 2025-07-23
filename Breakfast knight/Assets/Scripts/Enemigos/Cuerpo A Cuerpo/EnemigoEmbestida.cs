@@ -122,9 +122,8 @@ public class EnemigoEmbestida : Enemigo
         }
     }
 
-    protected override void OnCollisionEnter(Collision collision)
+private void OnCollisionEnter(Collision collision)
     {
-        base.OnCollisionEnter(collision);
         if (collision.gameObject.CompareTag("Player"))
         {
             Debug.Log("Enemigo ha colisionado con el jugador");
@@ -151,9 +150,8 @@ public class EnemigoEmbestida : Enemigo
         }
     }
 
-    protected override void OnCollisionExit(Collision collision)
+    private void OnCollisionExit(Collision collision)
     {
-        base.OnCollisionEnter(collision);
         if (collision.gameObject.CompareTag("Player"))
         {
             Debug.Log("Enemigo ha dejado de colisionar con el jugador");
