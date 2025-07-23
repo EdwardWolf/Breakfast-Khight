@@ -21,8 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Mat_Sopa
-  m_Shader: {fileID: -6465566751694194690, guid: bf97e3823b6221443a6d720bb3e204a3,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: bf97e3823b6221443a6d720bb3e204a3, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -70,7 +69,7 @@ Material:
     - _DepthOpacity: 0.734
     - _Displacement: 0.2
     - _DstBlend: 0
-    - _NoiseSpeed: 0.14
+    - _NoiseSpeed: -0.14
     - _NoiseValue: 1.95
     - _OffsetSpeed: 0.15
     - _QueueControl: 0
@@ -84,5 +83,7 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
+    - _Direccion: {r: 1, g: 1, b: 0, a: 0}
+    - _Fluid_Scale: {r: 1, g: 1, b: 0, a: 0}
     - _Tint: {r: 1.7207954, g: 0.36683863, b: 0.06306582, a: 0}
   m_BuildTextureStacks: []
