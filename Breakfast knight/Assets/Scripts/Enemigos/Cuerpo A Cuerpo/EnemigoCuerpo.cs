@@ -5,159 +5,200 @@ public class EnemigoCuerpo : Enemigo
 {
     [Header("Enemigo Cuerpo a Cuerpo --------------------")]
     public GameObject Charco;
-    private Coroutine soltarObjetoCoroutine; // Variable para almacenar la corrutina
-    public bool haAlcanzadoAlJugador = false; // Variable para controlar si ha alcanzado al jugador
-    public Collider triggerAtaque; // Asigna este collider desde el inspector
+    private Coroutine soltarCharcoCoroutine;
+    private GameObject charcoInstanciado;
+    public float tiempoCharcoActivo = 5f;
+
+    public bool haAlcanzadoAlJugador = false;
     public bool estaAtacando = false;
-    public SpriteRenderer spriteRangoAtaque; // Asigna este SpriteRenderer desde el inspector
+    public SpriteRenderer spriteRangoAtaque;
 
     [Header("Configuración de ataque cuerpo a cuerpo")]
     [Tooltip("Tiempo de retardo antes de ejecutar el ataque (segundos)")]
     public float delayAntesDeAtaque = 0.4f;
 
+    public float tiempoCargaAtaque = 1.5f;
+    public float multiplicadorDañoCargado = 2f;
+
+    public bool enContactoConJugador = false;
+    private Coroutine ataqueCoroutine;
+    private bool estaCargando = false;
+
+    public Collider triggerAtaque;
+
+    // NUEVO: Control de cooldown entre ataques
+    public float cooldownContactoConJugador = 1.5f;
+    private float tiempoUltimoAtaque = -999f;
+
+    public GameObject objetoAActivar; // Objeto visual que aparecerá antes del ataque
+
     protected override void Start()
     {
         base.Start();
-        soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
+        if (Charco != null)
+        {
+            charcoInstanciado = Instantiate(Charco, transform.position, Quaternion.identity);
+            charcoInstanciado.SetActive(false);
+        }
+        soltarCharcoCoroutine = StartCoroutine(SoltarCharcoCadaIntervalo(tiempoParaSoltarObjeto));
+        if (triggerAtaque != null)
+            triggerAtaque.enabled = false;
     }
 
-    private IEnumerator SoltarObjetoCadaIntervalo(float intervalo)
+    private IEnumerator SoltarCharcoCadaIntervalo(float intervalo)
     {
         while (true)
         {
             yield return new WaitForSeconds(intervalo);
             if (persiguiendoJugador && puedeSoltarObjeto)
             {
-                Vector3 dropPosition = this.dropPosition != null ? this.dropPosition.position : transform.position;
-                RaycastHit hit;
-                if (Physics.Raycast(dropPosition, Vector3.down, out hit))
-                {
-                    dropPosition.y = hit.point.y + 0.1f;
-                }
-
-                GameObject objetoInstanciado = Instantiate(Charco, dropPosition, Quaternion.identity);
-
-                // Iniciar la disminución del albedo si el objeto instanciado tiene el componente Charco
-                Charco charco = objetoInstanciado.GetComponent<Charco>();
-                if (charco != null)
-                {
-                    charco.IniciarDisminucion();
-                }
+                SoltarCharco();
             }
         }
+    }
+
+    private void SoltarCharco()
+    {
+        if (charcoInstanciado == null)
+            return;
+
+        if (!charcoInstanciado.activeSelf)
+        {
+            Vector3 dropPosition = this.dropPosition != null ? this.dropPosition.position : transform.position;
+            RaycastHit hit;
+            if (Physics.Raycast(dropPosition, Vector3.down, out hit))
+            {
+                dropPosition.y = hit.point.y + 0.1f;
+            }
+            charcoInstanciado.transform.position = dropPosition;
+            charcoInstanciado.SetActive(true);
+
+            Charco charco = charcoInstanciado.GetComponent<Charco>();
+            if (charco != null)
+            {
+                charco.IniciarDisminucion();
+            }
+            StartCoroutine(DesactivarCharcoTrasTiempo());
+        }
+    }
+
+    private IEnumerator DesactivarCharcoTrasTiempo()
+    {
+        yield return new WaitForSeconds(tiempoCharcoActivo);
+        if (charcoInstanciado != null)
+            charcoInstanciado.SetActive(false);
     }
 
     protected override void Update()
     {
         base.Update();
-        // Mantener la animación de ataque mientras estaAtacando sea true
         if (animator != null)
             animator.SetBool("Atacando", estaAtacando);
     }
 
     public override void PerseguirJugador()
     {
-        if (enContactoConEscudo)
+        if (enContactoConEscudo || enContactoConJugador || estaAtacando)
         {
             velocidadMovimientoActual = 0f;
-        }
-        else if (!estaAtacando)
-        {
-            base.PerseguirJugador();
-        }
-        else
-        {
-            // No moverse ni animar caminar si está atacando
             if (animator != null)
                 animator.SetBool("Caminando", false);
         }
-    }
-
-    public void AlcanzarJugador()
-    {
-        haAlcanzadoAlJugador = true;
-        velocidadMovimientoActual = 0f;
-        StartCoroutine(EjecutarAtaque());
-    }
-
-    protected override void OnCollisionEnter(Collision collision)
-    {
-
-        base.OnCollisionEnter(collision);
-        if (collision.gameObject.CompareTag("Escudo"))
+        else
         {
-        //    enContactoConEscudo = true;
-            if (soltarObjetoCoroutine != null)
+            base.PerseguirJugador();
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && !estaCargando)
+        {
+            enContactoConJugador = true;
+
+            if (ataqueCoroutine != null)
             {
-               StopCoroutine(soltarObjetoCoroutine);
-           }
-        //    if (jugador != null)
-        //    {
-        //        reducirResistenciaEscudoCoroutine = StartCoroutine(EsperarYReducirResistenciaEscudo());
-        //    }
+                StopCoroutine(ataqueCoroutine);
+                ataqueCoroutine = null;
+            }
+            ataqueCoroutine = StartCoroutine(AtaqueCargado());
+            tiempoUltimoAtaque = Time.time;
         }
     }
 
-    protected override void OnCollisionExit(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
-        base.OnCollisionExit(collision);
-        if (collision.gameObject.CompareTag("Escudo"))
+        if (collision.gameObject.CompareTag("Player"))
         {
-        //    enContactoConEscudo = false;
-        //    if (reducirResistenciaEscudoCoroutine != null)
-        //    {
-        //        StopCoroutine(reducirResistenciaEscudoCoroutine);
-        //        reducirResistenciaEscudoCoroutine = null;
-        //    }
-            if (soltarObjetoCoroutine == null)
-           {
-               soltarObjetoCoroutine = StartCoroutine(SoltarObjetoCadaIntervalo(tiempoParaSoltarObjeto));
-           }
+            enContactoConJugador = true;
+
+            // Si no está atacando/cargando y ha pasado el cooldown, ejecuta otro ataque
+            if (!estaCargando && !estaAtacando && Time.time - tiempoUltimoAtaque >= cooldownContactoConJugador)
+            {
+                if (ataqueCoroutine != null)
+                {
+                    StopCoroutine(ataqueCoroutine);
+                    ataqueCoroutine = null;
+                }
+                ataqueCoroutine = StartCoroutine(AtaqueCargado());
+                tiempoUltimoAtaque = Time.time;
+            }
         }
     }
 
-    private IEnumerator EjecutarAtaque()
+    private void OnCollisionExit(Collision collision)
     {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            enContactoConJugador = false;
+            if (!estaAtacando)
+                velocidadMovimientoActual = velocidadMovimientoInicial;
+        }
+    }
+
+    private IEnumerator AtaqueCargado()
+    {
+        estaCargando = true;
         estaAtacando = true;
-        // Espera antes de atacar (delay configurable)
-        yield return new WaitForSeconds(delayAntesDeAtaque);
+        velocidadMovimientoActual = 0f;
 
-        // Inicia la animación de ataque
         if (animator != null)
-            animator.SetBool("Atacando", true);
+            animator.SetTrigger("Atacando");
 
-        // Activa el trigger de ataque y el sprite del rango
-        triggerAtaque.enabled = true;
+        // Mostrar objeto visual con su propia duración
+        if (objetoAActivar != null)
+            StartCoroutine(MostrarObjetoVisual(0.2f, tiempoCargaAtaque + delayAntesDeAtaque - 0.1f));
+
         if (spriteRangoAtaque != null)
             spriteRangoAtaque.enabled = true;
 
-        yield return new WaitForSeconds(0.3f); // Duración del golpe, ajústalo según la animación
+        yield return new WaitForSeconds(tiempoCargaAtaque);
+        yield return new WaitForSeconds(delayAntesDeAtaque);
 
-        // Desactiva el trigger de ataque y el sprite del rango
-        triggerAtaque.enabled = false;
+        if (triggerAtaque != null)
+            triggerAtaque.enabled = true;
+
+        yield return new WaitForSeconds(0.4f);
+
+        if (triggerAtaque != null)
+            triggerAtaque.enabled = false;
+
         if (spriteRangoAtaque != null)
             spriteRangoAtaque.enabled = false;
 
-        if (animator != null)
-            animator.SetBool("Atacando", false);
-
-        // Cooldown antes de poder moverse/atacar de nuevo
-        yield return new WaitForSeconds(1f);
-
-        haAlcanzadoAlJugador = false;
+        estaCargando = false;
         estaAtacando = false;
-        velocidadMovimientoActual = velocidadMovimientoInicial;
+        ataqueCoroutine = null;
+
+        if (!enContactoConJugador)
+            velocidadMovimientoActual = velocidadMovimientoInicial;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private IEnumerator MostrarObjetoVisual(float delayAntes, float duracion)
     {
-        if (triggerAtaque.enabled && other.CompareTag("Player"))
-        {
-            Jugador jugador = other.GetComponent<Jugador>();
-            if (jugador != null)
-            {
-                jugador.ReducirVida(damage); // Usa el campo damage para coherencia
-            }
-        }
+        yield return new WaitForSeconds(delayAntes);
+        objetoAActivar.SetActive(true);
+        yield return new WaitForSeconds(duracion);
+        objetoAActivar.SetActive(false);
     }
 }

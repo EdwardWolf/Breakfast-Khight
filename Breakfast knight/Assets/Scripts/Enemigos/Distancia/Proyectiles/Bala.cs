@@ -27,7 +27,7 @@ public class Bala : MonoBehaviour
         }
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         // Obtener el AttackHandler del tercer nivel de padres
         Transform parent = transform.parent;
@@ -39,7 +39,7 @@ public class Bala : MonoBehaviour
         // Iniciar la corrutina para regresar la bala después de un tiempo
         StartCoroutine(RegresarBalaDespuesDeTiempo(tiempoDeVida));
     }
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         // Obtener el AttackHandler del tercer nivel de padres
         Transform parent = transform.parent;

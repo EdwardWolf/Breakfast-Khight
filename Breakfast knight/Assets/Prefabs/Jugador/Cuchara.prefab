@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3596477083952887307}
   - component: {fileID: 8723432014591084177}
-  m_Layer: 6
+  m_Layer: 13
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,11 +223,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 24384b5bb3733314c8747f9bf8f89774, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 24384b5bb3733314c8747f9bf8f89774, type: 3}
+      propertyPath: m_TagString
+      value: EditorOnly
       objectReference: {fileID: 0}
     - target: {fileID: 1336937309355795813, guid: 24384b5bb3733314c8747f9bf8f89774, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 3027682972879419619, guid: 24384b5bb3733314c8747f9bf8f89774, type: 3}
       propertyPath: m_Materials.Array.data[0]

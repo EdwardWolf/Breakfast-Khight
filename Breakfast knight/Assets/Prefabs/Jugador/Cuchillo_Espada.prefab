@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6164993290942727329}
   - component: {fileID: 4118284305392838567}
-  m_Layer: 6
+  m_Layer: 13
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,9 +159,9 @@ GameObject:
   - component: {fileID: 354076466286183446}
   - component: {fileID: 2521297640114797438}
   - component: {fileID: 864002045660035059}
-  m_Layer: 6
+  m_Layer: 13
   m_Name: Cuchillo_Espada
-  m_TagString: Untagged
+  m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

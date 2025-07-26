@@ -45,7 +45,6 @@ public class EnemySpawner : MonoBehaviour
         }
         detectionBox.isTrigger = true;
 
-        Debug.Log("Lista activeEnemies inicializada.");
     }
 
     private void Update()

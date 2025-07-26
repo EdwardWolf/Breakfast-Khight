@@ -9,7 +9,6 @@ public class CaballeroLigero : Jugador
 {
     //private bool escudoActivo = false;
     public Collider Escudo; // Referencia al collider del escudo
-
     private GameInputs playerInputActions;
     public Animator animator; // Referencia al componente Animator
     //public Animator armas; // Referencia al componente Animator
@@ -32,6 +31,12 @@ public class CaballeroLigero : Jugador
         playerInputActions = new GameInputs();
         Escudo.enabled = false;
         animator = GetComponentInChildren<Animator>(); // Obtener el componente Animator del hijo
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        escudoCollider = Escudo; // Asigna el collider del escudo de la clase derivada a la base
     }
 
     private void Update()
@@ -154,17 +159,28 @@ public class CaballeroLigero : Jugador
                 ataqueCargadoBarra.fillAmount = 0f;
             }
         }
-        // Verificar si la resistencia del escudo es cero y desactivar el escudo
-        if (resistenciaEscudoActual <= 0 && escudoActivo)
+        // Desactivar el objeto del escudo si la resistencia es 0 o menos
+        if (resistenciaEscudoActual <= 0)
         {
-            DesactivarEscudo();
+            if (Escudo.gameObject.activeSelf)
+                Escudo.gameObject.SetActive(false);
+            escudoActivo = false;
+            if (playerInputActions != null)
+                playerInputActions.Player.Dash.Disable();
+
+            // Desactivar la animación del escudo
+            escudoLayerWeight = 0f;
+            animator.SetLayerWeight(2, escudoLayerWeight);
+        }
+        // Activar el objeto del escudo SOLO cuando la resistencia esté al máximo
+        else if (resistenciaEscudoActual >= stats.resistenciaEscudo)
+        {
+            if (!Escudo.gameObject.activeSelf)
+                Escudo.gameObject.SetActive(true);
         }
 
-        if (PlayerController.Interaccion())
-        {
-            ActivarInteraction();
-        }
-        if (PlayerController.Shield() && resistenciaEscudoActual > 0)
+        // La animación se puede hacer siempre por input
+        if (PlayerController.Shield())
         {
             ActivarEscudo();
         }
@@ -178,12 +194,6 @@ public class CaballeroLigero : Jugador
         animator.SetLayerWeight(2, escudoLayerWeight);
         animator.SetLayerWeight(3, chargeLayerWeight);
         animator.SetLayerWeight(4, cargadoLayerWeight);
-
-        // Debugging: Imprimir valores del Animator
-        //Debug.Log($"isAttacking: {isAttacking}");
-        //Debug.Log($"Attack Layer Weight: {animator.GetLayerWeight(1)}");
-        //Debug.Log($"Current State: {animator.GetCurrentAnimatorStateInfo(1).normalizedTime}");
-        //Debug.Log($"Is In Transition: {animator.IsInTransition(1)}");
     
     }
 
@@ -275,12 +285,16 @@ public class CaballeroLigero : Jugador
             Escudo.enabled = true;
             escudoActivo = true;
             _velocidadMovimiento /= 2; // Reducir la velocidad a la mitad
-            animator.SetBool("Escudo", true); // Activar la animación de escudo activado
+            animator.SetBool("Escudo", true); // Usar bool en vez de trigger
             escudoLayerWeight = 1f;
-            animator.SetLayerWeight(2, escudoLayerWeight); // Ajustar el peso de Defensa Layer (index 1)
+            animator.SetLayerWeight(2, escudoLayerWeight);
 
             // Cambiar el material del escudo
             EscudoR.material = materialEscudoActivo;
+
+            // Habilitar el input del dash
+            if (playerInputActions != null)
+                playerInputActions.Player.Dash.Enable();
         }
     }
 
@@ -292,12 +306,17 @@ public class CaballeroLigero : Jugador
             Escudo.enabled = false;
             escudoActivo = false;
             _velocidadMovimiento = stats.velocidadMovimiento; // Restaurar la velocidad original
-            animator.SetBool("Escudo", false); // Desactivar la animación de escudo activado
-            escudoLayerWeight = 0f;
-            animator.SetLayerWeight(2, escudoLayerWeight); // Ajustar el peso de Defensa Layer (index 1)
+            animator.SetBool("Escudo", false); // Usar bool en vez de trigger
+            
 
             // Restaurar el material del escudo
             EscudoR.material = materialEscudoNormal;
+
+            // Deshabilitar el input del dash
+            if (playerInputActions != null)
+                playerInputActions.Player.Dash.Disable();
+            escudoLayerWeight = 0f;
+            animator.SetLayerWeight(2, escudoLayerWeight);
         }
     }
 

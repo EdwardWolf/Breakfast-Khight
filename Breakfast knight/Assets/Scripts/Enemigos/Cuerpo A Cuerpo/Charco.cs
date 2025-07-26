@@ -30,6 +30,13 @@ public class Charco : MonoBehaviour
 
     public void IniciarDisminucion()
     {
+        // Restaurar el color y estado antes de iniciar la disminución
+        if (material != null)
+            material.color = colorInicial;
+        debufoAplicado = false;
+        jugador = null;
+        gameObject.SetActive(true);
+
         StartCoroutine(DisminuirAlbedo());
     }
 
@@ -50,6 +57,14 @@ public class Charco : MonoBehaviour
 
             yield return null;
         }
+        
+        // Antes de desactivar el objeto, remover el debufo si el jugador sigue dentro
+        if (jugador != null)
+        {
+            jugador.RemoverDebufoVelocidad();
+            jugador = null;
+            debufoAplicado = false;
+        }
 
         // Desactivar el objeto una vez que el albedo sea 0
         gameObject.SetActive(false);
@@ -60,10 +75,10 @@ public class Charco : MonoBehaviour
         if (other.CompareTag("Player") && !debufoAplicado)
         {
             jugador = other.GetComponent<Jugador>();
-            if (jugador != null)
+            if (jugador != null && !jugador.EsInvulnerable) // Solo aplica el debufo si no es inmune
             {
-                jugador.AplicarDebufoVelocidad(reduccionVelocidad, duracion); // Usar el nuevo método
-                debufoAplicado = true; // Marcar que el debufo ha sido aplicado
+                jugador.AplicarDebufoVelocidad(reduccionVelocidad, duracion);
+                debufoAplicado = true;
             }
         }
     }

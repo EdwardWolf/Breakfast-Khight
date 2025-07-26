@@ -8,7 +8,7 @@ public abstract class Jugador : MonoBehaviour
 {
     [SerializeField] public Stats stats;
     [SerializeField] public float vidaActual;
-    [SerializeField] protected float resistenciaEscudoActual;
+    [SerializeField] public float resistenciaEscudoActual;
     [SerializeField] public float _velocidadMovimiento;
     [SerializeField] protected float velocidadAtaque;
     [SerializeField] public float ataque; // Añadir una variable para el ataque
@@ -226,6 +226,7 @@ public abstract class Jugador : MonoBehaviour
 
     public void AplicarDebufoVelocidad(float reduccionVelocidad, float duracion)
     {
+        if (invulnerable) return; // No aplicar debufo si está invulnerable (por ejemplo, durante el dash)
         if (!debufoVelocidadAplicado)
         {
             velocidadActual *= (1 - reduccionVelocidad);
@@ -445,6 +446,10 @@ public abstract class Jugador : MonoBehaviour
         {
             // Manejar la ruptura del escudo
             escudoActivo = false;
+
+            // Deshabilitar el input del dash
+            if (playerInputActions != null)
+                playerInputActions.Player.Dash.Disable();
         }
 
         // Reproducir el sonido del golpe en el escudo
@@ -483,10 +488,13 @@ public abstract class Jugador : MonoBehaviour
                 barraResistenciaEscudo.fillAmount = resistenciaEscudoActual / stats.resistenciaEscudo;
             }
 
-            //if (resistenciaEscudoActual >= valorMinimoEscudo)
-            //{
-            //    escudoActivo = true;
-            //}
+            // Cuando el escudo se regenera completamente, activar el dash
+            if (resistenciaEscudoActual >= stats.resistenciaEscudo && !escudoActivo)
+            {
+                escudoActivo = true;
+                if (playerInputActions != null)
+                    playerInputActions.Player.Dash.Enable();
+            }
 
             yield return null;
         }
@@ -606,7 +614,7 @@ public abstract class Jugador : MonoBehaviour
 
     public bool PuedeUsarEscudo()
     {
-        return escudoActivo && resistenciaEscudoActual >= valorMinimoEscudo;
+        return escudoActivo = false && resistenciaEscudoActual >= valorMinimoEscudo;
     }
 
     private void EmpujarEnemigo(Enemigo enemigo)
@@ -614,6 +622,7 @@ public abstract class Jugador : MonoBehaviour
         Rigidbody rb = enemigo.GetComponent<Rigidbody>();
         if (rb != null)
         {
+            StartCoroutine(DesactivarKinematicTemporalmente(rb));
             Vector3 direction = (enemigo.transform.position - transform.position).normalized;
             rb.AddForce(direction * pushForce, ForceMode.Impulse);
         }
@@ -753,10 +762,16 @@ public abstract class Jugador : MonoBehaviour
         if (uiManager != null)
             uiManager.OcultarIncrementoAtaque();
     }
-
+    public Collider escudoCollider;
     public void IntentarDash(Vector3 direccion)
     {
-        if (puedeHacerDash && escudoActivo && resistenciaEscudoActual > 0)
+        // Dash solo si el escudo está activo, el collider está habilitado, el objeto visual está activo y la resistencia > 0
+        if (puedeHacerDash
+            && escudoActivo
+            && resistenciaEscudoActual > 0
+            && EscudoR.gameObject.activeSelf
+            && escudoCollider != null
+            && escudoCollider.enabled)
         {
             StartCoroutine(EjecutarDash(direccion));
         }
@@ -780,6 +795,9 @@ public abstract class Jugador : MonoBehaviour
 
         Rigidbody rb = GetComponent<Rigidbody>();
 
+        // Lista para evitar empujar al mismo enemigo varias veces en un solo dash
+        HashSet<Enemigo> enemigosEmpujados = new HashSet<Enemigo>();
+
         while (tiempo < dashDuracion)
         {
             float t = tiempo / dashDuracion;
@@ -788,15 +806,14 @@ public abstract class Jugador : MonoBehaviour
             Vector3 direccionFrame = (siguientePosicion - ultimaPosicion).normalized;
             float distanciaFrame = Vector3.Distance(ultimaPosicion, siguientePosicion);
 
+            // Detectar colisión con muros
             if (Physics.Raycast(ultimaPosicion, direccionFrame, out RaycastHit hit, distanciaFrame, LayerMask.GetMask("Default", "Muro")))
             {
-                // Detener el dash en el punto de colisión
                 transform.position = hit.point;
 
-                // Rebote: aplicar fuerza contraria si hay Rigidbody
                 if (rb != null)
                 {
-                    Vector3 rebote = -direccion.normalized * 5f; // Puedes ajustar la fuerza del rebote
+                    Vector3 rebote = -direccion.normalized * 5f;
                     rb.AddForce(rebote, ForceMode.Impulse);
                 }
                 break;
@@ -804,6 +821,21 @@ public abstract class Jugador : MonoBehaviour
             else
             {
                 transform.position = siguientePosicion;
+            }
+
+            // Detectar y empujar enemigos durante el dash
+            Collider[] colisiones = Physics.OverlapSphere(transform.position, 0.8f); // Ajusta el radio si es necesario
+            foreach (Collider col in colisiones)
+            {
+                if (col.CompareTag("Enemigo"))
+                {
+                    Enemigo enemigo = col.GetComponent<Enemigo>();
+                    if (enemigo != null && !enemigosEmpujados.Contains(enemigo))
+                    {
+                        EmpujarEnemigo(enemigo);
+                        enemigosEmpujados.Add(enemigo);
+                    }
+                }
             }
 
             ultimaPosicion = transform.position;
@@ -826,4 +858,15 @@ public abstract class Jugador : MonoBehaviour
     public Image barraAtaque; // Referencia a la barra de ataque
     public bool puedeAtaqueCargado = false;
     public float tiempoTranscurridoDebug;
+
+    private IEnumerator DesactivarKinematicTemporalmente(Rigidbody rb)
+    {
+        rb.isKinematic = false;
+        yield return new WaitForSeconds(0.3f); // Ajusta el tiempo según lo que necesites
+        rb.velocity = Vector3.zero; // Detén el movimiento después del empuje
+        rb.isKinematic = true;
+    }
+
+    public bool EsInvulnerable => invulnerable;
 }
+   

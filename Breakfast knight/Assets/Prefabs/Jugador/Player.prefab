@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 357522278508060413}
   - component: {fileID: 8784618698675673369}
   - component: {fileID: 7563246785929151028}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: NoEspecial
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 832
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -194,7 +194,7 @@ MonoBehaviour:
   ataque: 0
   derrota: {fileID: 0}
   areaRadius: 1.24
-  pushForce: 10
+  pushForce: 2
   cargaBarra: {fileID: 7924672443042596809}
   barraResistenciaEscudo: {fileID: 0}
   ataqueCargadoEfecto: {fileID: 0}
@@ -244,15 +244,18 @@ MonoBehaviour:
   - {fileID: 7587844127754766362}
   renderersNoAfectados: []
   velocidadActual: 0
-  Equis: {fileID: 0}
+  Equis: {fileID: 331188720615763707}
   velocidadEffectBar: {fileID: 0}
   duracionEfecto: 5
   aderezoVelocidadActivo: {fileID: 0}
+  duracionAderezoVelocidadActivo: 0
   dashDistancia: 5
   dashDuracion: 0.2
   dashCooldown: 2
   dashDisponibleImage: {fileID: 0}
   dashCollider: {fileID: 7792551372398520725}
+  tiempoRestanteBuffVelocidad: 0
+  duracionInvulnerabilidad: 1
   barraAtaque: {fileID: 0}
   puedeAtaqueCargado: 0
   tiempoTranscurridoDebug: 0
@@ -283,10 +286,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.12796415
+  m_Radius: 0.32
   m_Height: 1.111474
   m_Direction: 1
-  m_Center: {x: 0, y: 0.54337966, z: 0.036277995}
+  m_Center: {x: 0, y: 0.31, z: 0}
 --- !u!195 &7338979593208870204
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -317,7 +320,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1249846634939483258}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -367,7 +370,7 @@ GameObject:
   - component: {fileID: 5082928573008552883}
   - component: {fileID: 2406933466677348027}
   - component: {fileID: 5788365915259379619}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -468,7 +471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2194705541114405863}
   - component: {fileID: 2413055422390538527}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Circulo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -584,7 +587,7 @@ GameObject:
   - component: {fileID: 135207721665504172}
   - component: {fileID: 3279977954998539534}
   - component: {fileID: 7924672443042596809}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Barracarga
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -753,7 +756,7 @@ GameObject:
   - component: {fileID: 8767265922080039611}
   - component: {fileID: 40317427953989560}
   - component: {fileID: 1645441811502600903}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Carga (VFX)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
