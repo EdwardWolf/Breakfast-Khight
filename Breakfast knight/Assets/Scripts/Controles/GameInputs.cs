@@ -267,7 +267,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""1d4ccbc2-242d-47fa-8f7a-60135a4e9926"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""path"": ""<Mouse>/middleButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

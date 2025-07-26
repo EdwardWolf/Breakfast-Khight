@@ -226,6 +226,7 @@ public abstract class Jugador : MonoBehaviour
 
     public void AplicarDebufoVelocidad(float reduccionVelocidad, float duracion)
     {
+        if (invulnerable) return; // No aplicar debufo si está invulnerable (por ejemplo, durante el dash)
         if (!debufoVelocidadAplicado)
         {
             velocidadActual *= (1 - reduccionVelocidad);
@@ -445,6 +446,10 @@ public abstract class Jugador : MonoBehaviour
         {
             // Manejar la ruptura del escudo
             escudoActivo = false;
+
+            // Deshabilitar el input del dash
+            if (playerInputActions != null)
+                playerInputActions.Player.Dash.Disable();
         }
 
         // Reproducir el sonido del golpe en el escudo
@@ -481,6 +486,14 @@ public abstract class Jugador : MonoBehaviour
             if (barraResistenciaEscudo != null)
             {
                 barraResistenciaEscudo.fillAmount = resistenciaEscudoActual / stats.resistenciaEscudo;
+            }
+
+            // Cuando el escudo se regenera completamente, activar el dash
+            if (resistenciaEscudoActual >= stats.resistenciaEscudo && !escudoActivo)
+            {
+                escudoActivo = true;
+                if (playerInputActions != null)
+                    playerInputActions.Player.Dash.Enable();
             }
 
             yield return null;
@@ -749,10 +762,16 @@ public abstract class Jugador : MonoBehaviour
         if (uiManager != null)
             uiManager.OcultarIncrementoAtaque();
     }
-
+    public Collider escudoCollider;
     public void IntentarDash(Vector3 direccion)
     {
-        if (puedeHacerDash && escudoActivo && resistenciaEscudoActual > 0)
+        // Dash solo si el escudo está activo, el collider está habilitado, el objeto visual está activo y la resistencia > 0
+        if (puedeHacerDash
+            && escudoActivo
+            && resistenciaEscudoActual > 0
+            && EscudoR.gameObject.activeSelf
+            && escudoCollider != null
+            && escudoCollider.enabled)
         {
             StartCoroutine(EjecutarDash(direccion));
         }
@@ -847,6 +866,7 @@ public abstract class Jugador : MonoBehaviour
         rb.velocity = Vector3.zero; // Detén el movimiento después del empuje
         rb.isKinematic = true;
     }
+
+    public bool EsInvulnerable => invulnerable;
 }
-
-
+   

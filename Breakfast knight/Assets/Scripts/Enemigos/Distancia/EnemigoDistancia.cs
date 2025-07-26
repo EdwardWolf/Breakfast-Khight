@@ -1,28 +1,41 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemigoDistancia : Enemigo
 {
     public AttackHandler attackHandler;
     public bool atacando = false;
-    public GameObject objetoAActivar;
     public Camera camara;
 
     [Header("Raycast de ataque")]
     public float rangoRaycast = 10f; // Distancia máxima del raycast
+    [Header("Distancia mínima para atacar (se aleja si está más cerca)")]
+    [Range(0.5f, 20f)]
+    public float distanciaMinimaAtaque = 6f; // Ajusta este valor en el Inspector
+
     public LayerMask layerJugador;   // Asigna el layer del jugador en el inspector
     public GameObject obj;
     public float offsetY = 1.0f; // Ajusta este valor según lo que necesites
+
+    private NavMeshAgent navMeshAgent;
+
+    public GameObject objetoAActivar; // Referencia al objeto que quieres activar antes de disparar
 
     protected override void Start()
     {
         base.Start();
         attackHandler = GetComponent<AttackHandler>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
     protected override void Update()
     {
         base.Update();
+
+        // Si está alejándose, no ejecutar lógica de ataque ni persecución
+        if (alejandose)
+            return;
 
         // Si hay un aderezo detectado y no está interactuando con él, perseguirlo
         if (isOnWayToAderezo && !isInteractingWithAderezo)
@@ -34,46 +47,56 @@ public class EnemigoDistancia : Enemigo
 
         if (jugador != null)
         {
-            Vector3 destino = jugador.transform.position + Vector3.up * offsetY;
-            Vector3 direccionAlJugador = (destino - obj.transform.position).normalized;
+            Collider jugadorCollider = jugador.GetComponent<Collider>();
+            Vector3 centroJugador = jugadorCollider != null ? jugadorCollider.bounds.center : jugador.transform.position;
+            Vector3 direccionAlJugador = (centroJugador - obj.transform.position).normalized;
             float distanciaAlJugador = Vector3.Distance(transform.position, jugador.transform.position);
 
-            // Raycast para detectar al jugador
-            RaycastHit hit;
-            if (Physics.Raycast(obj.transform.position, direccionAlJugador, out hit, rangoRaycast, layerJugador))
+            // Alejarse si está demasiado cerca
+            if (distanciaAlJugador < distanciaMinimaAtaque)
             {
-                // Si el raycast impacta al jugador y no está interactuando con aderezo, detenerse y atacar
-                if (!isInteractingWithAderezo)
-                {
-                    if (velocidadMovimientoActual != 0f)
-                        velocidadMovimientoActual = 0f;
-
-                    persiguiendoJugador = false;
-                    LanzarProyectilConEfecto();
-                }
+                Vector3 direccionAlejarse = (transform.position - jugador.transform.position).normalized;
+                Vector3 destinoAlejarse = jugador.transform.position + direccionAlejarse * distanciaMinimaAtaque;
+                navMeshAgent.isStopped = false;
+                navMeshAgent.speed = statsEnemigo.velocidadMovimiento;
+                navMeshAgent.SetDestination(destinoAlejarse);
+                persiguiendoJugador = false;
+                velocidadMovimientoActual = statsEnemigo.velocidadMovimiento;
+                return;
             }
-            else if (distanciaAlJugador <= detectionRadius)
+            // Acercarse si está demasiado lejos
+            else if (distanciaAlJugador > rangoRaycast)
             {
+                navMeshAgent.isStopped = false;
                 persiguiendoJugador = true;
                 velocidadMovimientoActual = statsEnemigo.velocidadMovimiento;
                 PerseguirJugador();
+                return;
             }
+            // Atacar si está en rango
             else
             {
-                persiguiendoJugador = false;
-                velocidadMovimientoActual = 0f;
-            }
-        }
-       
-        
+                RaycastHit hit;
+                if (Physics.Raycast(obj.transform.position, direccionAlJugador, out hit, rangoRaycast, layerJugador))
+                {
+                    if (!isInteractingWithAderezo)
+                    {
+                        if (velocidadMovimientoActual != 0f)
+                            velocidadMovimientoActual = 0f;
 
-        // Hacer que el objeto siempre mire a la cámara
-        if (objetoAActivar != null && objetoAActivar.activeSelf && camara != null)
-        {
-            objetoAActivar.transform.LookAt(
-                objetoAActivar.transform.position + camara.transform.rotation * Vector3.forward,
-                camara.transform.rotation * Vector3.up
-            );
+                        navMeshAgent.isStopped = true;
+                        persiguiendoJugador = false;
+                        LanzarProyectilConEfecto();
+                    }
+                }
+                else
+                {
+                    navMeshAgent.isStopped = false;
+                    persiguiendoJugador = true;
+                    velocidadMovimientoActual = statsEnemigo.velocidadMovimiento;
+                    PerseguirJugador();
+                }
+            }
         }
     }
 
@@ -114,26 +137,33 @@ public class EnemigoDistancia : Enemigo
         // No atacar si está alejándose
         if (alejandose || isOnWayToAderezo || isInteractingWithAderezo)
             return;
-
-        StartCoroutine(ActivarObjetoYLanzarProyectil());
+        
+        // Activar el efecto visual antes de disparar
+        if (objetoAActivar != null)
+            StartCoroutine(ActivarObjetoYLanzarProyectil());
+        else
+            attackHandler.ActivarAtaque(); // Si no hay objeto que activar, disparar directamente
     }
 
     private IEnumerator ActivarObjetoYLanzarProyectil()
     {
-        if (objetoAActivar != null)
-            objetoAActivar.SetActive(true);
-
-        float delay = Random.Range(0.05f, 0.3f);
-        yield return new WaitForSeconds(delay);
-
+        // Activar el objeto
+        objetoAActivar.SetActive(true);
+        
+        // Esperar un pequeño delay (puedes ajustar este valor)
+        yield return new WaitForSeconds(0.2f);
+        
+        // Ejecutar el ataque
         if (attackHandler != null)
             attackHandler.ActivarAtaque();
-
-        yield return new WaitForSeconds(2f);
-
-        if (objetoAActivar != null)
-            objetoAActivar.SetActive(false);
+        
+        // Esperar otro pequeño delay antes de desactivar el objeto
+        yield return new WaitForSeconds(0.5f);
+        
+        // Desactivar el objeto
+        objetoAActivar.SetActive(false);
     }
+
     private void OnDrawGizmosSelected()
     {
         if (jugador == null)
@@ -146,6 +176,9 @@ public class EnemigoDistancia : Enemigo
         Gizmos.DrawLine(origen, origen + direccion * rangoRaycast);
     }
 }
+
+
+
 
 
 

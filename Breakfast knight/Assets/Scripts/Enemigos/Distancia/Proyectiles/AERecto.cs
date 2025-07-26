@@ -8,6 +8,8 @@ public class AERecto : AtaqueEnemigo
     public LayerMask playerLayer;
     public float projectileSpeed = 10f; // Nueva variable para la velocidad del proyectil
 
+    public GameObject objetoAActivar; // Asigna este objeto desde el inspector
+
     private float tiempoUltimoDisparo = -Mathf.Infinity;
 
     private void Awake()
@@ -28,20 +30,36 @@ public class AERecto : AtaqueEnemigo
 
     private void DispararBala()
     {
-        // Obtener una bala del pool
+        // En lugar de activar/desactivar instantáneamente, usar una corrutina
+        StartCoroutine(MostrarEfectoYDisparar());
+    }
+
+    private IEnumerator MostrarEfectoYDisparar()
+    {
+        // Activar el objeto
+        if (objetoAActivar != null)
+            objetoAActivar.SetActive(true);
+
+        // Esperar un momento para que el efecto sea visible antes de disparar
+        yield return new WaitForSeconds(0.5f); // Ajusta este tiempo según necesites
+
+        // Obtener y disparar la bala
         GameObject bala = ObtenerBala();
         if (bala != null)
         {
-            // Posicionar y rotar la bala en la posición del enemigo
             bala.transform.position = transform.position;
             bala.transform.rotation = transform.rotation;
 
-            // Calcular la dirección hacia el jugador
             Vector3 direction = (jugador.position - transform.position).normalized;
-
-            // Aplicar la dirección a la bala usando projectileSpeed
             bala.GetComponent<Rigidbody>().velocity = direction * projectileSpeed;
         }
+
+        // Esperar otro momento para que el efecto se muestre después del disparo
+        yield return new WaitForSeconds(0.2f); // Ajusta este tiempo según necesites
+
+        // Desactivar el objeto
+        if (objetoAActivar != null)
+            objetoAActivar.SetActive(false);
     }
 
     public override void CoolDown()

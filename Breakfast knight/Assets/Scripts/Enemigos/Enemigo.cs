@@ -88,6 +88,11 @@ public class Enemigo : MonoBehaviour
     private Vector3 destinoAlejarse;
     private Vector3 ultimaPosicionJugador;
 
+    [SerializeField] private Material materialDaño; // Material que se aplicará cuando el enemigo reciba daño
+    private List<Renderer> enemyRenderers = new List<Renderer>(); // Lista para almacenar todos los renderers
+    private Dictionary<Renderer, Material> materialesOriginales = new Dictionary<Renderer, Material>(); // Para almacenar los materiales originales
+    private Coroutine flashCoroutine; // Para controlar la corrutina del efecto flash
+
     protected virtual void Awake()
     {
         camara = Camera.main;
@@ -95,12 +100,30 @@ public class Enemigo : MonoBehaviour
         {
             audioSource = camara.GetComponent<AudioSource>();
         }
+        
+        // Obtiene todos los renderers del enemigo y sus hijos
+        enemyRenderers.AddRange(GetComponentsInChildren<Renderer>());
+        
+        // Guarda los materiales originales
+        foreach (Renderer renderer in enemyRenderers)
+        {
+            materialesOriginales[renderer] = renderer.material;
+        }
+        
+        // Mantén la referencia al renderer principal para compatibilidad
         enemigoRenderer = GetComponentInChildren<Renderer>();
         if (enemigoRenderer != null)
         {
             materialOriginal = enemigoRenderer.material;
         }
+        
         agent = GetComponent<NavMeshAgent>();
+        if (agent != null)
+        {
+            agent.radius = 0.6f; // Ajusta según el tamaño de tus enemigos
+            agent.avoidancePriority = Random.Range(30, 70); // Para variedad en evasión
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+        }
     }
 
     public void OnEnable()
@@ -127,6 +150,7 @@ public class Enemigo : MonoBehaviour
 
     protected virtual void Update()
     {
+        
         if (!puedeActuar)
             return;
 
@@ -326,19 +350,15 @@ public class Enemigo : MonoBehaviour
     }
     public virtual void PerseguirJugador()
     {
-        if (alejandose) // Protección extra: no perseguir si está alejándose
+        if (alejandose)
             return;
 
-        if (playerTransform != null)
+        if (playerTransform != null && agent != null)
         {
-            Vector3 direction = (playerTransform.position - transform.position).normalized;
-            float distancia = Vector3.Distance(transform.position, playerTransform.position);
-
-            bool estaCaminando = velocidadMovimientoActual > 0.01f && distancia > 0.05f;
+            agent.SetDestination(playerTransform.position);
+            bool estaCaminando = agent.velocity.magnitude > 0.01f;
             if (animator != null)
                 animator.SetBool("Caminando", estaCaminando);
-
-            transform.position += direction * velocidadMovimientoActual * Time.deltaTime;
         }
         else
         {
@@ -487,6 +507,11 @@ public class Enemigo : MonoBehaviour
         ActualizarBarraDeVida();
         MostrarBarrasVida();
         tiempoUltimoDanio = Time.time;
+        
+        // Inicia el efecto flash
+        if (flashCoroutine != null)
+            StopCoroutine(flashCoroutine);
+        flashCoroutine = StartCoroutine(EfectoFlashDaño(1.0f)); // 1 segundo de duración
 
         if (isInteractingWithAderezo)
         {
@@ -518,7 +543,7 @@ public class Enemigo : MonoBehaviour
             {
                 alejandose = true;
                 tiempoAlejarseActual = 0f;
-                velocidadMovimientoActual = velocidadMovimientoInicial; // ← RESTAURADO: velocidad normal al alejarse
+                velocidadMovimientoActual = velocidadMovimientoInicial;
                 if (jugador != null)
                 {
                     ultimaPosicionJugador = jugador.transform.position;
@@ -530,6 +555,27 @@ public class Enemigo : MonoBehaviour
                 if (agent != null) agent.ResetPath();
             }
         }
+    }
+
+    private IEnumerator EfectoFlashDaño(float duracion)
+    {
+        // Cambia todos los materiales al material de daño
+        foreach (Renderer renderer in enemyRenderers)
+        {
+            renderer.material = materialDaño;
+        }
+        
+        // Espera la duración especificada
+        yield return new WaitForSeconds(duracion);
+        
+        // Restaura todos los materiales originales
+        foreach (Renderer renderer in enemyRenderers)
+        {
+            if (materialesOriginales.ContainsKey(renderer))
+                renderer.material = materialesOriginales[renderer];
+        }
+        
+        flashCoroutine = null;
     }
 
     private void Alejarse()
@@ -744,6 +790,13 @@ public class Enemigo : MonoBehaviour
         {
             enemigoRenderer.material = materialOriginal;
         }
+
+        // Restaura los materiales originales
+        foreach (Renderer renderer in enemyRenderers)
+        {
+            if (materialesOriginales.ContainsKey(renderer))
+                renderer.material = materialesOriginales[renderer];
+        }
     }
 
     private IEnumerator ActivarTrasDelay()
@@ -771,6 +824,29 @@ public class Enemigo : MonoBehaviour
                 aderezo.LiberarParaEnemigos();
             }
             aderezoTransform = null;
+        }
+    }
+
+    public float separationRadius = 1f;
+    public float minDistance = 0.6f; // distancia mínima permitida entre enemigos
+    public float separationStrength = 0.5f; // fuerza de separación (ajusta según necesidad)
+    void AvoidOverlap()
+    {
+       
+        Collider[] nearbyEnemies = Physics.OverlapSphere(transform.position, separationRadius, LayerMask.GetMask("Enemigo"));
+        foreach (var enemy in nearbyEnemies)
+        {
+            if (enemy.gameObject != gameObject)
+            {
+                Vector3 dir = transform.position - enemy.transform.position;
+                float distance = dir.magnitude;
+                if (distance < minDistance && distance > 0.01f)
+                {
+                    // Calcula cuánto debe separarse
+                    float push = (minDistance - distance) * separationStrength;
+                    transform.position += dir.normalized * push;
+                }
+            }
         }
     }
 }

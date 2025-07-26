@@ -30,6 +30,8 @@ public class EnemigoCuerpo : Enemigo
     public float cooldownContactoConJugador = 1.5f;
     private float tiempoUltimoAtaque = -999f;
 
+    public GameObject objetoAActivar; // Objeto visual que aparecerá antes del ataque
+
     protected override void Start()
     {
         base.Start();
@@ -163,6 +165,10 @@ public class EnemigoCuerpo : Enemigo
         if (animator != null)
             animator.SetTrigger("Atacando");
 
+        // Mostrar objeto visual con su propia duración
+        if (objetoAActivar != null)
+            StartCoroutine(MostrarObjetoVisual(0.2f, tiempoCargaAtaque + delayAntesDeAtaque - 0.1f));
+
         if (spriteRangoAtaque != null)
             spriteRangoAtaque.enabled = true;
 
@@ -186,5 +192,13 @@ public class EnemigoCuerpo : Enemigo
 
         if (!enContactoConJugador)
             velocidadMovimientoActual = velocidadMovimientoInicial;
+    }
+
+    private IEnumerator MostrarObjetoVisual(float delayAntes, float duracion)
+    {
+        yield return new WaitForSeconds(delayAntes);
+        objetoAActivar.SetActive(true);
+        yield return new WaitForSeconds(duracion);
+        objetoAActivar.SetActive(false);
     }
 }
