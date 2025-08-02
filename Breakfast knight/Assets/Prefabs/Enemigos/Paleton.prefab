@@ -133,7 +133,9 @@ MonoBehaviour:
   velocidadMovimientoActual: 0
   usarRadioDeAtaque: 1
   barraDeVida: {fileID: 636513289733358477}
-  aderezosPrefabis: []
+  aderezosPrefabis:
+  - {fileID: 314813060356092051, guid: 30d39cb69bebaab4d8b49f76f9e0f863, type: 3}
+  - {fileID: 314813060356092051, guid: 2bb3af57676a91347ad980157b9a29d6, type: 3}
   dropChanceMin: 0.1
   dropChanceMax: 0.5
   dropPosition: {fileID: 6097031936530603922}
@@ -158,7 +160,7 @@ MonoBehaviour:
   interactionTime: 2
   probabilidadAlejarse: 0.848
   distanciaAlejarse: 5
-  puedeAlejarse: 0
+  puedeAlejarse: 1
   fuerzaEmpuje: 5
   escudoCollider: {fileID: 0}
   isStunned: 0

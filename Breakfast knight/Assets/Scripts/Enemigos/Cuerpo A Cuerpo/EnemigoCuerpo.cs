@@ -159,33 +159,41 @@ public class EnemigoCuerpo : Enemigo
     private IEnumerator AtaqueCargado()
     {
         estaCargando = true;
-        estaAtacando = true;
         velocidadMovimientoActual = 0f;
 
-        if (animator != null)
-            animator.SetTrigger("Atacando");
+        // Nota: Ya NO activamos la animación de ataque aquí, sino cuando realmente ataca
 
-        // Mostrar objeto visual con su propia duración
+        // Mostrar objeto visual durante la carga
         if (objetoAActivar != null)
             StartCoroutine(MostrarObjetoVisual(0.2f, tiempoCargaAtaque + delayAntesDeAtaque - 0.1f));
 
         if (spriteRangoAtaque != null)
             spriteRangoAtaque.enabled = true;
 
+        // Fase de carga - el enemigo está preparándose para atacar
         yield return new WaitForSeconds(tiempoCargaAtaque);
         yield return new WaitForSeconds(delayAntesDeAtaque);
 
+        // AQUÍ ES DONDE REALMENTE ATACA - activamos la animación justo antes del collider
+        estaAtacando = true;
+        if (animator != null)
+            animator.SetTrigger("Atacando"); // Movido aquí para sincronizar con el daño real
+
+        // Activar el collider que aplica el daño
         if (triggerAtaque != null)
             triggerAtaque.enabled = true;
 
+        // Mantenemos el collider activo por un tiempo
         yield return new WaitForSeconds(0.4f);
 
+        // Desactivar el collider cuando termina el ataque
         if (triggerAtaque != null)
             triggerAtaque.enabled = false;
 
         if (spriteRangoAtaque != null)
             spriteRangoAtaque.enabled = false;
 
+        // Terminó tanto la carga como el ataque
         estaCargando = false;
         estaAtacando = false;
         ataqueCoroutine = null;

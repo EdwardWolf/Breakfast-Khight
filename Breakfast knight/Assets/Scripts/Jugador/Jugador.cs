@@ -102,6 +102,9 @@ public abstract class Jugador : MonoBehaviour
 
     [SerializeField] private float duracionInvulnerabilidad = 1f; // Duración en segundos
 
+    [SerializeField] private ParticleSystem particulasBuffVelocidad; // Sistema de partículas para el buff de velocidad
+    [SerializeField] private ParticleSystem particulasCuracion; // Sistema de partículas para la curación
+
     protected virtual void Start()
     {
         Equis.SetActive(false); 
@@ -178,6 +181,17 @@ public abstract class Jugador : MonoBehaviour
         renderersNoAfectados.AddRange(particleRenderers);
 
         renderers = new List<Renderer>(GetComponentsInChildren<Renderer>());
+
+        // Inicializar el estado de las partículas de buff de velocidad
+        if (particulasBuffVelocidad != null)
+        {
+            particulasBuffVelocidad.gameObject.SetActive(false);
+        }
+        // Inicializar el estado de las partículas de curación
+        if (particulasCuracion != null)
+        {
+            particulasCuracion.gameObject.SetActive(false);
+        }
     }
 
 
@@ -226,17 +240,21 @@ public abstract class Jugador : MonoBehaviour
 
     public void AplicarDebufoVelocidad(float reduccionVelocidad, float duracion)
     {
-        if (invulnerable) return; // No aplicar debufo si está invulnerable (por ejemplo, durante el dash)
-        if (!debufoVelocidadAplicado)
+        // Si está invulnerable (en dash) o ya tiene un debufo activo, no aplica el nuevo debufo
+        if (invulnerable || debufoVelocidadAplicado) return;
+        
+        // Aplica el debufo (solo llegará aquí si no hay debufo activo)
+        velocidadActual *= (1 - reduccionVelocidad);
+        debufoVelocidadAplicado = true;
+        
+        // Cancela cualquier corrutina anterior si existe
+        if (debufoVelocidadCoroutine != null)
         {
-            velocidadActual *= (1 - reduccionVelocidad);
-            debufoVelocidadAplicado = true;
-            if (debufoVelocidadCoroutine != null)
-            {
-                StopCoroutine(debufoVelocidadCoroutine);
-            }
-            debufoVelocidadCoroutine = StartCoroutine(RemoverDebufoVelocidadDespuesDeTiempo(duracion));
+            StopCoroutine(debufoVelocidadCoroutine);
         }
+        
+        // Inicia la nueva corrutina
+        debufoVelocidadCoroutine = StartCoroutine(RemoverDebufoVelocidadDespuesDeTiempo(duracion));
     }
 
     private IEnumerator RemoverDebufoVelocidadDespuesDeTiempo(float duracion)
@@ -429,7 +447,7 @@ public abstract class Jugador : MonoBehaviour
         estaRecibiendoDaño = false;
     }
 
-    public void ReducirResistenciaEscudo(float cantidad)
+    public virtual void ReducirResistenciaEscudo(float cantidad)
     {
         resistenciaEscudoActual -= cantidad;
         if (resistenciaEscudoActual < 0)
@@ -635,25 +653,59 @@ public abstract class Jugador : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, areaRadius);
     }
 
+    private bool estaEnMovimiento = false;
+
+    // Modifica el método Mover para detectar cuando el jugador está en movimiento
     public void Mover(Vector3 direccion)
     {
-        // Normalizar la dirección para evitar que las velocidades se sumen
+        // Detectar si el jugador está en movimiento (magnitud > 0)
+        estaEnMovimiento = direccion.magnitude > 0.01f;
+        
+        // Actualizar estado de las partículas si el buff está activo
+        ActualizarEstadoParticulasVelocidad();
+        
+        // El resto del código existente
         if (direccion.magnitude > 1)
         {
             direccion.Normalize();
         }
 
-        // Rotar la dirección del movimiento 45 grados
         Quaternion rotacion = Quaternion.Euler(0, 45, 0);
         Vector3 direccionRotada = rotacion * direccion;
 
-        // Mover al jugador en la dirección rotada sin importar la dirección a la que está mirando
         Vector3 movimiento = new Vector3(direccionRotada.x, 0, direccionRotada.z) * velocidadActual * Time.deltaTime;
         transform.Translate(movimiento, Space.World);
     }
 
+    // Añade este nuevo método para controlar el estado de las partículas
+    private void ActualizarEstadoParticulasVelocidad()
+    {
+        if (particulasBuffVelocidad != null && buffVelocidadActivo)
+        {
+            // Si está en movimiento Y tiene el buff activo -> activar partículas
+            if (estaEnMovimiento)
+            {
+                if (!particulasBuffVelocidad.isPlaying)
+                {
+                    particulasBuffVelocidad.Play();
+                    particulasBuffVelocidad.gameObject.SetActive(true);
+                }
+            }
+            // Si no está en movimiento PERO tiene el buff activo -> pausar partículas
+            else
+            {
+                if (particulasBuffVelocidad.isPlaying)
+                {
+                    particulasBuffVelocidad.Pause();
+                }
+            }
+        }
+    }
+
+    // Modifica el método AplicarBuffVelocidad para solo preparar las partículas sin activarlas
     public void AplicarBuffVelocidad(float incremento, float duracion, AderezoVelocidad aderezo = null)
     {
+        // El código existente para gestionar el buff
         if (buffVelocidadActivo)
         {
             if (buffVelocidadCoroutine != null)
@@ -686,9 +738,20 @@ public abstract class Jugador : MonoBehaviour
         // Inicia la barra de velocidad con la nueva duración
         barraVelocidadCoroutine = StartCoroutine(BarraVelocidad());
 
+        // Preparar el sistema de partículas pero no activarlo aún
+        if (particulasBuffVelocidad != null)
+        {
+            particulasBuffVelocidad.gameObject.SetActive(true);
+            particulasBuffVelocidad.Stop(); // Asegurarse de que esté detenido inicialmente
+        }
+
+        // Actualizar estado de partículas según si está en movimiento
+        ActualizarEstadoParticulasVelocidad();
+
         buffVelocidadCoroutine = StartCoroutine(BuffVelocidadCoroutine(incremento, duracion));
     }
 
+    // Modifica la corrutina BuffVelocidadCoroutine para desactivar las partículas al finalizar
     private IEnumerator BuffVelocidadCoroutine(float incremento, float duracion)
     {
         buffVelocidadActivo = true;
@@ -703,6 +766,13 @@ public abstract class Jugador : MonoBehaviour
         {
             aderezoVelocidadActivo.OcultarAderezo();
             aderezoVelocidadActivo = null;
+        }
+
+        // Desactivar partículas cuando termina el buff
+        if (particulasBuffVelocidad != null)
+        {
+            particulasBuffVelocidad.Stop();
+            particulasBuffVelocidad.gameObject.SetActive(false);
         }
 
         if (uiManager != null)
@@ -779,77 +849,59 @@ public abstract class Jugador : MonoBehaviour
 
     private IEnumerator EjecutarDash(Vector3 direccion)
     {
-        puedeHacerDash = false;
-        if (dashDisponibleImage != null)
-            dashDisponibleImage.enabled = false;
-
-        if (dashCollider != null)
-            dashCollider.enabled = true;
-
-        invulnerable = true;
-
-        float tiempo = 0f;
-        Vector3 inicio = transform.position;
-        Vector3 destino = inicio + direccion.normalized * dashDistancia;
-        Vector3 ultimaPosicion = inicio;
-
+        float tiempoInicio = Time.time;
+        Vector3 posicionInicial = transform.position;
+        Vector3 posicionObjetivo = transform.position + direccion.normalized * dashDistancia;
+        
+        // Guardamos estado original
         Rigidbody rb = GetComponent<Rigidbody>();
-
-        // Lista para evitar empujar al mismo enemigo varias veces en un solo dash
-        HashSet<Enemigo> enemigosEmpujados = new HashSet<Enemigo>();
-
-        while (tiempo < dashDuracion)
+        bool eraKinematic = rb.isKinematic;
+        
+        // Activamos detección de colisiones
+        rb.isKinematic = false;
+        
+        while (Time.time < tiempoInicio + dashDuracion)
         {
-            float t = tiempo / dashDuracion;
-            Vector3 siguientePosicion = Vector3.Lerp(inicio, destino, t);
-
-            Vector3 direccionFrame = (siguientePosicion - ultimaPosicion).normalized;
-            float distanciaFrame = Vector3.Distance(ultimaPosicion, siguientePosicion);
-
-            // Detectar colisión con muros
-            if (Physics.Raycast(ultimaPosicion, direccionFrame, out RaycastHit hit, distanciaFrame, LayerMask.GetMask("Default", "Muro")))
+            float t = (Time.time - tiempoInicio) / dashDuracion;
+            
+            // Intentamos mover con raycast para detectar colisiones
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, direccion, out hit, direccion.magnitude * Time.deltaTime * (dashDistancia / dashDuracion)))
             {
-                transform.position = hit.point;
-
-                if (rb != null)
-                {
-                    Vector3 rebote = -direccion.normalized * 5f;
-                    rb.AddForce(rebote, ForceMode.Impulse);
-                }
-                break;
+                // Si hay colisión, rebotamos
+                Vector3 reflejado = Vector3.Reflect(direccion, hit.normal);
+                direccion = reflejado.normalized * direccion.magnitude * 0.8f; // Reducción de velocidad al rebotar
+                
+                // Opcionalmente, reproducir efecto de sonido o partículas
             }
-            else
-            {
-                transform.position = siguientePosicion;
-            }
-
-            // Detectar y empujar enemigos durante el dash
-            Collider[] colisiones = Physics.OverlapSphere(transform.position, 0.8f); // Ajusta el radio si es necesario
-            foreach (Collider col in colisiones)
-            {
-                if (col.CompareTag("Enemigo"))
-                {
-                    Enemigo enemigo = col.GetComponent<Enemigo>();
-                    if (enemigo != null && !enemigosEmpujados.Contains(enemigo))
-                    {
-                        EmpujarEnemigo(enemigo);
-                        enemigosEmpujados.Add(enemigo);
-                    }
-                }
-            }
-
-            ultimaPosicion = transform.position;
-            tiempo += Time.deltaTime;
+            
+            // Movemos usando velocidad en vez de posición directa
+            rb.velocity = direccion.normalized * (dashDistancia / dashDuracion);
+            
             yield return null;
         }
+        
+        // Detener al finalizar
+        rb.velocity = Vector3.zero;
+        
+        // Restaurar estado
+        rb.isKinematic = eraKinematic;
+        
+        StartCoroutine(DashCooldown());
+    }
 
-        if (dashCollider != null)
-            dashCollider.enabled = false;
-
-        invulnerable = false;
-
+    private IEnumerator DashCooldown()
+    {
+        puedeHacerDash = false;
+        
+        // Desactivar la imagen cuando el dash entra en cooldown
+        if (dashDisponibleImage != null)
+            dashDisponibleImage.enabled = false;
+            
+        // Esperar el tiempo de cooldown
         yield return new WaitForSeconds(dashCooldown);
-
+        
+        // Reactivar la imagen cuando el dash está disponible nuevamente
         puedeHacerDash = true;
         if (dashDisponibleImage != null)
             dashDisponibleImage.enabled = true;
@@ -868,5 +920,39 @@ public abstract class Jugador : MonoBehaviour
     }
 
     public bool EsInvulnerable => invulnerable;
+
+    // Añade este método para que pueda ser llamado desde el aderezo de salud
+    public void MostrarEfectoCuracion()
+    {
+        if (particulasCuracion != null)
+        {
+            // Asegura que las partículas están activas
+            particulasCuracion.gameObject.SetActive(true);
+            
+            // Detiene cualquier emisión previa por si acaso
+            particulasCuracion.Stop();
+            
+            // Inicia el efecto de partículas
+            particulasCuracion.Play();
+            
+            // Inicia la corrutina para desactivar las partículas después de un tiempo
+            StartCoroutine(DesactivarParticulasCuracion(2.0f)); // 2 segundos de duración, ajusta según necesites
+        }
+    }
+
+    // Corrutina para desactivar las partículas de curación después de cierto tiempo
+    private IEnumerator DesactivarParticulasCuracion(float duracion)
+    {
+        // Espera la duración especificada
+        yield return new WaitForSeconds(duracion);
+        
+        // Detiene la emisión de partículas si aún está activa
+        if (particulasCuracion != null && particulasCuracion.isPlaying)
+        {
+            particulasCuracion.Stop();
+            particulasCuracion.gameObject.SetActive(false);
+        }
+    }
+
 }
    

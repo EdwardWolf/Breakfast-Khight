@@ -150,7 +150,6 @@ public class Enemigo : MonoBehaviour
 
     protected virtual void Update()
     {
-        
         if (!puedeActuar)
             return;
 
@@ -161,19 +160,24 @@ public class Enemigo : MonoBehaviour
             return;
         }
 
-        if (alejandose)
+        // Primero orientamos la barra de vida hacia la cámara SIEMPRE
+        if (barraDeVida != null)
         {
-            Alejarse();
-            return;
-        }
-
-        barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
+            barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
                          camara.transform.rotation * Vector3.up);
+        }
 
         if (barraDeVidaFondo != null)
         {
             barraDeVidaFondo.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
-                                              camara.transform.rotation * Vector3.up);
+                                      camara.transform.rotation * Vector3.up);
+        }
+
+        // Verificamos si está alejándose después de orientar la barra
+        if (alejandose)
+        {
+            Alejarse();
+            return;
         }
 
         DetectPlayer();
@@ -213,17 +217,6 @@ public class Enemigo : MonoBehaviour
                 StopCoroutine(reducirResistenciaEscudoCoroutine);
                 reducirResistenciaEscudoCoroutine = null;
             }
-        }
-
-        if (barraDeVida != null)
-        {
-            barraDeVida.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
-                             camara.transform.rotation * Vector3.up);
-        }
-        if (barraDeVidaFondo != null)
-        {
-            barraDeVidaFondo.transform.LookAt(transform.position + camara.transform.rotation * Vector3.forward,
-                                              camara.transform.rotation * Vector3.up);
         }
 
         if (barraVisible && (Time.time - tiempoUltimoDanio > tiempoBarraVisible))
@@ -384,6 +377,7 @@ public class Enemigo : MonoBehaviour
                 animator.SetBool("Caminando", false);
             return;
         }
+        
         if (aderezoTransform == null || !aderezoTransform.gameObject.activeSelf)
         {
             isInteractingWithAderezo = false;
@@ -413,17 +407,36 @@ public class Enemigo : MonoBehaviour
         if (!isInteractingWithAderezo)
         {
             isOnWayToAderezo = true;
-            Vector3 direction = (aderezoTransform.position - transform.position).normalized;
             float distancia = Vector3.Distance(transform.position, aderezoTransform.position);
 
-            bool estaCaminando = velocidadMovimientoActual > 0.01f && distancia > 0.05f;
-            if (animator != null)
-                animator.SetBool("Caminando", estaCaminando);
-
-            transform.position += direction * velocidadMovimientoActual * Time.deltaTime;
+            // CAMBIO AQUÍ: Usa NavMeshAgent para moverse en vez de mover directamente la posición
+            if (agent != null)
+            {
+                agent.isStopped = false;
+                agent.speed = velocidadMovimientoActual; // Establece la velocidad correcta
+                agent.SetDestination(aderezoTransform.position);
+                
+                bool estaCaminando = agent.velocity.magnitude > 0.01f;
+                if (animator != null)
+                    animator.SetBool("Caminando", estaCaminando);
+            }
+            else
+            {
+                // Código de respaldo por si no hay NavMeshAgent (mantén el original como fallback)
+                Vector3 direction = (aderezoTransform.position - transform.position).normalized;
+                bool estaCaminando = velocidadMovimientoActual > 0.01f && distancia > 0.05f;
+                if (animator != null)
+                    animator.SetBool("Caminando", estaCaminando);
+                    
+                // Limita la velocidad multiplicándola por un factor razonable si es necesario
+                transform.position += direction * velocidadMovimientoActual * Time.deltaTime;
+            }
 
             if (distancia < 0.6f)
             {
+                if (agent != null)
+                    agent.isStopped = true;
+                    
                 isInteractingWithAderezo = true;
                 isOnWayToAderezo = false;
                 interactionTimer = 0f;

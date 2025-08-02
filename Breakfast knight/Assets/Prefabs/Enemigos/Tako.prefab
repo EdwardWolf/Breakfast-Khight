@@ -103,7 +103,9 @@ MonoBehaviour:
   velocidadMovimientoActual: 0
   usarRadioDeAtaque: 0
   barraDeVida: {fileID: 8819437283638173974}
-  aderezosPrefabis: []
+  aderezosPrefabis:
+  - {fileID: 314813060356092051, guid: 2bb3af57676a91347ad980157b9a29d6, type: 3}
+  - {fileID: 314813060356092051, guid: 30d39cb69bebaab4d8b49f76f9e0f863, type: 3}
   dropChanceMin: 0.1
   dropChanceMax: 0.5
   dropPosition: {fileID: 6097031936530603922}
@@ -151,8 +153,8 @@ MonoBehaviour:
   haAlcanzadoAlJugador: 0
   estaAtacando: 0
   spriteRangoAtaque: {fileID: 2153872216090225681}
-  delayAntesDeAtaque: 0.4
-  tiempoCargaAtaque: 1.5
+  delayAntesDeAtaque: 0
+  tiempoCargaAtaque: 0.8
   "multiplicadorDa\xF1oCargado": 2
   enContactoConJugador: 0
   triggerAtaque: {fileID: 4282443079364112390}

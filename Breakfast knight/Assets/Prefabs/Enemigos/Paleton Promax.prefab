@@ -116,6 +116,10 @@ PrefabInstance:
       propertyPath: probabilidadAlejarse
       value: 0.251
       objectReference: {fileID: 0}
+    - target: {fileID: 8595395226700582368, guid: ce3a147d361b175478ccee127463ed1d, type: 3}
+      propertyPath: aderezosPrefabis.Array.data[1]
+      value: 
+      objectReference: {fileID: 314813060356092051, guid: 203865cd49b9d8843a424b7b73cba8ac, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -20,11 +20,20 @@ public class CaballeroLigero : Jugador
     public bool isAttacking = false;
     public ParticleSystem carga;
 
-    [SerializeField] private Material materialEscudoActivo; // Material del escudo activo
-    [SerializeField] private Material materialEscudoNormal; // Material del escudo normal
+    [SerializeField] private Material materialEscudoCompleto; // Material cuando resistencia está a 3/3
+    [SerializeField] private Material materialEscudoMedio;    // Material cuando resistencia está a 2/3
+    [SerializeField] private Material materialEscudoBajo;     // Material cuando resistencia está a 1/3
 
     public Image ataqueCargadoBarra; // Referencia a la barra de carga del ataque cargado
+    public ParticleSystem particulasResistenciaEscudo;
 
+    // Añadir esta variable para el sistema de partículas del escudo roto
+    [SerializeField] private ParticleSystem particulasEscudoRoto;
+
+    private Coroutine coroutinaParticulasEscudo;
+
+    // Añadir esta variable para rastrear el valor anterior de resistencia
+    private float resistenciaEscudoAnterior;
 
     private void Awake()
     {
@@ -37,6 +46,10 @@ public class CaballeroLigero : Jugador
     {
         base.Start();
         escudoCollider = Escudo; // Asigna el collider del escudo de la clase derivada a la base
+        resistenciaEscudoAnterior = resistenciaEscudoActual; // Inicializar el valor anterior
+
+        // Iniciar la comprobación periódica del material durante la regeneración
+        StartCoroutine(ComprobarRegeneracionEscudo());
     }
 
     private void Update()
@@ -171,6 +184,13 @@ public class CaballeroLigero : Jugador
             // Desactivar la animación del escudo
             escudoLayerWeight = 0f;
             animator.SetLayerWeight(2, escudoLayerWeight);
+
+            // Activar partículas del escudo roto si existe el sistema
+            if (particulasEscudoRoto != null)
+            {
+                particulasEscudoRoto.transform.position = Escudo.transform.position;
+                particulasEscudoRoto.Play();
+            }
         }
         // Activar el objeto del escudo SOLO cuando la resistencia esté al máximo
         else if (resistenciaEscudoActual >= stats.resistenciaEscudo)
@@ -195,6 +215,15 @@ public class CaballeroLigero : Jugador
         animator.SetLayerWeight(3, chargeLayerWeight);
         animator.SetLayerWeight(4, cargadoLayerWeight);
     
+        // Detectar cambios en la resistencia del escudo (regeneración)
+        if (escudoActivo && resistenciaEscudoActual > resistenciaEscudoAnterior)
+        {
+            // El escudo está regenerándose mientras está activo
+            ActualizarMaterialEscudo();
+        }
+        
+        // Guardar el valor actual para la siguiente comprobación
+        resistenciaEscudoAnterior = resistenciaEscudoActual;
     }
 
 
@@ -289,8 +318,8 @@ public class CaballeroLigero : Jugador
             escudoLayerWeight = 1f;
             animator.SetLayerWeight(2, escudoLayerWeight);
 
-            // Cambiar el material del escudo
-            EscudoR.material = materialEscudoActivo;
+            // Actualizar el material del escudo según el nivel actual
+            ActualizarMaterialEscudo();
 
             // Habilitar el input del dash
             if (playerInputActions != null)
@@ -307,10 +336,8 @@ public class CaballeroLigero : Jugador
             escudoActivo = false;
             _velocidadMovimiento = stats.velocidadMovimiento; // Restaurar la velocidad original
             animator.SetBool("Escudo", false); // Usar bool en vez de trigger
-            
 
-            // Restaurar el material del escudo
-            EscudoR.material = materialEscudoNormal;
+            // No necesitamos actualizar el material aquí, ya que el escudo está desactivado
 
             // Deshabilitar el input del dash
             if (playerInputActions != null)
@@ -351,6 +378,127 @@ public class CaballeroLigero : Jugador
         if (!juegoPausado)
         {
             ActivarAtaque();
+        }
+    }
+
+    // Modificar el método override para manejar la reducción de resistencia del escudo
+    public override void ReducirResistenciaEscudo(float cantidad)
+    {
+        // Guardar el valor anterior para comprobar si se rompe
+        float resistenciaAnterior = resistenciaEscudoActual;
+        
+        // Llamar al método base para mantener la funcionalidad original
+        base.ReducirResistenciaEscudo(cantidad);
+        
+        // Actualizar el material del escudo según el nivel actual
+        ActualizarMaterialEscudo();
+        
+        // Comprobar si el escudo se ha roto en esta reducción de resistencia
+        if (resistenciaAnterior > 0 && resistenciaEscudoActual <= 0)
+        {
+            // El escudo se acaba de romper - activar efecto
+            ActivarEfectoEscudoRoto();
+        }
+        
+        // Activa las partículas normales si existe el sistema
+        if (particulasResistenciaEscudo != null)
+        {
+            // Si ya hay una coroutina activa, detenerla
+            if (coroutinaParticulasEscudo != null)
+                StopCoroutine(coroutinaParticulasEscudo);
+                
+            // Iniciar nueva coroutina para controlar las partículas
+            coroutinaParticulasEscudo = StartCoroutine(MostrarParticulasResistenciaEscudo());
+        }
+    }
+    private IEnumerator MostrarParticulasResistenciaEscudo()
+    {
+        if (particulasResistenciaEscudo != null)
+        {
+            particulasResistenciaEscudo.Play();
+            yield return new WaitForSeconds(particulasResistenciaEscudo.main.duration);
+            particulasResistenciaEscudo.Stop();
+        }
+        else
+        {
+            yield return null;
+        }
+    }
+
+    // Añadir este método para activar el efecto cuando el escudo se rompe
+    private void ActivarEfectoEscudoRoto()
+    {
+        if (particulasEscudoRoto != null)
+        {
+            // Posicionamos las partículas en la posición del escudo
+            particulasEscudoRoto.transform.position = Escudo.transform.position;
+            
+            // Reproducimos las partículas
+            particulasEscudoRoto.Play();
+            
+            // Opcional: Reproducir sonido de escudo rompiéndose
+            if (GetComponent<AudioSource>() != null)
+            {
+                AudioSource audio = GetComponent<AudioSource>();
+                // Asumiendo que tienes un clip de audio para el escudo rompiéndose
+                AudioClip sonidoRotura = Resources.Load<AudioClip>("Sonidos/EscudoRoto");
+                if (sonidoRotura != null)
+                    audio.PlayOneShot(sonidoRotura);
+            }
+            
+            // Opcional: Añadir efecto de cámara o feedback visual adicional
+            StartCoroutine(DesactivarParticulasEscudoRoto());
+        }
+    }
+
+    // Corrutina para desactivar las partículas del escudo roto después de su reproducción
+    private IEnumerator DesactivarParticulasEscudoRoto()
+    {
+        // Esperar a que terminen de reproducirse las partículas
+        yield return new WaitForSeconds(particulasEscudoRoto.main.duration);
+        
+        // Detener la emisión si aún está activa
+        if (particulasEscudoRoto.isPlaying)
+        {
+            particulasEscudoRoto.Stop();
+        }
+    }
+
+    // Añadir este método después de ReducirResistenciaEscudo
+    private void ActualizarMaterialEscudo()
+    {
+        float resistenciaMaxima = stats.resistenciaEscudo;
+        float umbralMedio = resistenciaMaxima * 2f / 3f;
+        float umbralBajo = resistenciaMaxima / 3f;
+
+        if (EscudoR == null) return;
+
+        if (resistenciaEscudoActual > umbralMedio)
+        {
+            EscudoR.material = materialEscudoCompleto;
+        }
+        else if (resistenciaEscudoActual > umbralBajo)
+        {
+            EscudoR.material = materialEscudoMedio;
+        }
+        else
+        {
+            EscudoR.material = materialEscudoBajo;
+        }
+    }
+
+    // Añadir este método para comprobar periódicamente la regeneración
+    private IEnumerator ComprobarRegeneracionEscudo()
+    {
+        while (true)
+        {
+            // Si el escudo está activo y se está regenerando
+            if (escudoActivo && resistenciaEscudoActual < stats.resistenciaEscudo)
+            {
+                ActualizarMaterialEscudo();
+            }
+            
+            yield return new WaitForSeconds(0.1f); // Comprobar cada 0.1 segundos
         }
     }
 }

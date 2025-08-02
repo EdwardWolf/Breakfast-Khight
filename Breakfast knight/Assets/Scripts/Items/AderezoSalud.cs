@@ -28,6 +28,7 @@ public class AderezoSalud : Aderezo
             Debug.Log($"Salud del jugador después de usar el aderezo: {jugador.vidaActual}");
             jugador.ActualizarBarraDeVida();
             gameObject.SetActive(false); // Desactivar el objeto instanciado
+            jugador.MostrarEfectoCuracion(); // Mostrar efecto de curación
         }
     }
 

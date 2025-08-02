@@ -22,16 +22,38 @@ public class EnemigoDistancia : Enemigo
 
     public GameObject objetoAActivar; // Referencia al objeto que quieres activar antes de disparar
 
+    private Color colorOriginal;
+    private bool estaActivadoPorAderezo = false;
+
     protected override void Start()
     {
         base.Start();
         attackHandler = GetComponent<AttackHandler>();
         navMeshAgent = GetComponent<NavMeshAgent>();
+        
+        // Guardar referencia del color original si existe objetoAActivar
+        if (objetoAActivar != null)
+        {
+            // Asegurar que el objeto esté activo al menos una vez para configurarlo
+            objetoAActivar.SetActive(true);
+            
+            Renderer renderer = objetoAActivar.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                colorOriginal = renderer.material.color;
+            }
+            
+            // Después, desactivarlo hasta que sea necesario
+            objetoAActivar.SetActive(false);
+        }
     }
 
     protected override void Update()
     {
         base.Update();
+
+        // Controlar la activación y color del objeto según el estado
+        ActualizarEstadoObjetoAActivar();
 
         // Si está alejándose, no ejecutar lógica de ataque ni persecución
         if (alejandose)
@@ -164,6 +186,48 @@ public class EnemigoDistancia : Enemigo
         objetoAActivar.SetActive(false);
     }
 
+    private void ActualizarEstadoObjetoAActivar()
+    {
+        if (objetoAActivar == null)
+        {
+            Debug.LogWarning("objetoAActivar no está asignado");
+            return;
+        }
+            
+        if (isOnWayToAderezo)
+        {
+            // Asegurar que el objeto esté activo
+            objetoAActivar.SetActive(true);
+            
+            // Cambiar color a verde
+            Renderer renderer = objetoAActivar.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = Color.green;
+                Debug.Log("Cambiando color a verde, enemigo persiguiendo aderezo");
+            }
+            
+            estaActivadoPorAderezo = true;
+        }
+        else if (estaActivadoPorAderezo)
+        {
+            // Restaurar color original
+            Renderer renderer = objetoAActivar.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = colorOriginal;
+            }
+            
+            // Solo desactivar si no está atacando
+            if (!atacando)
+            {
+                objetoAActivar.SetActive(false);
+            }
+            
+            estaActivadoPorAderezo = false;
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (jugador == null)
@@ -176,6 +240,12 @@ public class EnemigoDistancia : Enemigo
         Gizmos.DrawLine(origen, origen + direccion * rangoRaycast);
     }
 }
+
+
+
+
+
+
 
 
 
