@@ -12,6 +12,8 @@ TagManager:
   - Point
   - Boss
   - Ground
+  - Undefined
+  - Arma
   layers:
   - Default
   - TransparentFX

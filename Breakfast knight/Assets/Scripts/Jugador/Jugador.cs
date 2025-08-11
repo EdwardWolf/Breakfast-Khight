@@ -32,6 +32,7 @@ public abstract class Jugador : MonoBehaviour
     public GameObject panelPausa; // Referencia al panel de pausa
     [SerializeField] private Transform puntoInstanciacionArma; // Punto de instanciación del arma
     public Renderer EscudoR; // Referencia al renderer del escudo
+    public Transform center; // Punto central del jugador para ataques y efectos
 
     public UIManager uiManager;
 

@@ -19,7 +19,11 @@ public class UIManager : MonoBehaviour
 
     private Coroutine barraAtaqueCoroutine;
     private Coroutine barraVelocidadCoroutine;
+    public TextMeshProUGUI textoMonedas;
+    public TextMeshProUGUI textoGemas;
 
+    private int monedas = 0;
+    private int gemas = 0;
     private void OnEnable()
     {
         Jugador.OnVidaCambiada += ActualizarCorazones;
@@ -118,5 +122,24 @@ public class UIManager : MonoBehaviour
         }
         barra.fillAmount = 0f;
         barra.gameObject.SetActive(false);
+    }
+    public void AgregarMonedas(int cantidad)
+    {
+        monedas += cantidad;
+        ActualizarUIInventario();
+    }
+
+    public void AgregarGemas(int cantidad)
+    {
+        gemas += cantidad;
+        ActualizarUIInventario();
+    }
+
+    private void ActualizarUIInventario()
+    {
+        if (textoMonedas != null)
+            textoMonedas.text = monedas.ToString();
+        if (textoGemas != null)
+            textoGemas.text = gemas.ToString();
     }
 }
